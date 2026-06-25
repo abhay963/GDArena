@@ -6,7 +6,6 @@ import {
   Terminal,
   Menu,
   X,
-  Play,
   ArrowRight,
   MessageSquare,
   Bot,
@@ -18,8 +17,8 @@ import {
   Shuffle,
   GraduationCap,
   Quote,
- 
-  
+  Activity,
+  Globe
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -29,12 +28,25 @@ export default function LandingPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Dynamic simulation data for the new Interactive System Badge
+  const [liveUsers, setLiveUsers] = useState(1420);
+  const [currentTopic, setCurrentTopic] = useState("Impact of LLMs on Software Engineering Salaries");
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Minor random counter animation to make the live element feel genuine
+    const interval = setInterval(() => {
+      setLiveUsers(prev => prev + (Math.random() > 0.5 ? 1 : -1));
+    }, 4000);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval);
+    };
   }, []);
 
   const scrollToSection = (id) => {
@@ -135,11 +147,11 @@ export default function LandingPage() {
           </div>
 
           <div className="hidden md:flex items-center space-x-8 text-sm text-neutral-400 font-medium">
-            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hover:text-white transition-colors">Home</button>
-            <button onClick={() => scrollToSection("features")} className="hover:text-white transition-colors">Features</button>
-            <button onClick={() => scrollToSection("how-it-works")} className="hover:text-white transition-colors">How It Works</button>
-            <button onClick={() => scrollToSection("stats")} className="hover:text-white transition-colors">Metrics</button>
-            <button onClick={() => scrollToSection("testimonials")} className="hover:text-white transition-colors">Testimonials</button>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hover:text-white transition-colors cursor-pointer">Home</button>
+            <button onClick={() => scrollToSection("features")} className="hover:text-white transition-colors cursor-pointer">Features</button>
+            <button onClick={() => scrollToSection("how-it-works")} className="hover:text-white transition-colors cursor-pointer">How It Works</button>
+            <button onClick={() => scrollToSection("stats")} className="hover:text-white transition-colors cursor-pointer">Metrics</button>
+            <button onClick={() => scrollToSection("testimonials")} className="hover:text-white transition-colors cursor-pointer">Testimonials</button>
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -169,6 +181,7 @@ export default function LandingPage() {
 
       {/* ==================== HERO SECTION ==================== */}
       <section className="relative pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden flex flex-col items-center justify-center px-6">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_30%,#000_70%,transparent_100%)] pointer-events-none" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-600/15 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute top-1/3 left-1/3 w-[300px] h-[300px] bg-rose-500/10 rounded-full blur-[100px] pointer-events-none" />
 
@@ -205,19 +218,33 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
+            className="flex flex-col lg:flex-row items-center justify-center gap-6 max-w-3xl mx-auto mb-20"
           >
             <button 
               onClick={() => navigate("/signup")} 
-              className="w-full sm:w-auto cursor-pointer bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold px-8 py-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all"
+              className="w-full lg:w-auto shrink-0 cursor-pointer bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold px-8 py-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all group"
             >
               <span>Start Practicing Free</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="w-full sm:w-auto bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-xl flex items-center justify-center space-x-2 backdrop-blur-md active:scale-[0.98] transition-all cursor-pointer">
-              <Play className="w-4 h-4 text-red-400 fill-red-400" />
-              <span>Watch Demo</span>
-            </button>
+
+            {/* HIGH-END SYSTEM ACTIVITY HUB COMPONENT */}
+            <div className="w-full lg:w-auto flex items-center space-x-4 bg-white/[0.02] border border-white/10 px-5 py-3 rounded-xl backdrop-blur-md text-left">
+              <div className="flex items-center justify-center relative w-10 h-10 rounded-lg bg-red-500/10 shrink-0">
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500" />
+                <Globe className="w-5 h-5 text-red-400" />
+              </div>
+              <div className="text-xs truncate">
+                <div className="text-neutral-400 font-medium flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                  <Activity className="w-3 h-3 text-neutral-500" />
+                  <span>{liveUsers} Debaters Online</span>
+                </div>
+                <div className="text-neutral-200 font-semibold truncate max-w-[240px] md:max-w-[320px] mt-0.5">
+                  Live: <span className="text-rose-400 font-normal">"{currentTopic}"</span>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
           {/* Hero Visual Discussion Mockup */}
@@ -386,10 +413,10 @@ export default function LandingPage() {
         <p className="text-neutral-400 mb-8 max-w-lg mx-auto">Build consistency patterns. Outperform expectations.</p>
         <button 
           onClick={() => navigate("/signup")}
-          className="mx-auto bg-white text-black font-bold px-8 py-4 rounded-xl flex items-center space-x-2 hover:bg-neutral-200 transition-all active:scale-95 cursor-pointer shadow-xl shadow-black/40"
+          className="mx-auto bg-white text-black font-bold px-8 py-4 rounded-xl flex items-center space-x-2 hover:bg-neutral-200 transition-all active:scale-95 cursor-pointer shadow-xl shadow-black/40 group"
         >
           <span>Start Free Today</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </section>
 
@@ -405,7 +432,6 @@ export default function LandingPage() {
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
           </div>
-          
         </div>
       </footer>
 
