@@ -27,13 +27,12 @@ export default function Hero() {
   const [step, setStep] = useState("enter");
   const [topic, setTopic] = useState("");
   const [history, setHistory] = useState([]);
-  const [listening, setListening] = useState(false);
   const [loadingAI, setLoadingAI] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
 
-  // Tracks whose turn it is to drive the automated loop
-  // Options: "idle" | "player1" | "player2" | "user"
-  const [currentTurn, setCurrentTurn] = useState("idle");
+  // Dynamic UI States for active talkers
+  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
+  const [activeAiSpeaker, setActiveAiSpeaker] = useState("");
 
   const [showStreakPopup, setShowStreakPopup] = useState(false);
   const [latestStreak, setLatestStreak] = useState(0);
@@ -41,13 +40,18 @@ export default function Hero() {
 
   const audioRef = useRef(null);
   const chatEndRef = useRef(null);
+  const socketRef = useRef(null);
+const mediaRecorderRef = useRef(null);
+const mediaStreamRef = useRef(null);
+  // Refs for continuous speech & interruption mechanics
   const recognitionRef = useRef(null);
   const silenceTimeoutRef = useRef(null);
+  const isUserSpeakingRef = useRef(false);
   const fullSpeechRef = useRef("");
 
-  // Storage for text payloads that need to be read sequentially
-  const pendingPlayer1Text = useRef("");
-  const pendingPlayer2Text = useRef("");
+  // Queue to coordinate asynchronous dynamic speech segments safely
+  const aiSpeechQueue = useRef([]);
+  const isProcessingQueue = useRef(false);
 
   // Fetch streak info on user login
   useEffect(() => {
@@ -69,31 +73,18 @@ export default function Hero() {
     }
   }, [history]);
 
-  // Turn management supervisor loop
+  // Main listener hook to spawn/teardown speech stream based on playground steps
   useEffect(() => {
-    if (step !== "gd") return;
-
-    if (currentTurn === "player1" && pendingPlayer1Text.current) {
-      speakText(pendingPlayer1Text.current, () => {
-        pendingPlayer1Text.current = "";
-        setCurrentTurn("player2");
-      });
-    } else if (currentTurn === "player2" && pendingPlayer2Text.current) {
-      speakText(pendingPlayer2Text.current, () => {
-        pendingPlayer2Text.current = "";
-        setCurrentTurn("user");
-      });
-    } else if (currentTurn === "user") {
-      startAutomaticListening();
+    if (step === "gd") {
+      startContinuousListening();
+    } else {
+      stopAllAudio();
     }
-  }, [currentTurn, step]);
 
-  // Clean up timers on unmount
-  useEffect(() => {
     return () => {
-      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+      stopAllAudio();
     };
-  }, []);
+  }, [step]);
 
   const stopAllAudio = () => {
     if (audioRef.current) {
@@ -101,41 +92,245 @@ export default function Hero() {
       audioRef.current.currentTime = 0;
     }
     window.speechSynthesis.cancel();
-    if (silenceTimeoutRef.current) {
-      clearTimeout(silenceTimeoutRef.current);
-    }
+    if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+    
+    aiSpeechQueue.current = [];
+    isProcessingQueue.current = false;
+    isUserSpeakingRef.current = false;
+    fullSpeechRef.current = "";
+    
+    setIsAiSpeaking(false);
+    setActiveAiSpeaker("");
+
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.onend = null;
+        recognitionRef.current.onstart = null;
+        recognitionRef.current.onresult = null;
         recognitionRef.current.onerror = null;
+        recognitionRef.current.onend = null;
         recognitionRef.current.stop();
       } catch (e) {}
       recognitionRef.current = null;
     }
-    fullSpeechRef.current = "";
-    setListening(false);
-    setCurrentTurn("idle");
+  };
+function connectWebSocket() {
+  socketRef.current = new WebSocket("ws://localhost:5000");
+
+  socketRef.current.onopen = () => {
+    console.log("✅ WebSocket Connected");
   };
 
-  const speakText = (text, onComplete) => {
+  socketRef.current.onclose = () => {
+    console.log("❌ WebSocket Closed");
+  };
+
+  socketRef.current.onerror = (err) => {
+    console.error(err);
+  };
+
+  socketRef.current.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+
+    console.log(message);
+  };
+}
+
+async function startStreaming() {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: true,
+  });
+
+  mediaStreamRef.current = stream;
+
+  const recorder = new MediaRecorder(stream);
+
+  mediaRecorderRef.current = recorder;
+
+  recorder.ondataavailable = (event) => {
+  console.log("Chunk size:", event.data.size);
+
+  if (
+    socketRef.current &&
+    socketRef.current.readyState === WebSocket.OPEN
+  ) {
+    socketRef.current.send(event.data);
+    console.log("✅ Audio chunk sent");
+  } else {
+    console.log("❌ WebSocket not open");
+  }
+};
+
+  recorder.start(250);
+}
+
+function stopStreaming() {
+  if (mediaRecorderRef.current) {
+    mediaRecorderRef.current.stop();
+  }
+
+  if (mediaStreamRef.current) {
+    mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+  }
+
+  if (socketRef.current) {
+    socketRef.current.close();
+  }
+}
+  // Continuous background audio stream engine
+  const startContinuousListening = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      alert("Speech Recognition not supported in this browser.");
+      return;
+    }
+
+    if (recognitionRef.current) return; // Prevent double initialization
+
+    const recognition = new SR();
+    recognitionRef.current = recognition;
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      console.log("Continuous microphone engine live.");
+    };
+
+    recognition.onresult = (e) => {
+      // User started making sound: Immediately cut off any speaking AIs
+      if (!isUserSpeakingRef.current) {
+        isUserSpeakingRef.current = true;
+        window.speechSynthesis.cancel(); 
+        // Pause the queue manager so it waits for user utterance wrap-up
+        isProcessingQueue.current = false; 
+        setIsAiSpeaking(false);
+        setActiveAiSpeaker("");
+      }
+
+      // Reset voice frame threshold timers
+      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+      silenceTimeoutRef.current = setTimeout(() => {
+        handleUserUtteranceComplete();
+      }, 2500); // 2.5 seconds of silence processing threshold
+
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) {
+          fullSpeechRef.current += " " + e.results[i][0].transcript;
+        }
+      }
+    };
+
+    recognition.onerror = (e) => {
+      if (e.error !== "no-speech") {
+        console.error("Speech recognition engine glitch:", e.error);
+      }
+    };
+
+    // Auto-restart loop if browser drops mic connection organically
+    recognition.onend = () => {
+      if (step === "gd" && recognitionRef.current) {
+        try {
+          recognition.start();
+        } catch (err) {}
+      }
+    };
+
     try {
-      window.speechSynthesis.cancel(); // Clear any hung speech items
-      const speech = new SpeechSynthesisUtterance(text);
+      recognition.start();
+    } catch (e) {
+      console.error("Failed to boot speech capture runtime exception:", e);
+    }
+  };
+
+  const handleUserUtteranceComplete = async () => {
+    isUserSpeakingRef.current = false;
+    const speechText = fullSpeechRef.current.trim();
+    fullSpeechRef.current = ""; // Flush internal text buffer clear
+
+    if (!speechText) {
+      // No valid vocal statements found; resume processing leftover queued elements safely
+      processSpeechQueue();
+      return;
+    }
+
+    // Append statement logs synchronously to chat history stack UI
+    setHistory((prev) => [...prev, { speaker: "You", text: speechText, avatar: "👤" }]);
+    setLoadingAI(true);
+
+    // Wipe outstanding speech items to prevent delayed logic overlap
+    aiSpeechQueue.current = [];
+    isProcessingQueue.current = false;
+
+    try {
+      const ai = await axios.post(`${import.meta.env.VITE_API_URL}/api/gd`, {
+        userSpeech: speechText,
+        topic,
+        history: history.map((h) => ({
+          ...h,
+          speaker: h.speaker.replace("Agent", "Player"),
+        })),
+      });
+
+      // Clear downstream text pipeline array payloads
+      const payloads = [];
+      if (ai.data["Player 1"]) payloads.push({ speaker: "Player 1", text: ai.data["Player 1"], avatar: "🤖" });
+      if (ai.data["Player 2"]) payloads.push({ speaker: "Player 2", text: ai.data["Player 2"], avatar: "🤖" });
+
+      // Append items to UI timeline feed
+      setHistory((prev) => [...prev, ...payloads]);
+
+      // Push into processing array safely
+      aiSpeechQueue.current = [...aiSpeechQueue.current, ...payloads];
+      processSpeechQueue();
+    } catch (error) {
+      console.error("Failed to evaluate dialogue tree logic calculations:", error);
+      processSpeechQueue();
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  // Asynchronous queue logic to process text-to-speech blocks sequentially
+  const processSpeechQueue = () => {
+    if (isUserSpeakingRef.current || isProcessingQueue.current || aiSpeechQueue.current.length === 0) {
+      return;
+    }
+
+    isProcessingQueue.current = true;
+    const currentSegment = aiSpeechQueue.current.shift();
+
+    setActiveAiSpeaker(currentSegment.speaker);
+    setIsAiSpeaking(true);
+
+    try {
+      window.speechSynthesis.cancel();
+      const speech = new SpeechSynthesisUtterance(currentSegment.text);
       speech.lang = "en-US";
       speech.pitch = 0.9;
       speech.rate = 0.95;
-      
+
       speech.onend = () => {
-        if (onComplete) onComplete();
+        isProcessingQueue.current = false;
+        setIsAiSpeaking(false);
+        setActiveAiSpeaker("");
+        // Recursively trigger next queue evaluation step
+        processSpeechQueue(); 
       };
-      speech.onerror = () => {
-        if (onComplete) onComplete();
+
+      speech.onerror = (e) => {
+        isProcessingQueue.current = false;
+        setIsAiSpeaking(false);
+        setActiveAiSpeaker("");
+        processSpeechQueue();
       };
 
       window.speechSynthesis.speak(speech);
     } catch (err) {
       console.error("SpeechSynthesis error:", err);
-      if (onComplete) onComplete();
+      isProcessingQueue.current = false;
+      setIsAiSpeaking(false);
+      setActiveAiSpeaker("");
+      processSpeechQueue();
     }
   };
 
@@ -152,161 +347,47 @@ export default function Hero() {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/gd/start`);
       setTopic(res.data.topic);
 
-      setHistory([
+      const initialPayload = [
         { speaker: "Player 1", text: res.data.agents["Player 1"], avatar: "🤖" },
         { speaker: "Player 2", text: res.data.agents["Player 2"], avatar: "🤖" },
-      ]);
+      ];
 
+      setHistory(initialPayload);
       if (audioRef.current) audioRef.current.pause();
+      
+      // Pivot stage tracking triggers the continuous listening effect chain
       setStep("gd");
+      connectWebSocket();
 
-      // Queue text segments and hand execution off to the layout lifecycle controller
-      pendingPlayer1Text.current = res.data.agents["Player 1"];
-      pendingPlayer2Text.current = res.data.agents["Player 2"];
-      setCurrentTurn("player1");
+await startStreaming();
+
+      aiSpeechQueue.current = [...initialPayload];
+      // Slight artificial timeout to let mic drivers spin up comfortably
+      setTimeout(() => {
+        processSpeechQueue();
+      }, 400);
     } catch (error) {
-      console.error("Failed to start GD:", error);
-    }
-  };
-
-  const handleUserSpeech = async (userSpeech) => {
-    setHistory((prev) => [...prev, { speaker: "You", text: userSpeech, avatar: "👤" }]);
-    setLoadingAI(true);
-    setCurrentTurn("idle");
-
-    try {
-      const ai = await axios.post(`${import.meta.env.VITE_API_URL}/api/gd`, {
-        userSpeech,
-        topic,
-        history: history.map((h) => ({
-          ...h,
-          speaker: h.speaker.replace("Agent", "Player"),
-        })),
-      });
-
-      setHistory((prev) => [
-        ...prev,
-        { speaker: "Player 1", text: ai.data["Player 1"], avatar: "🤖" },
-        { speaker: "Player 2", text: ai.data["Player 2"], avatar: "🤖" },
-      ]);
-
-      pendingPlayer1Text.current = ai.data["Player 1"];
-      pendingPlayer2Text.current = ai.data["Player 2"];
-      setCurrentTurn("player1");
-    } catch (error) {
-      console.error("Failed to get AI response:", error);
-      // Attempt self-healing recovery step if backend crashes
-      setCurrentTurn("user");
-    } finally {
-      setLoadingAI(false);
-    }
-  };
-
-  const startAutomaticListening = () => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      alert("Speech Recognition not supported in this browser.");
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    fullSpeechRef.current = "";
-
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {}
-    }
-
-    const recognition = new SR();
-    recognitionRef.current = recognition;
-
-    recognition.lang = "en-US";
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    // Reset silence tracker whenever valid text returns
-    const resetSilenceTimeout = () => {
-      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
-      silenceTimeoutRef.current = setTimeout(() => {
-        stopAutomaticListening();
-      }, 3000); // 3 seconds of continuous silence yields control back
-    };
-
-    recognition.onstart = () => {
-      setListening(true);
-      resetSilenceTimeout();
-    };
-
-    recognition.onresult = (e) => {
-      resetSilenceTimeout();
-      let interimTranscript = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) {
-          fullSpeechRef.current += " " + e.results[i][0].transcript;
-        } else {
-          interimTranscript += e.results[i][0].transcript;
-        }
-      }
-    };
-
-    recognition.onerror = (e) => {
-      console.error("Speech recognition error error:", e.error);
-      // Don't kill context on soft empty sounds, recycle back gracefully
-      if (e.error === "no-speech") {
-        stopAutomaticListening();
-      }
-    };
-
-    recognition.onend = () => {
-      setListening(false);
-    };
-
-    try {
-      recognition.start();
-    } catch (e) {
-      console.error("Start speech capture runtime exception:", e);
-      setListening(false);
-    }
-  };
-
-  const stopAutomaticListening = () => {
-    if (silenceTimeoutRef.current) {
-      clearTimeout(silenceTimeoutRef.current);
-      silenceTimeoutRef.current = null;
-    }
-
-    const recognition = recognitionRef.current;
-    if (recognition) {
-      try {
-        recognition.onend = null;
-        recognition.onerror = null;
-        recognition.stop();
-      } catch {}
-    }
-
-    setListening(false);
-    recognitionRef.current = null;
-
-    const speech = fullSpeechRef.current.trim();
-    if (speech) {
-      handleUserSpeech(speech);
-    } else {
-      // User didn't say anything; prompt conversational loop recycling fallback
-      setCurrentTurn("user");
+      console.error("Failed to switch session stage parameters dynamically:", error);
     }
   };
 
   const handleLogout = async () => {
     await signOut(auth);
     stopAllAudio();
+    stopStreaming();
     setStep("enter");
   };
 
   const handleExit = async () => {
+    stopStreaming();
     stopAllAudio();
-
     try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/performance`, {
+        uid: user.uid,
+        topic,
+        history,
+      });
+
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/streak/update`, {
         uid: user.uid,
         email: user.email,
@@ -414,10 +495,10 @@ export default function Hero() {
             <div className="space-y-4">
               {[
                 ["1", "Enter Playground", "Begin your interactive speech session environment."],
-                ["2", "Press Start Match", "The workspace prepares audio tracks and initializes variables."],
-                ["3", "AI Group Discussion Starts", "AI participants converse automatically back-to-back using automated voice generation."],
-                ["4", "Your Voice Turn Indicator", "When it is your turn, a live prompt instructs you to contribute points."],
-                ["5", "Automatic Silence Submission", "Just speak naturally. Pause talking for 3 seconds to complete processing automatically."],
+                ["2", "Press Start Match", "The workspace prepares audio tracks and initializes context variables."],
+                ["3", "Dynamic Environment", "AI participants converse naturally. Speak at any moment to express your ideas."],
+                ["4", "Natural Interruptions", "Starting to speak instantly pauses ongoing AI vocal feedback tracks."],
+                ["5", "Fluid Tracking Loop", "Pause for 2.5 seconds to dispatch transcription payloads smoothly to the backend."],
               ].map(([num, title, desc], i) => (
                 <div key={i} className="flex gap-4 p-3 bg-gray-950/50 rounded-xl border border-gray-800/40">
                   <span className="text-red-500 font-bold text-lg">{num}</span>
@@ -444,12 +525,12 @@ export default function Hero() {
                   Welcome to the Arena
                 </h2>
                 <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-                  Enter an arena where clear communication matters. Coordinate alongside artificial intelligence players in a collaborative discussion round. Take your position.
+                  Enter an arena where clear communication matters. Coordinate alongside artificial intelligence players in an active collaborative discussion round. Take your position.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
                 <button
-                  onClick={handleEnter}
+                  onClick={() => setShowCountdown(true)}
                   className="w-full bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-xl transition shadow-lg shadow-red-900/20 text-sm tracking-wider uppercase cursor-pointer"
                 >
                   Enter Playground
@@ -464,24 +545,7 @@ export default function Hero() {
             </div>
           )}
 
-          {/* STEP: AUDIO SYSTEM CALIBRATION */}
-          {step === "audio" && (
-            <div className="text-center space-y-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-950/30 rounded-full border border-red-900/40">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
-                  <span className="text-red-400 text-xs font-semibold uppercase tracking-wider">System Calibrating</span>
-                </div>
-                <p className="text-gray-400 text-sm">Prepare your device audio controls. Your match starts shortly.</p>
-              </div>
-              <button
-                onClick={() => setShowCountdown(true)}
-                className="px-10 py-4 text-sm font-bold bg-green-600 hover:bg-green-500 text-white rounded-xl transition tracking-wider uppercase cursor-pointer shadow-md"
-              >
-                Start Match
-              </button>
-            </div>
-          )}
+        
 
           {/* STEP: RUNTIME DISCUSSION SCREEN */}
           {step === "gd" && (
@@ -492,26 +556,30 @@ export default function Hero() {
                 <p className="text-xl font-medium text-gray-200 leading-relaxed">{topic}</p>
               </div>
 
-              {/* Status Turn Information Feed Notification */}
+              {/* Event Driven Status Bar Notification Indicator */}
               <div className="flex flex-col sm:flex-row items-center justify-between bg-gray-900/30 rounded-xl p-4 border border-gray-800/80 gap-4">
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  {currentTurn === "user" && listening ? (
-                    <div className="px-6 py-3.5 bg-red-600 text-white text-xs font-bold tracking-wider uppercase rounded-xl flex items-center gap-2 animate-pulse shadow-md shadow-red-900/30">
-                      <span>🎤 It's your turn to speak</span>
-                    </div>
-                  ) : currentTurn === "player1" || currentTurn === "player2" ? (
-                    <div className="px-6 py-3.5 bg-purple-900/60 border border-purple-700/50 text-purple-200 text-xs font-bold tracking-wider uppercase rounded-xl">
-                      <span>🤖 AI Participant Speaking...</span>
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                  
+                  {/* Persistent Listening Banner Badge */}
+                  <div className="px-4 py-3 bg-blue-950/40 border border-blue-800/60 text-blue-400 text-xs font-bold tracking-wider uppercase rounded-xl flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                    <span>🎤 Listening...</span>
+                  </div>
+
+                  {/* Active Speaker State Banner Display */}
+                  {isAiSpeaking ? (
+                    <div className="px-4 py-3 bg-purple-900/50 border border-purple-700/40 text-purple-200 text-xs font-bold tracking-wider uppercase rounded-xl">
+                      <span>🤖 {activeAiSpeaker} Speaking...</span>
                     </div>
                   ) : (
-                    <div className="px-6 py-3.5 bg-gray-900 text-gray-400 text-xs font-bold tracking-wider uppercase rounded-xl">
-                      <span>Waiting turn configuration...</span>
+                    <div className="px-4 py-3 bg-gray-900 border border-gray-800 text-gray-400 text-xs font-bold tracking-wider uppercase rounded-xl">
+                      <span>Discussion Open</span>
                     </div>
                   )}
 
                   <button
                     onClick={handleExit}
-                    className="cursor-pointer px-5 py-3.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-gray-300 font-bold text-xs tracking-wider uppercase transition"
+                    className="cursor-pointer px-4 py-3 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-gray-300 font-bold text-xs tracking-wider uppercase transition"
                   >
                     Exit Arena
                   </button>
@@ -520,7 +588,7 @@ export default function Hero() {
                 {loadingAI && (
                   <div className="flex items-center gap-2 text-yellow-500 text-xs font-medium bg-yellow-500/5 border border-yellow-500/10 px-3 py-1.5 rounded-lg">
                     <FaSpinner className="animate-spin" />
-                    <span className="tracking-wider uppercase">Evaluating Text Input...</span>
+                    <span className="tracking-wider uppercase">Processing Response...</span>
                   </div>
                 )}
               </div>

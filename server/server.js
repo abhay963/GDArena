@@ -12,6 +12,8 @@ import gdRoutes from "./routes/gd.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
 import topicRoutes from "./routes/topic.routes.js";
 
+import performanceRoutes from "./routes/performance.routes.js";
+
 // Load .env variables into process.env
 dotenv.config();
 
@@ -24,26 +26,19 @@ app.use(cors());
 // Parse incoming JSON request bodies
 app.use(express.json());
 
-// Register GD routes
-// All routes inside gd.routes.js will start with /api/gd
-// Example:
-// GET /api/gd/start
+
 // POST /api/gd
 app.use("/api/gd", gdRoutes);
 
-// Register streak routes
-// Example:
-// POST /api/streak/update
-// GET /api/streak/:uid
+
 app.use("/api/streak", streakRoutes);
 
-// Register topic routes
-// Example:
-// GET /api/topics
-// GET /api/topics/start
-// GET /api/topics/stats
+
 app.use("/api/topics", topicRoutes);
 
+
+
+app.use("/api/performance", performanceRoutes);
 // Default route to check whether backend is running
 app.get("/", (req, res) => {
   res.send("🚀 GD Arena Backend is Running...");
@@ -51,10 +46,9 @@ app.get("/", (req, res) => {
 
 // Read port from .env
 // If not available, use 5000
+// Read port from .env
 const PORT = process.env.PORT || 5000;
 
-// Start Express server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log("Hey Abhay Back Again 😎");
-});
+app.listen(PORT,(req,res)=>{
+  console.log(`Working on ${PORT}`);
+})

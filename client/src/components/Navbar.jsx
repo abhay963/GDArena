@@ -1,117 +1,152 @@
-import { useState } from "react";
-import { FaSkull, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
-import StreakCalendar from "./StreakCalendar";
+import { useState, useRef, useEffect } from "react";
+import Performance from "./PerformanceDashboard.jsx";
+import StreakCalendar from "./StreakCalendar.jsx"; // Imported your calendar component
+import { getAuth } from "firebase/auth";
 
 export default function Navbar({ user, streak, onLogout, onNavigateHome }) {
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showPerformance, setShowPerformance] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false); // State for the calendar modal
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const auth = getAuth();
+  const uid = user?.uid || auth.currentUser?.uid;
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <nav className="border-b border-gray-800 bg-black/40 backdrop-blur-md sticky top-0 z-40">
-      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+    <>
+      <nav className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md px-6 py-3.5 flex justify-between items-center selection:bg-red-500/30">
         
-        {/* LOGO AREA */}
-        <div
-          className="flex items-center gap-3 cursor-pointer select-none group"
-          onClick={() => {
-            if (onNavigateHome) onNavigateHome();
-            setMobileMenuOpen(false);
-          }}
+        {/* Brand Logo / Action */}
+        <div 
+          onClick={onNavigateHome}
+          className="flex items-center gap-2.5 cursor-pointer group select-none"
         >
-          <FaSkull className="text-3xl text-red-500 transform group-hover:scale-110 transition-transform duration-200" />
-          <h1 className="text-2xl font-black tracking-wider text-red-500 bg-clip-text">
-            GD ARENA
+          <div className="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center font-black text-white text-sm shadow-md shadow-red-900/30 group-hover:scale-105 transition-transform duration-200">
+            Ω
+          </div>
+          <h1 className="text-lg font-black tracking-wider text-white uppercase group-hover:text-red-500 transition-colors duration-200">
+            GD <span className="text-red-500 group-hover:text-white transition-colors duration-200">Arena</span>
           </h1>
         </div>
 
-        {/* DESKTOP ACTIONS */}
-        <div className="hidden md:flex items-center gap-6">
-          {/* Streak Indicator */}
-          <div className="relative">
-            <div
-              onClick={() => setShowCalendar(true)}
-              className="cursor-pointer flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 hover:bg-yellow-500/20 hover:border-yellow-500/50 transition-all duration-200 select-none"
-            >
-              <span className="text-yellow-400 font-bold">🔥 {streak}</span>
-              <span className="text-xs text-yellow-300 font-medium tracking-wide">day streak</span>
-            </div>
-
-            {showCalendar && (
-              <StreakCalendar streak={streak} onClose={() => setShowCalendar(false)} />
-            )}
-          </div>
-
-          {/* User Email Info */}
-          {user?.email && (
-            <span className="text-sm font-medium text-gray-400 border-l border-gray-800 pl-6">
-              {user.email}
-            </span>
-          )}
-
-          {/* Logout Action */}
-          <button
-            onClick={onLogout}
-            title="Sign Out"
-            className="p-2.5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-950/20 border border-transparent hover:border-red-900/30 transition-all duration-200 cursor-pointer"
-          >
-            <FaSignOutAlt className="text-lg" />
-          </button>
-        </div>
-
-        {/* MOBILE MENU TOGGLE BUTTON */}
-        <div className="md:hidden flex items-center gap-4">
-          {/* Quick Streak view for Mobile */}
+        {/* Global Navigation Controls */}
+        <div className="flex items-center gap-4">
+          
+          {/* Active Fire Streak Counter (Clickable Trigger) */}
           <div 
             onClick={() => setShowCalendar(true)}
-            className="cursor-pointer px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-bold text-sm"
+            className="flex items-center gap-1.5 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 hover:border-orange-500/40 px-3 py-1.5 rounded-xl text-orange-400 select-none shadow-sm cursor-pointer transition-all duration-150 active:scale-95"
+            title="View Streak Calendar"
           >
-            🔥 {streak}
+            <span className="text-sm animate-pulse">🔥</span>
+            <span className="font-mono text-xs font-bold tracking-tight">{streak || 0}d</span>
           </div>
 
+          {/* Performance Trigger Action Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-gray-400 hover:text-white text-xl focus:outline-none"
+            onClick={() => setShowPerformance(true)}
+            className="hidden sm:flex items-center gap-2 bg-slate-900 hover:bg-slate-800 active:bg-slate-850 text-slate-200 hover:text-white border border-slate-800 hover:border-slate-700 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-150 shadow-sm cursor-pointer"
           >
-            {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+            <svg className="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            Performance
           </button>
-        </div>
-      </div>
 
-      {/* MOBILE DROP-DOWN MENU */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-gray-950 border-b border-gray-800 transition-all duration-300">
-          <div className="px-6 pt-2 pb-6 space-y-4 flex flex-col">
-            {user?.email && (
-              <div className="text-xs font-semibold text-gray-500 tracking-wider uppercase pt-2">
-                Logged in as: <span className="text-gray-300 normal-case block mt-1 text-sm">{user.email}</span>
+          {/* User Profile Navigation Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="flex items-center gap-2 p-1 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-slate-800/60 hover:border-slate-700 transition focus:outline-none cursor-pointer"
+            >
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-xs font-bold text-white uppercase shadow-inner">
+                {user?.email ? user.email.charAt(0) : "U"}
+              </div>
+              <svg 
+                className={`w-3.5 h-3.5 text-slate-400 mr-1.5 transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`} 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Menu Items */}
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-800 rounded-xl p-1.5 shadow-2xl animate-fade-in z-50">
+                <div className="px-3 py-2 border-b border-slate-800/60 mb-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Authenticated As</p>
+                  <p className="text-xs text-slate-300 truncate font-medium mt-0.5">{user?.email || "User Account"}</p>
+                </div>
+
+                {/* Mobile-only Calendar fallback menu item */}
+                <button
+                  onClick={() => {
+                    setShowCalendar(true);
+                    setShowDropdown(false);
+                  }}
+                  className="sm:hidden w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-lg transition"
+                >
+                  <span className="text-orange-400">🔥</span> Streak Calendar
+                </button>
+
+                {/* Mobile-only Performance fallback menu item */}
+                <button
+                  onClick={() => {
+                    setShowPerformance(true);
+                    setShowDropdown(false);
+                  }}
+                  className="sm:hidden w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-lg transition"
+                >
+                  <span className="text-indigo-400">📊</span> Analytics Overview
+                </button>
+
+                <button
+                  onClick={() => {
+                    onLogout();
+                    setShowDropdown(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-950/20 rounded-lg transition cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Sign Out Session
+                </button>
               </div>
             )}
-            
-            <hr className="border-gray-900" />
-            
-            <button
-              onClick={() => {
-                setShowCalendar(true);
-                setMobileMenuOpen(false);
-              }}
-              className="w-full text-left py-2 text-yellow-400 font-medium flex items-center gap-2"
-            >
-              🔥 View Streak History
-            </button>
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onLogout();
-              }}
-              className="w-full text-left py-2.5 px-4 rounded-xl font-bold bg-red-950/30 text-red-400 border border-red-900/40 flex items-center justify-center gap-2 hover:bg-red-900/40 transition"
-            >
-              <FaSignOutAlt />
-              SIGN OUT
-            </button>
           </div>
+
         </div>
+      </nav>
+
+      {/* Embedded Performance Modal */}
+      {showPerformance && (
+        <Performance
+          uid={uid}
+          onClose={() => setShowPerformance(false)}
+        />
       )}
-    </nav>
+
+      {/* Embedded Streak Calendar Modal */}
+      {showCalendar && (
+        <StreakCalendar
+          uid={uid}
+          onClose={() => setShowCalendar(false)}
+        />
+      )}
+    </>
   );
 }
