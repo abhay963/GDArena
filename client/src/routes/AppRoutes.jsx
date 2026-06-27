@@ -1,28 +1,22 @@
-// Import React Router components
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-// Import pages
 import Landing from "../pages/Landing";
 import Hero from "../pages/Hero";
 
-// Import components
 import Auth from "../components/Auth";
 import ProtectedRoute from "../components/ProtectedRoute";
 
-// Application routes
 export default function AppRoutes() {
   return (
     <Routes>
       {/* Landing Page */}
       <Route path="/" element={<Landing />} />
 
-      {/* Login */}
+      {/* Authentication */}
       <Route path="/login" element={<Auth />} />
-
-      {/* Signup */}
       <Route path="/signup" element={<Auth />} />
 
-      {/* Protected Hero Page */}
+      {/* Protected Hero */}
       <Route
         path="/hero"
         element={
@@ -31,6 +25,9 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Redirect Unknown Routes */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

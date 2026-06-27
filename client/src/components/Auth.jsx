@@ -1,321 +1,259 @@
-// React hook
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-// React Router
-import { useNavigate } from "react-router-dom";
-
-// Authentication services
 import {
   login,
   signup,
   googleLogin,
+  forgotPassword,
 } from "../services/auth.service";
 
-// Icons
 import {
   FiMail,
   FiLock,
   FiEye,
   FiEyeOff,
   FiLoader,
-  FiAlertTriangle,
   FiArrowLeft,
 } from "react-icons/fi";
 
 import { FcGoogle } from "react-icons/fc";
-import { Terminal } from "lucide-react";
+import { toast } from "react-toastify";
 
-// Images
-import gdimage from "../assets/images/gdimage.png";
+// Import the image
+import gdImage from  "../assets/images/gdimage.png";   // Adjust path if needed
 
 export default function Auth() {
-  // Navigation hook
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Email input state
+  const isLoginPage = location.pathname === "/login";
+
   const [email, setEmail] = useState("");
-
-  // Password input state
   const [password, setPassword] = useState("");
-
-  // true = Login
-  // false = Signup
-  const [isLogin, setIsLogin] = useState(true);
-
-  // Error message
-  const [error, setError] = useState("");
-
-  // Loading state
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Show / Hide password
-  const [showPassword, setShowPassword] = useState(false);
+  /* -------------------------------
+          LOGIN / SIGNUP
+  -------------------------------- */
 
-  // Handles Email Login / Signup
-  const handleEmailAuth = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    setError("");
-
-    // Validate inputs
-    if (!email || !password) {
-      setError("All fields are required");
+    if (!email.trim()) {
+      toast.error("Enter your email.");
       return;
     }
-
-    // Password validation during signup
-    if (!isLogin && password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (!password.trim()) {
+      toast.error("Enter your password.");
       return;
     }
-
-    setLoading(true);
+    if (!isLoginPage && password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
 
     try {
-      // Login existing user
-      if (isLogin) {
+      setLoading(true);
+      if (isLoginPage) {
         await login(email, password);
-      }
-      // Create new account
-      else {
+        toast.success("Login Successful");
+      } else {
         await signup(email, password);
+        toast.success("Account Created Successfully");
       }
-
-      // Redirect after successful authentication
-      navigate("/hero");
+      navigate("/hero", { replace: true });
     } catch (err) {
-      // Display Firebase error
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  // Handles Google Authentication
-  const handleGoogleLogin = async () => {
-    setError("");
-    setLoading(true);
-
+  async function handleGoogle() {
     try {
+      setLoading(true);
       await googleLogin();
-
-      // Redirect after successful authentication
-      navigate("/hero");
+      toast.success("Welcome");
+      navigate("/hero", { replace: true });
     } catch (err) {
-      // Display Firebase error
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-   return (
-    <div className="min-h-screen bg-[#030014] text-gray-100 overflow-x-hidden">
-      {/* ==================== NAVBAR ==================== */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#030014]/90 backdrop-blur-md border-b border-white/10 py-5">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <div
-            className="flex items-center space-x-3 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            <div className="w-9 h-9 bg-gradient-to-tr from-red-600 to-rose-500 rounded-xl flex items-center justify-center">
-              <Terminal className="w-5 h-5 text-white" />
-            </div>
+  async function handleForgotPassword() {
+    if (!email.trim()) {
+      toast.error("Enter your email first.");
+      return;
+    }
+    try {
+      await forgotPassword(email);
+      toast.success("Password reset email sent.");
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
 
-            <span className="text-2xl font-bold tracking-tight">
+  return (
+    <div className="min-h-screen bg-[#030014] text-gray-200 flex overflow-hidden">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-sm text-gray-400 hover:text-white transition"
+      >
+        <FiArrowLeft />
+        Back
+      </button>
+
+      <div className="flex w-full h-screen">
+        {/* LEFT SIDE - IMAGE */}
+        <div className="hidden lg:flex w-1/2 relative bg-black">
+          <img
+            src={gdImage}
+            alt="GD Arena"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Optional overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+          
+          {/* Optional branding on image */}
+          <div className="absolute bottom-12 left-12 z-10">
+            <h2 className="text-5xl font-bold text-white tracking-tight">
               GD Arena
-            </span>
-          </div>
-
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors"
-          >
-            <FiArrowLeft />
-            Back to Home
-          </button>
-        </div>
-      </nav>
-
-      <div className="flex min-h-screen pt-20">
-        {/* ==================== LEFT SIDE ==================== */}
-        <div className="hidden lg:flex w-1/2 relative items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(at_center,#4c1d16_0%,transparent_70%)]" />
-
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-red-600/10 rounded-full blur-3xl" />
-
-          <div className="absolute bottom-32 right-10 w-80 h-80 bg-rose-500/10 rounded-full blur-3xl" />
-
-          <div className="relative z-10 max-w-md text-center px-8">
-            <img
-              src={gdimage}
-              alt="GD Arena"
-              className="mx-auto w-full max-w-[420px] drop-shadow-2xl"
-            />
-
-            <div className="mt-10 space-y-4">
-              <h2 className="text-4xl font-bold tracking-tight">
-                Level Up Your
-                <br />
-                Communication Skills
-              </h2>
-
-              <p className="text-neutral-400 text-lg">
-                Join thousands practicing with AI-powered group discussions
-              </p>
-            </div>
+            </h2>
+            <p className="text-xl text-gray-300 mt-2">
+              Compete. Improve. Win.
+            </p>
           </div>
         </div>
 
-        {/* ==================== RIGHT SIDE ==================== */}
+        {/* RIGHT SIDE - FORM */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
-          <div className="w-full max-w-md">
-            <div className="mb-10 text-center">
-              <h1 className="text-4xl font-bold tracking-tight mb-2">
-                {isLogin ? "Sign In" : "Create Account"}
+          <div className="w-full max-w-sm space-y-8">
+            <div className="text-center space-y-2">
+              <h1 className="text-3xl font-semibold tracking-tight text-white">
+                {isLoginPage ? "Welcome Back" : "Join GD Arena"}
               </h1>
-
-              <p className="text-neutral-400">
-                {isLogin
-                  ? "Welcome back to GD Arena"
-                  : "Start your journey to mastering group discussions"}
+              <p className="text-gray-400">
+                {isLoginPage
+                  ? "Sign in to continue your journey"
+                  : "Create your account and start competing"}
               </p>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/10 backdrop-blur-2xl rounded-3xl p-10 shadow-2xl">
-              <form
-                onSubmit={handleEmailAuth}
-                className="space-y-6"
-              >
-                {/* Email */}
-                <div>
-                  <label className="text-sm text-neutral-400 block mb-2">
-                    Email
-                  </label>
-
-                  <div className="relative">
-                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={loading}
-                      placeholder="you@example.com"
-                      className="w-full pl-11 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all placeholder:text-neutral-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="text-sm text-neutral-400 block mb-2">
-                    Password
-                  </label>
-
-                  <div className="relative">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) =>
-                        setPassword(e.target.value)
-                      }
-                      disabled={loading}
-                      placeholder="••••••••"
-                      className="w-full pl-11 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all placeholder:text-neutral-500"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowPassword(!showPassword)
-                      }
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-red-400"
-                    >
-                      {showPassword ? (
-                        <FiEyeOff size={20} />
-                      ) : (
-                        <FiEye size={20} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Error */}
-                {error && (
-                  <div className="flex gap-3 text-sm bg-red-900/30 border border-red-500/30 p-4 rounded-2xl text-red-400">
-                    <FiAlertTriangle className="mt-0.5" />
-
-                    {error}
-                  </div>
-                )}
-
-                {/* Submit */}
-                <button
-                  type="submit"
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email */}
+              <div className="relative">
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input
+                  type="email"
+                  value={email}
                   disabled={loading}
-                  className="w-full py-4 mt-4 bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:brightness-110 font-semibold rounded-2xl transition-all active:scale-[0.985] disabled:opacity-70 flex items-center justify-center gap-2 text-lg shadow-lg shadow-red-600/40"
+                  placeholder="Email Address"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
+                />
+              </div>
+
+              {/* Password */}
+              <div className="relative">
+                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  disabled={loading}
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-11 pr-11 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200"
                 >
-                  {loading ? (
-                    <>
-                      <FiLoader className="animate-spin" />
-
-                      {isLogin
-                        ? "Signing In..."
-                        : "Creating Account..."}
-                    </>
-                  ) : isLogin ? (
-                    "Sign In"
-                  ) : (
-                    "Create Account"
-                  )}
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
                 </button>
-              </form>
-                            {/* Divider */}
-              <div className="my-8 flex items-center gap-4">
-                <div className="flex-1 h-px bg-white/10" />
+              </div>
 
-                <span className="text-xs text-neutral-500 font-medium">
-                  OR
-                </span>
+              {/* Confirm Password */}
+              {!isLoginPage && (
+                <div className="relative">
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    disabled={loading}
+                    placeholder="Confirm Password"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
+                  />
+                </div>
+              )}
 
-                <div className="flex-1 h-px bg-white/10" />
+              {isLoginPage && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-sm text-red-400 hover:underline transition"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 disabled:opacity-60 transition font-medium text-lg flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <FiLoader className="animate-spin" />
+                    Please Wait...
+                  </>
+                ) : isLoginPage ? (
+                  "Sign In"
+                ) : (
+                  "Create Account"
+                )}
+              </button>
+
+              {/* Divider */}
+              <div className="relative flex items-center py-3">
+                <div className="flex-1 border-t border-white/10" />
+                <span className="px-4 text-xs text-gray-500 font-medium">OR</span>
+                <div className="flex-1 border-t border-white/10" />
               </div>
 
               {/* Google Login */}
               <button
-                onClick={handleGoogleLogin}
+                type="button"
+                onClick={handleGoogle}
                 disabled={loading}
-                className="w-full py-4 border border-white/10 hover:bg-white/5 rounded-2xl flex items-center justify-center gap-3 font-medium transition-all active:scale-[0.985]"
+                className="w-full py-3.5 rounded-2xl border border-white/10 hover:bg-white/5 transition flex items-center justify-center gap-3 font-medium"
               >
-                <FcGoogle size={24} />
-
+                <FcGoogle size={22} />
                 Continue with Google
               </button>
+            </form>
 
-              {/* Toggle Login / Signup */}
-              <p className="text-center mt-8 text-neutral-400">
-                {isLogin
-                  ? "Don't have an account?"
-                  : "Already have an account?"}{" "}
-                <button
-                  onClick={() => {
-                    setIsLogin(!isLogin);
-                    setError("");
-                  }}
-                  className="text-red-400 hover:text-red-300 font-semibold transition-colors"
-                >
-                  {isLogin ? "Sign Up" : "Sign In"}
-                </button>
-              </p>
-            </div>
-
-            {/* Footer */}
-            <p className="text-center text-xs text-neutral-500 mt-8">
-              By continuing, you agree to our Terms of Service and Privacy
-              Policy
+            {/* Toggle Login/Signup */}
+            <p className="text-center text-sm text-gray-400">
+              {isLoginPage ? "Don't have an account?" : "Already have an account?"}
+              <button
+                className="ml-1.5 text-red-400 hover:underline font-medium"
+                onClick={() =>
+                  navigate(isLoginPage ? "/signup" : "/login")
+                }
+              >
+                {isLoginPage ? "Sign Up" : "Sign In"}
+              </button>
             </p>
           </div>
         </div>

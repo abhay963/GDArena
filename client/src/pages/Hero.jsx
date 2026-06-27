@@ -414,17 +414,16 @@ await startStreaming();
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">
-        <p className="text-sm tracking-wider uppercase font-medium">Loading...</p>
-      </div>
-    );
-  }
 
-  if (!user) {
-    return <Auth />;
-  }
+if (loading) {
+  return (
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">
+      <p className="text-sm tracking-wider uppercase font-medium">
+        Loading...
+      </p>
+    </div>
+  );
+}
 
   return (
     <div className="relative min-h-screen bg-gray-950 text-gray-100 flex flex-col overflow-x-hidden selection:bg-red-500/30">

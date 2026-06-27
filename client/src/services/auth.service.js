@@ -1,50 +1,175 @@
-// Import Firebase authentication methods
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
 
-// Import Firebase auth instance
 import { auth } from "../firebase/firebase";
 
-// Login with email & password
-export async function login(email, password) {
-  const response = await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
+/* ===========================
+   GOOGLE PROVIDER
+=========================== */
 
-  return response.user;
-}
+const provider = new GoogleAuthProvider();
 
-// Signup with email & password
-export async function signup(email, password) {
-  const response = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
+provider.setCustomParameters({
+  prompt: "select_account",
+});
 
-  return response.user;
-}
+/* ===========================
+   LOGIN
+=========================== */
 
-// Login with Google
-export async function googleLogin() {
-  const provider = new GoogleAuthProvider();
+export const login = async (email, password) => {
+  try {
+    if (!email || !password) {
+      throw new Error("Email and Password are required.");
+    }
 
-  const response = await signInWithPopup(
-    auth,
-    provider
-  );
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email.trim(),
+      password
+    );
 
-  return response.user;
-}
+    return userCredential.user;
+  } catch (err) {
+    console.error("Login Error:", err);
 
-// Logout current user
-export async function logout() {
-  await signOut(auth);
+    throw new Error(getFirebaseError(err.code));
+  }
+};
+
+/* ===========================
+   SIGNUP
+=========================== */
+
+export const signup = async (email, password) => {
+  try {
+    if (!email || !password) {
+      throw new Error("Email and Password are required.");
+    }
+
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
+
+    return userCredential.user;
+  } catch (err) {
+    console.error("Signup Error:", err);
+
+    throw new Error(getFirebaseError(err.code));
+  }
+};
+
+/* ===========================
+   GOOGLE LOGIN
+=========================== */
+
+export const googleLogin = async () => {
+  try {
+    const result = await signInWithPopup(
+      auth,
+      provider
+    );
+
+    return result.user;
+  } catch (err) {
+    console.error("Google Login Error:", err);
+
+    throw new Error(getFirebaseError(err.code));
+  }
+};
+
+/* ===========================
+   FORGOT PASSWORD
+=========================== */
+
+export const forgotPassword = async (email) => {
+  try {
+    if (!email) {
+      throw new Error("Enter your email first.");
+    }
+
+    await sendPasswordResetEmail(
+      auth,
+      email.trim()
+    );
+
+    return true;
+  } catch (err) {
+    console.error("Reset Password Error:", err);
+
+    throw new Error(getFirebaseError(err.code));
+  }
+};
+
+/* ===========================
+   LOGOUT
+=========================== */
+
+export const logout = async () => {
+  try {
+    await signOut(auth);
+  } catch (err) {
+    console.error("Logout Error:", err);
+
+    throw err;
+  }
+};
+
+/* ===========================
+   FIREBASE ERROR HANDLER
+=========================== */
+
+function getFirebaseError(code) {
+  switch (code) {
+    case "auth/email-already-in-use":
+      return "Email already exists.";
+
+    case "auth/invalid-email":
+      return "Invalid email address.";
+
+    case "auth/user-not-found":
+      return "User not found.";
+
+    case "auth/wrong-password":
+      return "Incorrect password.";
+
+    case "auth/invalid-credential":
+      return "Incorrect email or password.";
+
+    case "auth/weak-password":
+      return "Password must be at least 6 characters.";
+
+    case "auth/network-request-failed":
+      return "No internet connection.";
+
+    case "auth/too-many-requests":
+      return "Too many attempts. Please try again later.";
+
+    case "auth/user-disabled":
+      return "This account has been disabled.";
+
+    case "auth/popup-closed-by-user":
+      return "Google sign in cancelled.";
+
+    case "auth/popup-blocked":
+      return "Popup blocked by browser.";
+
+    case "auth/cancelled-popup-request":
+      return "Popup request cancelled.";
+
+    case "auth/operation-not-allowed":
+      return "Enable Email/Password Authentication in Firebase.";
+
+    default:
+      return code || "Something went wrong.";
+  }
 }

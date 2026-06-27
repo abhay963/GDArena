@@ -1,10 +1,10 @@
-// Import Firebase app initializer
 import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 
-// Import Firebase Authentication
-import { getAuth } from "firebase/auth";
-
-// Firebase configuration loaded from .env
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -14,8 +14,9 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase application
 const app = initializeApp(firebaseConfig);
 
-// Create Authentication instance
 export const auth = getAuth(app);
+
+// Keep user logged in after refresh
+setPersistence(auth, browserLocalPersistence).catch(console.error);

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Performance from "./PerformanceDashboard.jsx";
-import StreakCalendar from "./StreakCalendar.jsx"; // Imported your calendar component
+// Imported your calendar component
 import { getAuth } from "firebase/auth";
 
 export default function Navbar({ user, streak, onLogout, onNavigateHome }) {
@@ -141,12 +141,7 @@ export default function Navbar({ user, streak, onLogout, onNavigateHome }) {
       )}
 
       {/* Embedded Streak Calendar Modal */}
-      {showCalendar && (
-        <StreakCalendar
-          uid={uid}
-          onClose={() => setShowCalendar(false)}
-        />
-      )}
+  
     </>
   );
 }
