@@ -20,8 +20,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
 
-// Import the image
-import gdImage from  "../assets/images/gdimage.png";   // Adjust path if needed
+import gdImage from "../assets/images/gdimage.png";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -117,10 +116,8 @@ export default function Auth() {
             alt="GD Arena"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* Optional overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           
-          {/* Optional branding on image */}
           <div className="absolute bottom-12 left-12 z-10">
             <h2 className="text-5xl font-bold text-white tracking-tight">
               GD Arena
@@ -132,129 +129,132 @@ export default function Auth() {
         </div>
 
         {/* RIGHT SIDE - FORM */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
-          <div className="w-full max-w-sm space-y-8">
-            <div className="text-center space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-white">
-                {isLoginPage ? "Welcome Back" : "Join GD Arena"}
-              </h1>
-              <p className="text-gray-400">
-                {isLoginPage
-                  ? "Sign in to continue your journey"
-                  : "Create your account and start competing"}
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email */}
-              <div className="relative">
-                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                <input
-                  type="email"
-                  value={email}
-                  disabled={loading}
-                  placeholder="Email Address"
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
-                />
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden">
+          {/* Scrollable & Smaller Container */}
+          <div className="w-full max-w-xs lg:max-w-sm h-[90vh] overflow-y-auto custom-scroll py-8">
+            <div className="space-y-8">
+              <div className="text-center space-y-2">
+                <h1 className="text-3xl font-semibold tracking-tight text-white">
+                  {isLoginPage ? "Welcome Back" : "Join GD Arena"}
+                </h1>
+                <p className="text-gray-400">
+                  {isLoginPage
+                    ? "Sign in to continue your journey"
+                    : "Create your account and start competing"}
+                </p>
               </div>
 
-              {/* Password */}
-              <div className="relative">
-                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  disabled={loading}
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-11 pr-11 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200"
-                >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button>
-              </div>
-
-              {/* Confirm Password */}
-              {!isLoginPage && (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Email */}
                 <div className="relative">
-                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                   <input
-                    type="password"
-                    value={confirmPassword}
+                    type="email"
+                    value={email}
                     disabled={loading}
-                    placeholder="Confirm Password"
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Email Address"
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
                   />
                 </div>
-              )}
 
-              {isLoginPage && (
-                <div className="text-right">
+                {/* Password */}
+                <div className="relative">
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    disabled={loading}
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-11 pr-11 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
+                  />
                   <button
                     type="button"
-                    onClick={handleForgotPassword}
-                    className="text-sm text-red-400 hover:underline transition"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200"
                   >
-                    Forgot Password?
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
                   </button>
                 </div>
-              )}
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 disabled:opacity-60 transition font-medium text-lg flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <FiLoader className="animate-spin" />
-                    Please Wait...
-                  </>
-                ) : isLoginPage ? (
-                  "Sign In"
-                ) : (
-                  "Create Account"
+                {/* Confirm Password */}
+                {!isLoginPage && (
+                  <div className="relative">
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      disabled={loading}
+                      placeholder="Confirm Password"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-red-500 transition-all"
+                    />
+                  </div>
                 )}
-              </button>
 
-              {/* Divider */}
-              <div className="relative flex items-center py-3">
-                <div className="flex-1 border-t border-white/10" />
-                <span className="px-4 text-xs text-gray-500 font-medium">OR</span>
-                <div className="flex-1 border-t border-white/10" />
-              </div>
+                {isLoginPage && (
+                  <div className="text-right">
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-sm text-red-400 hover:underline transition"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
+                )}
 
-              {/* Google Login */}
-              <button
-                type="button"
-                onClick={handleGoogle}
-                disabled={loading}
-                className="w-full py-3.5 rounded-2xl border border-white/10 hover:bg-white/5 transition flex items-center justify-center gap-3 font-medium"
-              >
-                <FcGoogle size={22} />
-                Continue with Google
-              </button>
-            </form>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 disabled:opacity-60 transition font-medium text-lg flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <FiLoader className="animate-spin" />
+                      Please Wait...
+                    </>
+                  ) : isLoginPage ? (
+                    "Sign In"
+                  ) : (
+                    "Create Account"
+                  )}
+                </button>
 
-            {/* Toggle Login/Signup */}
-            <p className="text-center text-sm text-gray-400">
-              {isLoginPage ? "Don't have an account?" : "Already have an account?"}
-              <button
-                className="ml-1.5 text-red-400 hover:underline font-medium"
-                onClick={() =>
-                  navigate(isLoginPage ? "/signup" : "/login")
-                }
-              >
-                {isLoginPage ? "Sign Up" : "Sign In"}
-              </button>
-            </p>
+                {/* Divider */}
+                <div className="relative flex items-center py-3">
+                  <div className="flex-1 border-t border-white/10" />
+                  <span className="px-4 text-xs text-gray-500 font-medium">OR</span>
+                  <div className="flex-1 border-t border-white/10" />
+                </div>
+
+                {/* Google Login */}
+                <button
+                  type="button"
+                  onClick={handleGoogle}
+                  disabled={loading}
+                  className="w-full py-3.5 rounded-2xl border border-white/10 hover:bg-white/5 transition flex items-center justify-center gap-3 font-medium"
+                >
+                  <FcGoogle size={22} />
+                  Continue with Google
+                </button>
+              </form>
+
+              {/* Toggle Login/Signup */}
+              <p className="text-center text-sm text-gray-400">
+                {isLoginPage ? "Don't have an account?" : "Already have an account?"}
+                <button
+                  className="ml-1.5 text-red-400 hover:underline font-medium"
+                  onClick={() =>
+                    navigate(isLoginPage ? "/signup" : "/login")
+                  }
+                >
+                  {isLoginPage ? "Sign Up" : "Sign In"}
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
