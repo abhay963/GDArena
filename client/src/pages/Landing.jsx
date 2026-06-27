@@ -104,7 +104,7 @@ export default function LandingPage() {
     },
     {
       icon: GraduationCap,
-      title: "Placement & MBA Preparation",
+      title: "Placement Preparation",
       description: "Prepare accurately for competitive campus placements, corporate hiring, and MBA interview rounds.",
     },
   ];
