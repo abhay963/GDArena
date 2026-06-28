@@ -548,9 +548,9 @@ if (loading) {
 
           {/* STEP: RUNTIME DISCUSSION SCREEN */}
           {step === "gd" && (
-            <div className="space-y-6">
+            <div className="space-y-9 mt-34">
               {/* Target Matrix Topic Header */}
-              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 backdrop-blur-sm">
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 backdrop-blur-sm ">
                 <p className="text-xs font-bold text-red-400 tracking-widest uppercase mb-1">Active Topic</p>
                 <p className="text-xl font-medium text-gray-200 leading-relaxed">{topic}</p>
               </div>
