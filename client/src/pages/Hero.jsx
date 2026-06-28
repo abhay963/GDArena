@@ -441,31 +441,53 @@ if (loading) {
       )}
 
       {/* STREAK POPUP */}
-      {showStreakPopup && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl px-8 py-8 w-[340px] text-center shadow-2xl">
-            <h2 className="text-6xl font-black text-orange-500 tracking-tight">{latestStreak}</h2>
-            <p className="text-xs font-bold text-orange-400 mt-2 uppercase tracking-widest">
-              Day Streak
-            </p>
-            <p className="text-gray-400 text-sm mt-4 leading-relaxed">
-              {latestStreak === 1 && "Nice start. Consistency begins today."}
-              {latestStreak >= 2 && latestStreak <= 3 && "You're building momentum."}
-              {latestStreak >= 4 && latestStreak <= 6 && "Strong consistency. Keep going."}
-              {latestStreak >= 7 && "Excellent discipline. Don't break the chain."}
-            </p>
-            <div className="mt-6">
-              <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-orange-500 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(latestStreak * 10, 100)}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+   
+   {showStreakPopup && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    {/* Main Card with LeetCode's signature deep gray and subtle glow */}
+    <div className="relative bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl px-8 py-8 w-[340px] text-center shadow-[0_0_40px_rgba(255,161,22,0.12)] overflow-hidden">
+      
+      {/* Dynamic Background Glow Effect */}
+      <div className="absolute top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#ffa116]/10 rounded-full blur-[40px] pointer-events-none animate-pulse" />
 
+      {/* Fiery Container */}
+      <div className="relative flex flex-col items-center justify-center mt-2">
+        {/* Glowing LeetCode-style Fire Icon */}
+        <div className="relative drop-shadow-[0_0_20px_rgba(255,161,22,0.6)] animate-[pulse_2s_infinite_ease-in-out]">
+          <span className="text-6xl select-none">🔥</span>
+        </div>
+        
+        {/* Glowing Streak Number */}
+        <h2 className="text-6xl font-extrabold text-[#ffa116] tracking-tight mt-3 drop-shadow-[0_0_25px_rgba(255,114,36,0.5)]">
+          {latestStreak}
+        </h2>
+      </div>
+
+      {/* Normal Text Formatting */}
+      <p className="text-sm font-semibold text-gray-200 mt-4 tracking-wide">
+        Day Streak
+      </p>
+
+      <p className="text-gray-400 text-sm mt-3 leading-relaxed">
+        {latestStreak === 1 && "Nice start. Consistency begins today."}
+        {latestStreak >= 2 && latestStreak <= 3 && "You're building momentum."}
+        {latestStreak >= 4 && latestStreak <= 6 && "Strong consistency. Keep going."}
+        {latestStreak >= 7 && "Excellent discipline. Don't break the chain."}
+      </p>
+
+      {/* LeetCode Orange Progress Bar */}
+      <div className="mt-6">
+        <div className="h-1.5 w-full bg-[#2e2e2e] rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-[#ff7224] to-[#ffa116] rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(255,161,22,0.5)]"
+            style={{ width: `${Math.min(latestStreak * 10, 100)}%` }}
+          />
+        </div>
+      </div>
+      
+    </div>
+  </div>
+)}
       {/* NAVBAR */}
       <Navbar
         user={user}
