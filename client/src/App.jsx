@@ -1,10 +1,26 @@
-// Import application routes
-import AppRoutes from "./routes/AppRoutes";
+import { Routes, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
+import Hero from "./pages/Hero";
+import Auth from "./components/Auth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-// Root component
 function App() {
-  return <AppRoutes />;
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Auth />} />
+      <Route path="/signup" element={<Auth />} />
+
+      <Route
+        path="/hero"
+        element={
+          <ProtectedRoute>
+            <Hero />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
 }
 
-// Export App component
 export default App;
