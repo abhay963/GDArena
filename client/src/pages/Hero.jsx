@@ -40,9 +40,7 @@ export default function Hero() {
 
   const audioRef = useRef(null);
   const chatEndRef = useRef(null);
-  const socketRef = useRef(null);
-const mediaRecorderRef = useRef(null);
-const mediaStreamRef = useRef(null);
+
   // Refs for continuous speech & interruption mechanics
   const recognitionRef = useRef(null);
   const silenceTimeoutRef = useRef(null);
@@ -113,69 +111,7 @@ const mediaStreamRef = useRef(null);
       recognitionRef.current = null;
     }
   };
-function connectWebSocket() {
-  socketRef.current = new WebSocket("ws://localhost:5000");
 
-  socketRef.current.onopen = () => {
-    console.log("✅ WebSocket Connected");
-  };
-
-  socketRef.current.onclose = () => {
-    console.log("❌ WebSocket Closed");
-  };
-
-  socketRef.current.onerror = (err) => {
-    console.error(err);
-  };
-
-  socketRef.current.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-
-    console.log(message);
-  };
-}
-
-async function startStreaming() {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    audio: true,
-  });
-
-  mediaStreamRef.current = stream;
-
-  const recorder = new MediaRecorder(stream);
-
-  mediaRecorderRef.current = recorder;
-
-  recorder.ondataavailable = (event) => {
-  console.log("Chunk size:", event.data.size);
-
-  if (
-    socketRef.current &&
-    socketRef.current.readyState === WebSocket.OPEN
-  ) {
-    socketRef.current.send(event.data);
-    console.log("✅ Audio chunk sent");
-  } else {
-    console.log("❌ WebSocket not open");
-  }
-};
-
-  recorder.start(250);
-}
-
-function stopStreaming() {
-  if (mediaRecorderRef.current) {
-    mediaRecorderRef.current.stop();
-  }
-
-  if (mediaStreamRef.current) {
-    mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-  }
-
-  if (socketRef.current) {
-    socketRef.current.close();
-  }
-}
   // Continuous background audio stream engine
   const startContinuousListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -357,9 +293,6 @@ function stopStreaming() {
       
       // Pivot stage tracking triggers the continuous listening effect chain
       setStep("gd");
-      connectWebSocket();
-
-await startStreaming();
 
       aiSpeechQueue.current = [...initialPayload];
       // Slight artificial timeout to let mic drivers spin up comfortably
@@ -374,12 +307,10 @@ await startStreaming();
   const handleLogout = async () => {
     await signOut(auth);
     stopAllAudio();
-    stopStreaming();
     setStep("enter");
   };
 
   const handleExit = async () => {
-    stopStreaming();
     stopAllAudio();
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/api/performance`, {
@@ -414,16 +345,15 @@ await startStreaming();
     }
   };
 
-
-if (loading) {
-  return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">
-      <p className="text-sm tracking-wider uppercase font-medium">
-        Loading...
-      </p>
-    </div>
-  );
-}
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">
+        <p className="text-sm tracking-wider uppercase font-medium">
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-gray-950 text-gray-100 flex flex-col overflow-x-hidden selection:bg-red-500/30">
@@ -441,53 +371,39 @@ if (loading) {
       )}
 
       {/* STREAK POPUP */}
-   
-   {showStreakPopup && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-    {/* Main Card with LeetCode's signature deep gray and subtle glow */}
-    <div className="relative bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl px-8 py-8 w-[340px] text-center shadow-[0_0_40px_rgba(255,161,22,0.12)] overflow-hidden">
-      
-      {/* Dynamic Background Glow Effect */}
-      <div className="absolute top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#ffa116]/10 rounded-full blur-[40px] pointer-events-none animate-pulse" />
-
-      {/* Fiery Container */}
-      <div className="relative flex flex-col items-center justify-center mt-2">
-        {/* Glowing LeetCode-style Fire Icon */}
-        <div className="relative drop-shadow-[0_0_20px_rgba(255,161,22,0.6)] animate-[pulse_2s_infinite_ease-in-out]">
-          <span className="text-6xl select-none">🔥</span>
+      {showStreakPopup && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="relative bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl px-8 py-8 w-[340px] text-center shadow-[0_0_40px_rgba(255,161,22,0.12)] overflow-hidden">
+            <div className="absolute top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#ffa116]/10 rounded-full blur-[40px] pointer-events-none animate-pulse" />
+            <div className="relative flex flex-col items-center justify-center mt-2">
+              <div className="relative drop-shadow-[0_0_20px_rgba(255,161,22,0.6)] animate-[pulse_2s_infinite_ease-in-out]">
+                <span className="text-6xl select-none">🔥</span>
+              </div>
+              <h2 className="text-6xl font-extrabold text-[#ffa116] tracking-tight mt-3 drop-shadow-[0_0_25px_rgba(255,114,36,0.5)]">
+                {latestStreak}
+              </h2>
+            </div>
+            <p className="text-sm font-semibold text-gray-200 mt-4 tracking-wide">
+              Day Streak
+            </p>
+            <p className="text-gray-400 text-sm mt-3 leading-relaxed">
+              {latestStreak === 1 && "Nice start. Consistency begins today."}
+              {latestStreak >= 2 && latestStreak <= 3 && "You're building momentum."}
+              {latestStreak >= 4 && latestStreak <= 6 && "Strong consistency. Keep going."}
+              {latestStreak >= 7 && "Excellent discipline. Don't break the chain."}
+            </p>
+            <div className="mt-6">
+              <div className="h-1.5 w-full bg-[#2e2e2e] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#ff7224] to-[#ffa116] rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(255,161,22,0.5)]"
+                  style={{ width: `${Math.min(latestStreak * 10, 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        
-        {/* Glowing Streak Number */}
-        <h2 className="text-6xl font-extrabold text-[#ffa116] tracking-tight mt-3 drop-shadow-[0_0_25px_rgba(255,114,36,0.5)]">
-          {latestStreak}
-        </h2>
-      </div>
+      )}
 
-      {/* Normal Text Formatting */}
-      <p className="text-sm font-semibold text-gray-200 mt-4 tracking-wide">
-        Day Streak
-      </p>
-
-      <p className="text-gray-400 text-sm mt-3 leading-relaxed">
-        {latestStreak === 1 && "Nice start. Consistency begins today."}
-        {latestStreak >= 2 && latestStreak <= 3 && "You're building momentum."}
-        {latestStreak >= 4 && latestStreak <= 6 && "Strong consistency. Keep going."}
-        {latestStreak >= 7 && "Excellent discipline. Don't break the chain."}
-      </p>
-
-      {/* LeetCode Orange Progress Bar */}
-      <div className="mt-6">
-        <div className="h-1.5 w-full bg-[#2e2e2e] rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-[#ff7224] to-[#ffa116] rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(255,161,22,0.5)]"
-            style={{ width: `${Math.min(latestStreak * 10, 100)}%` }}
-          />
-        </div>
-      </div>
-      
-    </div>
-  </div>
-)}
       {/* NAVBAR */}
       <Navbar
         user={user}
@@ -565,8 +481,6 @@ if (loading) {
               </div>
             </div>
           )}
-
-        
 
           {/* STEP: RUNTIME DISCUSSION SCREEN */}
           {step === "gd" && (
@@ -654,14 +568,7 @@ if (loading) {
         </div>
       </main>
 
-      {/* LOWER STICKY FOOTER */}
-      <span className="fixed bottom-4 right-4 z-[9999] flex items-center px-3 py-1.5 rounded-full bg-gray-900/90 backdrop-blur-sm border border-gray-800 shadow-lg">
-        <span className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-gray-500 text-[9px] tracking-wider uppercase">Developed by</span>
-          <span className="text-gray-200 text-xs font-semibold">Abhay</span>
-        </span>
-      </span>
+     
     </div>
   );
 }
