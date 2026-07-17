@@ -79,8 +79,14 @@ Category: ${category}
   };
 }
 
-// Continues an existing discussion
-const prompt = `
+export async function continueGD(userSpeech, topic, history) {
+  // Convert chat history into readable conversation
+  const transcript = history
+    .map((item) => `${item.speaker}: ${item.text}`)
+    .join("\n");
+
+  // Prompt for AI
+ const prompt = `
 You are simulating a professional campus placement Group Discussion.
 
 Generate responses for TWO AI participants.
@@ -161,3 +167,33 @@ Rules:
 - No conclusion.
 - Continue the discussion naturally.
 `;
+
+  // Call Groq API
+  const response = await axios.post(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      model: "llama-3.3-70b-versatile",
+
+      response_format: {
+        type: "json_object",
+      },
+
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+
+      temperature: 0.8,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+    }
+  );
+
+  // Return AI response
+  return safeJSON(response.data.choices[0].message.content);
+}
