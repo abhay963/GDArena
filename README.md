@@ -49,7 +49,7 @@ GD Arena is a full-stack AI-powered platform that enables users to practice grou
 
 <div align="center">
 
-<img src="./assets/er.png" alt="GD Arena ER Diagram" width="1000"/>
+<img src="https://raw.githubusercontent.com/abhay963/GDArena/main/client/src/assets/er.png" width="1000" />
 
 </div>
 
