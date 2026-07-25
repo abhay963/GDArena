@@ -46,6 +46,13 @@ GD Arena is a full-stack AI-powered platform that enables users to practice grou
 
 🌐 **https://gd-arena-cgh4.vercel.app/**
 
+
+<div align="center">
+
+<img src="./assets/er.png" alt="GD Arena ER Diagram" width="1000"/>
+
+</div>
+
 ## Author
 
 **Abhay Kumar Yadav**
