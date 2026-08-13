@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import {
@@ -15,12 +15,92 @@ import {
   FiEyeOff,
   FiLoader,
   FiArrowLeft,
+  FiCheck,
+  FiX,
 } from "react-icons/fi";
 
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
 
 import gdImage from "../assets/images/gdimage.png";
+
+/* --------------------------------
+   Password Strength Helper
+--------------------------------- */
+
+const WEAK_PASSWORDS = [
+  "12345678",
+  "password",
+  "password123",
+  "qwerty123",
+  "123456789",
+  "qwertyui",
+  "admin123",
+  "letmein1",
+];
+
+function evaluatePassword(password) {
+  if (!password) {
+    return {
+      score: 0,
+      label: "",
+      color: "bg-gray-600",
+      textColor: "text-gray-500",
+      width: "0%",
+      checks: {
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        special: false,
+      },
+      isCommonWeak: false,
+    };
+  }
+
+  const checks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  };
+
+  const met = Object.values(checks).filter(Boolean).length;
+  const isCommonWeak = WEAK_PASSWORDS.includes(password.toLowerCase());
+
+  let score = met;
+  if (isCommonWeak) score = Math.min(score, 1);
+
+  let label = "";
+  let color = "bg-gray-600";
+  let textColor = "text-gray-500";
+  let width = "0%";
+
+  if (score <= 1) {
+    label = "Weak";
+    color = "bg-red-500";
+    textColor = "text-red-400";
+    width = "25%";
+  } else if (score <= 3) {
+    label = "Medium";
+    color = "bg-orange-500";
+    textColor = "text-orange-400";
+    width = "50%";
+  } else if (score === 4) {
+    label = "Strong";
+    color = "bg-emerald-500";
+    textColor = "text-emerald-400";
+    width = "75%";
+  } else {
+    label = "Very Strong";
+    color = "bg-cyan-400";
+    textColor = "text-cyan-400";
+    width = "100%";
+  }
+
+  return { score, label, color, textColor, width, checks, isCommonWeak };
+}
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -33,6 +113,14 @@ export default function Auth() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const strength = useMemo(() => evaluatePassword(password), [password]);
+
+  const passwordsMatch =
+    confirmPassword.length > 0 && password === confirmPassword;
+
+  const showStrengthUI = !isLoginPage && password.length > 0;
+  const showMatchUI = !isLoginPage && confirmPassword.length > 0;
 
   /* -------------------------------
           LOGIN / SIGNUP
@@ -51,14 +139,23 @@ export default function Auth() {
       return;
     }
 
-    if (!isLoginPage && !confirmPassword.trim()) {
-      toast.error("Please confirm your password.");
-      return;
-    }
+    // Signup-only validation
+    if (!isLoginPage) {
+      if (!confirmPassword.trim()) {
+        toast.error("Please confirm your password.");
+        return;
+      }
 
-    if (!isLoginPage && password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
+      if (password !== confirmPassword) {
+        toast.error("Passwords do not match.");
+        return;
+      }
+
+      // Require at least Strong (score >= 4)
+      if (strength.score < 4 || strength.isCommonWeak) {
+        toast.error("Please create a stronger password.");
+        return;
+      }
     }
 
     try {
@@ -215,52 +312,147 @@ export default function Auth() {
             </div>
 
             {/* Password */}
-            <div className="relative group">
-
-              <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-500 transition-colors" />
-
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                disabled={loading}
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-red-500 focus:bg-white/[0.07] transition-all disabled:opacity-50"
-              />
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
-              >
-                {showPassword ? (
-                  <FiEyeOff className="w-5 h-5" />
-                ) : (
-                  <FiEye className="w-5 h-5" />
-                )}
-              </button>
-
-            </div>
-
-            {/* Confirm Password */}
-            {!isLoginPage && (
-              <div className="relative group animate-fadeIn">
+            <div className="space-y-2">
+              <div className="relative group">
 
                 <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-500 transition-colors" />
 
                 <input
-                  type="password"
-                  value={confirmPassword}
+                  type={showPassword ? "text" : "password"}
+                  value={password}
                   disabled={loading}
-                  placeholder="Confirm Password"
-                  onChange={(e) =>
-                    setConfirmPassword(e.target.value)
-                  }
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-red-500 focus:bg-white/[0.07] transition-all disabled:opacity-50"
                 />
 
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  {showPassword ? (
+                    <FiEyeOff className="w-5 h-5" />
+                  ) : (
+                    <FiEye className="w-5 h-5" />
+                  )}
+                </button>
+
+              </div>
+
+              {/* Password Strength UI (Signup only) */}
+              {showStrengthUI && (
+                <div className="space-y-2.5 pt-1 animate-in fade-in duration-200">
+                  {/* Label + Bar */}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-medium text-gray-500 tracking-wide uppercase">
+                      Password strength
+                    </span>
+                    <span
+                      className={`text-[11px] font-semibold tracking-wide transition-colors duration-300 ${strength.textColor}`}
+                    >
+                      {strength.label}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ease-out ${strength.color}`}
+                      style={{ width: strength.width }}
+                    />
+                  </div>
+
+                  {/* Requirements Checklist */}
+                  <ul className="grid grid-cols-1 gap-1.5 pt-1">
+                    {[
+                      { key: "length", label: "At least 8 characters" },
+                      { key: "uppercase", label: "One uppercase letter" },
+                      { key: "lowercase", label: "One lowercase letter" },
+                      { key: "number", label: "One number" },
+                      { key: "special", label: "One special character" },
+                    ].map(({ key, label }) => {
+                      const met = strength.checks[key];
+                      return (
+                        <li
+                          key={key}
+                          className={`flex items-center gap-2 text-[12px] transition-all duration-200 ${
+                            met
+                              ? "text-emerald-400"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          <span
+                            className={`flex items-center justify-center w-4 h-4 rounded-full transition-all duration-200 ${
+                              met
+                                ? "bg-emerald-500/20 text-emerald-400 scale-100"
+                                : "bg-white/5 text-gray-600 scale-95"
+                            }`}
+                          >
+                            {met ? (
+                              <FiCheck className="w-2.5 h-2.5" />
+                            ) : (
+                              <FiX className="w-2.5 h-2.5" />
+                            )}
+                          </span>
+                          {label}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            {!isLoginPage && (
+              <div className="space-y-2 animate-fadeIn">
+                <div className="relative group">
+
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-500 transition-colors" />
+
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    disabled={loading}
+                    placeholder="Confirm Password"
+                    onChange={(e) =>
+                      setConfirmPassword(e.target.value)
+                    }
+                    className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-red-500 focus:bg-white/[0.07] transition-all disabled:opacity-50"
+                  />
+
+                </div>
+
+                {/* Match Status */}
+                {showMatchUI && (
+                  <div
+                    className={`flex items-center gap-2 text-[12px] transition-all duration-200 ${
+                      passwordsMatch
+                        ? "text-emerald-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    <span
+                      className={`flex items-center justify-center w-4 h-4 rounded-full transition-all duration-200 ${
+                        passwordsMatch
+                          ? "bg-emerald-500/20 text-emerald-400"
+                          : "bg-red-500/15 text-red-400"
+                      }`}
+                    >
+                      {passwordsMatch ? (
+                        <FiCheck className="w-2.5 h-2.5" />
+                      ) : (
+                        <FiX className="w-2.5 h-2.5" />
+                      )}
+                    </span>
+                    {passwordsMatch
+                      ? "Passwords match"
+                      : "Passwords do not match"}
+                  </div>
+                )}
               </div>
             )}
 
