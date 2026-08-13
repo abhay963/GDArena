@@ -1,24 +1,22 @@
-// Import reusable axios instance
 import api from "./api";
 
 // Start a new Group Discussion
 export async function startGD() {
-  // Send request to backend
-  const response = await api.get("/api/start-gd");
+  const response = await api.get("/api/gd/start");
 
-  // Return response data
   return response.data;
 }
 
+
 // Continue the Group Discussion
-export async function continueGD(userSpeech, topic, history) {
-  // Send user's speech, topic and history to backend
+export async function continueGD(
+  sessionId,
+  userSpeech
+) {
   const response = await api.post("/api/gd", {
+    sessionId,
     userSpeech,
-    topic,
-    history,
   });
 
-  // Return AI response
   return response.data;
 }

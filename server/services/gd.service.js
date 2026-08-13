@@ -72,96 +72,66 @@ Topic: ${topic}
   };
 }
 
-export async function continueGD(userSpeech, topic, history) {
-  // Convert chat history into readable conversation
-  const transcript = history
+export async function continueGD(
+  userSpeech,
+  topic,
+  rollingSummary,
+  recentMessages
+) {
+  const recentTranscript = recentMessages
     .map((item) => `${item.speaker}: ${item.text}`)
     .join("\n");
 
-  // Prompt for AI
- const prompt = `
+  const prompt = `
 You are simulating a professional campus placement Group Discussion.
 
 Generate responses for TWO AI participants.
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON:
 
 {
-  "Player 1":"text",
-  "Player 2":"text"
+  "Player 1": "text",
+  "Player 2": "text"
 }
 
-=========================
-TOPIC
-=========================
+TOPIC:
 ${topic}
 
-=========================
-DISCUSSION SO FAR
-=========================
-${transcript}
+LONG-TERM MEMORY:
+${JSON.stringify(rollingSummary, null, 2)}
 
-=========================
-LATEST USER RESPONSE
-=========================
+RECENT DISCUSSION:
+${recentTranscript}
+
+LATEST USER RESPONSE:
 ${userSpeech}
 
-=========================
-INSTRUCTIONS
-=========================
+INSTRUCTIONS:
 
-The discussion has already progressed.
+- Remember participant positions from LONG-TERM MEMORY.
+- Remember position changes and contradictions.
+- Never repeat previous arguments.
+- Introduce a NEW perspective every turn.
+- Move the discussion forward naturally.
 
-Read the previous discussion carefully before answering.
-
-VERY IMPORTANT:
-
-• Never repeat any argument, example, fact, or opinion already mentioned.
-• Never paraphrase previous points.
-• Introduce NEW perspectives every turn.
-• Each response should move the discussion forward.
-
-Possible new perspectives include:
-- Technical
-- Business
-- Economic
-- Social
-- Ethical
-- Legal
-- Environmental
-- Psychological
-- Educational
-- Historical
-- Global comparison
-- Government policies
-- Real-world examples
-- Company examples
-- Future impact
-- Risks
-- Opportunities
-
-Player personalities:
-
-Player 1
+Player 1:
 - Slightly disagree with previous speaker.
 - Challenge assumptions politely.
-- Present a completely new argument.
+- Present a new argument.
 
-Player 2
+Player 2:
 - Give a balanced opinion.
-- Build upon previous discussion.
-- Introduce another fresh angle or example.
+- Build upon the discussion.
+- Introduce another fresh angle.
 
 Rules:
-- Each player speaks only once.
+- Each player speaks once.
 - Maximum 2-3 sentences.
 - Natural spoken English.
 - No greetings.
 - No conclusion.
-- Continue the discussion naturally.
 `;
 
-  // Call Groq API
   const response = await axios.post(
     "https://api.groq.com/openai/v1/chat/completions",
     {
@@ -187,6 +157,7 @@ Rules:
     }
   );
 
-  // Return AI response
-  return safeJSON(response.data.choices[0].message.content);
+  return safeJSON(
+    response.data.choices[0].message.content
+  );
 }

@@ -11,7 +11,7 @@ export function useAuth() {
     const unsubscribe = onAuthStateChanged(
       auth,
       (currentUser) => {
-        console.log("Auth State:", currentUser);
+       
 
         setUser(currentUser);
         setLoading(false);
