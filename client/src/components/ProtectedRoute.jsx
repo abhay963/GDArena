@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
-  // Wait until Firebase finishes checking authentication
+  // Firebase is still checking the current authentication state
   if (loading) {
     return (
       <div className="min-h-screen bg-[#030014] flex items-center justify-center">
@@ -28,6 +28,11 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  // User is logged in
+  // User is logged in but email is not verified
+  if (!user.emailVerified) {
+    return <Navigate to="/verify-email" replace />;
+  }
+
+  // User is authenticated and email is verified
   return children;
 }

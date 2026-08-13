@@ -1,6 +1,7 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
@@ -53,16 +54,59 @@ export const signup = async (email, password) => {
       throw new Error("Email and Password are required.");
     }
 
-    const userCredential =
-      await createUserWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      );
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email.trim(),
+      password
+    );
 
-    return userCredential.user;
+    const user = userCredential.user;
+
+    // Send email verification immediately after signup
+    await sendEmailVerification(user);
+
+    console.log("Verification email sent to:", user.email);
+    console.log("Email verified:", user.emailVerified);
+
+    return user;
   } catch (err) {
     console.error("Signup Error:", err);
+
+    throw new Error(getFirebaseError(err.code));
+  }
+};
+
+/* ===========================
+   RESEND VERIFICATION EMAIL
+=========================== */
+
+export const resendVerificationEmail = async () => {
+  try {
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("No user is currently logged in.");
+    }
+
+    // Don't send another verification email
+    // if the account is already verified.
+    if (user.emailVerified) {
+      return true;
+    }
+
+    await sendEmailVerification(user);
+
+    console.log(
+      "Verification email resent to:",
+      user.email
+    );
+
+    return true;
+  } catch (err) {
+    console.error(
+      "Resend Verification Error:",
+      err
+    );
 
     throw new Error(getFirebaseError(err.code));
   }
@@ -81,7 +125,10 @@ export const googleLogin = async () => {
 
     return result.user;
   } catch (err) {
-    console.error("Google Login Error:", err);
+    console.error(
+      "Google Login Error:",
+      err
+    );
 
     throw new Error(getFirebaseError(err.code));
   }
@@ -104,7 +151,10 @@ export const forgotPassword = async (email) => {
 
     return true;
   } catch (err) {
-    console.error("Reset Password Error:", err);
+    console.error(
+      "Reset Password Error:",
+      err
+    );
 
     throw new Error(getFirebaseError(err.code));
   }
@@ -118,7 +168,10 @@ export const logout = async () => {
   try {
     await signOut(auth);
   } catch (err) {
-    console.error("Logout Error:", err);
+    console.error(
+      "Logout Error:",
+      err
+    );
 
     throw err;
   }
