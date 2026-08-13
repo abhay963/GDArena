@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 // Import all route files
 import gdRoutes from "./routes/gd.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
-import topicRoutes from "./routes/topic.routes.js";
+
 
 import performanceRoutes from "./routes/performance.routes.js";
 
@@ -34,7 +34,7 @@ app.use("/api/gd", gdRoutes);
 app.use("/api/streak", streakRoutes);
 
 
-app.use("/api/topics", topicRoutes);
+
 
 
 

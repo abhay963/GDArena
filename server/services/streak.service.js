@@ -1,91 +1,89 @@
 import { pool } from "../config/db.js";
 import { differenceInCalendarDays } from "date-fns";
 
-// Returns today's date with time removed (00:00:00)
-function getLocalDate() {
+// Get today's date without time
+function getToday() {
   const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  return new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
 }
 
-// Updates the user's streak after completing today's task
+// Update user's streak after completing a task
 export async function updateUserStreak(uid, email) {
-  // Get today's date
-  const today = getLocalDate();
+  const today = getToday();
 
-  // Check whether the user already exists in the database
+  // Find user streak
   const { rows } = await pool.query(
     "SELECT * FROM user_streaks WHERE uid = $1",
     [uid]
   );
 
-  // If user is new, create a new streak record
+  // First activity
   if (rows.length === 0) {
     await pool.query(
       `INSERT INTO user_streaks
-      (uid, email, current_streak, max_streak, last_active_date)
-      VALUES ($1, $2, 1, 1, $3)`,
+       (uid, email, current_streak, max_streak, last_active_date)
+       VALUES ($1, $2, 1, 1, $3)`,
       [uid, email, today]
     );
 
-    // First completed day = streak of 1
     return 1;
   }
 
-  // Existing user data
   const user = rows[0];
 
-  // Convert last active date into JavaScript Date object
-  const last = user.last_active_date
-    ? new Date(user.last_active_date)
-    : null;
+  // Calculate days since last activity
+  const lastDate = new Date(user.last_active_date);
 
-  // Start with current streak
-  let newStreak = user.current_streak;
+  const diff = differenceInCalendarDays(
+    today,
+    lastDate
+  );
 
-  // User has never been active before
-  if (!last) {
-    newStreak = 1;
-  } else {
-    // Calculate number of days between today and last active day
-    const diff = differenceInCalendarDays(today, last);
-
-    // Already updated today → don't increase streak
-    if (diff === 0) {
-      return newStreak;
-    }
-
-    // Consecutive day → increase streak
-    if (diff === 1) {
-      newStreak++;
-    }
-
-    // Missed one or more days → reset streak
-    if (diff >= 2) {
-      newStreak = 1;
-    }
+  // Already completed today's task
+  if (diff === 0) {
+    return user.current_streak;
   }
 
-  // Update maximum streak if needed
-  const maxStreak = Math.max(newStreak, user.max_streak);
+  // Consecutive day → increase
+  // Missed days → reset to 1
+  const currentStreak =
+    diff === 1
+      ? user.current_streak + 1
+      : 1;
 
-  // Save updated values in database
+  // Update maximum streak
+  const maxStreak = Math.max(
+    currentStreak,
+    user.max_streak
+  );
+
+  // Save streak
   await pool.query(
     `UPDATE user_streaks
      SET current_streak = $1,
          max_streak = $2,
          last_active_date = $3
      WHERE uid = $4`,
-    [newStreak, maxStreak, today, uid]
+    [
+      currentStreak,
+      maxStreak,
+      today,
+      uid
+    ]
   );
 
-  // Return latest streak
-  return newStreak;
+  return currentStreak;
 }
 
-// Returns streak without modifying it
+
+// Get user's current streak
 export async function getUserStreak(uid) {
-  // Get today's date
-  const today = getLocalDate();
+  const today = getToday();
 
   // Find user
   const { rows } = await pool.query(
@@ -100,22 +98,22 @@ export async function getUserStreak(uid) {
 
   const user = rows[0];
 
-  // User never completed any task
+  // No activity yet
   if (!user.last_active_date) {
     return 0;
   }
 
-  // Convert database date into JavaScript Date object
-  const last = new Date(user.last_active_date);
+  // Calculate days since last activity
+  const diff = differenceInCalendarDays(
+    today,
+    new Date(user.last_active_date)
+  );
 
-  // Days between today and last completion
-  const diff = differenceInCalendarDays(today, last);
-
-  // If more than one day is missed, streak becomes 0 for display
-  if (diff >= 2) {
-    return 0;
+  // Streak is still active if activity was today or yesterday
+  if (diff <= 1) {
+    return user.current_streak;
   }
 
-  // Otherwise return current streak
-  return user.current_streak;
+  // Streak expired
+  return 0;
 }

@@ -330,17 +330,34 @@ export default function Hero() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">
-        <p className="text-sm tracking-wider uppercase font-medium">
-          Loading...
-        </p>
+      <div className="fixed inset-0 bg-[#030303] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-600/15 rounded-full blur-[140px] animate-pulse" />
+        </div>
+        <div className="relative z-10 flex flex-col items-center gap-5">
+          <div className="w-11 h-11 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin" />
+          <p className="text-[11px] tracking-[0.35em] uppercase font-medium text-gray-500">
+            Loading Arena
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-950 text-gray-100 flex flex-col overflow-x-hidden selection:bg-red-500/30">
-      {/* COUNTDOWN POPUP */}
+    <div className="relative min-h-screen w-full bg-[#030303] text-gray-100 flex flex-col overflow-hidden selection:bg-red-500/30">
+      
+      {/* Full-screen ambient background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] bg-red-600/10 rounded-full blur-[160px]" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] bg-orange-500/8 rounded-full blur-[140px]" />
+        <div className="absolute top-[40%] left-[60%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-purple-600/6 rounded-full blur-[120px]" />
+        
+        {/* Subtle radial gradient overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#030303_70%)]" />
+      </div>
+
+      {/* COUNTDOWN */}
       {showCountdown && (
         <Countdown
           initialCount={3}
@@ -353,32 +370,32 @@ export default function Hero() {
 
       {/* STREAK POPUP */}
       {showStreakPopup && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="relative bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl px-8 py-8 w-[340px] text-center shadow-[0_0_40px_rgba(255,161,22,0.12)] overflow-hidden">
-            <div className="absolute top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#ffa116]/10 rounded-full blur-[40px] pointer-events-none animate-pulse" />
-            <div className="relative flex flex-col items-center justify-center mt-2">
-              <div className="relative drop-shadow-[0_0_20px_rgba(255,161,22,0.6)] animate-[pulse_2s_infinite_ease-in-out]">
-                <span className="text-6xl select-none">🔥</span>
-              </div>
-              <h2 className="text-6xl font-extrabold text-[#ffa116] tracking-tight mt-3 drop-shadow-[0_0_25px_rgba(255,114,36,0.5)]">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-xl">
+          <div className="relative bg-[#0c0c0c] border border-orange-500/25 rounded-3xl px-12 py-11 w-[380px] text-center shadow-[0_0_100px_rgba(255,140,0,0.18)] overflow-hidden">
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-orange-500/20 rounded-full blur-[60px] animate-pulse" />
+            
+            <div className="relative flex flex-col items-center">
+              <span className="text-7xl mb-1 drop-shadow-[0_0_35px_rgba(255,160,20,0.7)]">🔥</span>
+              <h2 className="text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-orange-300 to-orange-500">
                 {latestStreak}
               </h2>
-            </div>
-            <p className="text-sm font-semibold text-gray-200 mt-4 tracking-wide">
-              Day Streak
-            </p>
-            <p className="text-gray-400 text-sm mt-3 leading-relaxed">
-              {latestStreak === 1 && "Nice start. Consistency begins today."}
-              {latestStreak >= 2 && latestStreak <= 3 && "You're building momentum."}
-              {latestStreak >= 4 && latestStreak <= 6 && "Strong consistency. Keep going."}
-              {latestStreak >= 7 && "Excellent discipline. Don't break the chain."}
-            </p>
-            <div className="mt-6">
-              <div className="h-1.5 w-full bg-[#2e2e2e] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#ff7224] to-[#ffa116] rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(255,161,22,0.5)]"
-                  style={{ width: `${Math.min(latestStreak * 10, 100)}%` }}
-                />
+              <p className="text-xs font-semibold text-orange-200/80 mt-3 tracking-[0.25em] uppercase">
+                Day Streak
+              </p>
+              <p className="text-gray-400 text-sm mt-4 leading-relaxed max-w-[240px]">
+                {latestStreak === 1 && "Nice start. Consistency begins today."}
+                {latestStreak >= 2 && latestStreak <= 3 && "You're building momentum."}
+                {latestStreak >= 4 && latestStreak <= 6 && "Strong consistency. Keep going."}
+                {latestStreak >= 7 && "Excellent discipline. Don't break the chain."}
+              </p>
+              
+              <div className="mt-8 w-full">
+                <div className="h-1.5 w-full bg-[#1a1a1a] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-orange-600 to-amber-400 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${Math.min(latestStreak * 10, 100)}%` }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -399,18 +416,25 @@ export default function Hero() {
       {/* HOW TO PLAY MODAL */}
       {showHowToPlay && (
         <div className="fixed inset-0 flex items-center justify-center z-[999] p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowHowToPlay(false)} />
-          <div className="relative w-full max-w-xl rounded-2xl bg-gray-900 border border-gray-800 p-8 shadow-2xl">
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-md" 
+            onClick={() => setShowHowToPlay(false)} 
+          />
+          <div className="relative w-full max-w-lg rounded-3xl bg-[#0c0c0c] border border-gray-800 p-8 shadow-2xl">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent" />
+            
             <button
               onClick={() => setShowHowToPlay(false)}
-              className="absolute top-5 right-5 text-gray-500 hover:text-white text-xl cursor-pointer transition-colors"
+              className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-900 text-gray-500 hover:text-white hover:bg-gray-800 transition-all cursor-pointer text-sm"
             >
               ✕
             </button>
-            <h2 className="text-xl font-bold tracking-wider text-center text-red-500 mb-6 uppercase">
-              How To Play
+            
+            <h2 className="text-xl font-bold tracking-wide text-center text-white mb-7">
+              How to Play
             </h2>
-            <div className="space-y-4">
+            
+            <div className="space-y-3">
               {[
                 ["1", "Enter Playground", "Begin your interactive speech session environment."],
                 ["2", "Press Start Match", "The workspace initializes context variables."],
@@ -418,11 +442,16 @@ export default function Hero() {
                 ["4", "Natural Interruptions", "Starting to speak instantly pauses ongoing AI vocal feedback tracks."],
                 ["5", "Fluid Tracking Loop", "Pause for 2.5 seconds to dispatch transcription payloads smoothly to the backend."],
               ].map(([num, title, desc], i) => (
-                <div key={i} className="flex gap-4 p-3 bg-gray-950/50 rounded-xl border border-gray-800/40">
-                  <span className="text-red-500 font-bold text-lg">{num}</span>
+                <div 
+                  key={i} 
+                  className="flex gap-4 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-colors"
+                >
+                  <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                    <span className="text-red-400 font-bold text-sm">{num}</span>
+                  </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-200">{title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
+                    <p className="text-sm font-semibold text-gray-100">{title}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -431,109 +460,187 @@ export default function Hero() {
         </div>
       )}
 
-      {/* MAIN VIEW CONTROLLER */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-6 py-12 flex items-center justify-center max-h-[calc(100vh-80px)] overflow-y-auto">
-        <div className="w-full">
-          
-          {/* STEP: ENTER PLAYGROUND (SPLASH VIEW) */}
-          {step === "enter" && (
-            <div className="text-center space-y-6 py-4">
-              <div className="space-y-3">
-                <h2 className="text-3xl md:text-5xl font-black tracking-wide text-red-500 uppercase">
-                  Welcome to the Arena
-                </h2>
-                <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-                  Enter an arena where clear communication matters. Coordinate alongside artificial intelligence players in an active collaborative discussion round. Take your position.
+      {/* ===================== MAIN CONTENT ===================== */}
+      <main className="relative z-10 flex-1 w-full flex flex-col">
+        
+        {/* ========== ENTER / SPLASH (FULL SCREEN) ========== */}
+        {step === "enter" && (
+          <section className="flex-1 w-full flex flex-col items-center justify-center px-6 py-12 relative">
+            
+            {/* Soft floating glow behind content */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-600/8 rounded-full blur-[100px] pointer-events-none" />
+
+            <div className="relative w-full max-w-2xl mx-auto text-center space-y-10">
+              
+              {/* Live badge */}
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                </span>
+                <span className="text-[11px] font-semibold tracking-[0.2em] text-red-400 uppercase">
+                  Live Arena
+                </span>
+              </div>
+
+              {/* Headline */}
+              <div className="space-y-5">
+                <h1 className="text-[2.75rem] sm:text-5xl md:text-[3.5rem] font-extrabold leading-[1.15] tracking-tight">
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-amber-300">
+                    Welcome to the
+                  </span>
+                  <span className="block text-white mt-1">
+                    Arena
+                  </span>
+                </h1>
+                
+                <p className="text-gray-400 text-[15px] sm:text-base max-w-md mx-auto leading-relaxed">
+                  Step into a live discussion floor. Coordinate with AI players in real time. Speak freely. Interrupt naturally. Own the conversation.
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
                 <button
                   onClick={() => setShowCountdown(true)}
-                  className="w-full bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-xl transition shadow-lg shadow-red-900/20 text-sm tracking-wider uppercase cursor-pointer"
+                  className="group relative w-full sm:w-auto min-w-[200px] overflow-hidden bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-300 shadow-[0_8px_30px_rgba(239,68,68,0.35)] hover:shadow-[0_8px_40px_rgba(239,68,68,0.5)] text-sm tracking-wide uppercase cursor-pointer"
                 >
-                  Enter Playground
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    Enter Playground
+                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </span>
+                  {/* Shine sweep */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
                 </button>
+
                 <button
                   onClick={() => setShowHowToPlay(true)}
-                  className="w-full px-8 py-4 text-sm font-bold bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl transition text-gray-300 cursor-pointer uppercase tracking-wider"
+                  className="w-full sm:w-auto min-w-[200px] px-8 py-3.5 text-sm font-semibold bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl transition-all duration-300 text-gray-300 hover:text-white cursor-pointer uppercase tracking-wide backdrop-blur-sm"
                 >
                   How to Play
                 </button>
               </div>
-            </div>
-          )}
 
-          {/* STEP: RUNTIME DISCUSSION SCREEN */}
-          {step === "gd" && (
-            <div className="space-y-9 mt-34">
-              {/* Target Matrix Topic Header */}
-              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 backdrop-blur-sm ">
-                <p className="text-xs font-bold text-red-400 tracking-widest uppercase mb-1">Active Topic</p>
-                <p className="text-xl font-medium text-gray-200 leading-relaxed">{topic}</p>
+              {/* Feature pills */}
+              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-6 text-[12px] text-gray-500">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Real-time Voice
+                </div>
+                <div className="hidden sm:block w-px h-3 bg-gray-700" />
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                  AI Partners
+                </div>
+                <div className="hidden sm:block w-px h-3 bg-gray-700" />
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                  Streak System
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ========== GD / DISCUSSION SCREEN ========== */}
+        {step === "gd" && (
+          <section className="flex-1 w-full max-w-4xl mx-auto px-5 sm:px-6 py-8 flex flex-col">
+            <div className="space-y-5 flex-1 flex flex-col">
+              
+              {/* Topic Card */}
+              <div className="relative overflow-hidden rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 sm:p-6 backdrop-blur-sm">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-[50px] pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    <p className="text-[10px] font-semibold text-red-400 tracking-[0.2em] uppercase">
+                      Active Topic
+                    </p>
+                  </div>
+                  <p className="text-lg sm:text-xl font-medium text-gray-100 leading-snug">
+                    {topic}
+                  </p>
+                </div>
               </div>
 
-              {/* Event Driven Status Bar Notification Indicator */}
-              <div className="flex flex-col sm:flex-row items-center justify-between bg-gray-900/30 rounded-xl p-4 border border-gray-800/80 gap-4">
-                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              {/* Status Bar */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl bg-white/[0.03] border border-white/[0.07] p-3">
+                <div className="flex flex-wrap items-center gap-2">
                   
-                  {/* Persistent Listening Banner Badge */}
-                  <div className="px-4 py-3 bg-blue-950/40 border border-blue-800/60 text-blue-400 text-xs font-bold tracking-wider uppercase rounded-xl flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                    <span>🎤 Listening...</span>
+                  {/* Listening */}
+                  <div className="px-3.5 py-2 bg-blue-500/10 border border-blue-500/25 text-blue-300 text-[11px] font-semibold tracking-wider uppercase rounded-xl flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-60" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400" />
+                    </span>
+                    Listening
                   </div>
 
-                  {/* Active Speaker State Banner Display */}
+                  {/* Speaker state */}
                   {isAiSpeaking ? (
-                    <div className="px-4 py-3 bg-purple-900/50 border border-purple-700/40 text-purple-200 text-xs font-bold tracking-wider uppercase rounded-xl">
-                      <span>🤖 {activeAiSpeaker} Speaking...</span>
+                    <div className="px-3.5 py-2 bg-violet-500/10 border border-violet-500/25 text-violet-200 text-[11px] font-semibold tracking-wider uppercase rounded-xl flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+                      {activeAiSpeaker} Speaking
                     </div>
                   ) : (
-                    <div className="px-4 py-3 bg-gray-900 border border-gray-800 text-gray-400 text-xs font-bold tracking-wider uppercase rounded-xl">
-                      <span>Discussion Open</span>
+                    <div className="px-3.5 py-2 bg-white/[0.04] border border-white/10 text-gray-400 text-[11px] font-semibold tracking-wider uppercase rounded-xl">
+                      Discussion Open
                     </div>
                   )}
 
                   <button
                     onClick={handleExit}
-                    className="cursor-pointer px-4 py-3 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-gray-300 font-bold text-xs tracking-wider uppercase transition"
+                    className="cursor-pointer px-3.5 py-2 bg-white/[0.04] hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-xl text-gray-400 hover:text-red-300 font-semibold text-[11px] tracking-wider uppercase transition-all duration-200"
                   >
                     Exit Arena
                   </button>
                 </div>
 
                 {loadingAI && (
-                  <div className="flex items-center gap-2 text-yellow-500 text-xs font-medium bg-yellow-500/5 border border-yellow-500/10 px-3 py-1.5 rounded-lg">
-                    <FaSpinner className="animate-spin" />
-                    <span className="tracking-wider uppercase">Processing Response...</span>
+                  <div className="flex items-center gap-2 text-amber-400/90 text-[11px] font-medium bg-amber-500/10 border border-amber-500/20 px-3.5 py-2 rounded-xl">
+                    <FaSpinner className="animate-spin text-xs" />
+                    <span className="tracking-wider uppercase">Processing</span>
                   </div>
                 )}
               </div>
 
-              {/* Chat Records Stream Box */}
-              <div className="bg-gray-900/20 border border-gray-800 rounded-xl p-5 backdrop-blur-sm">
-                <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase text-center mb-4">
-                  Discussion Records Stream
-                </p>
+              {/* Chat Stream */}
+              <div className="flex-1 min-h-0 rounded-2xl bg-white/[0.02] border border-white/[0.07] p-4 sm:p-5 flex flex-col">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
+                  <p className="text-[10px] font-semibold text-gray-500 tracking-[0.25em] uppercase">
+                    Discussion Stream
+                  </p>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
+                </div>
 
-                <div className="h-80 overflow-y-auto space-y-4 pr-1 scrollbar-thin scrollbar-thumb-gray-800">
+                <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                   {history.map((msg, i) => (
                     <div
                       key={i}
-                      className={`p-4 rounded-xl border ${
+                      className={`p-4 rounded-2xl border transition-colors duration-200 ${
                         msg.speaker === "You"
-                          ? "bg-blue-950/10 border-blue-900/40"
-                          : "bg-purple-950/10 border-purple-900/40"
+                          ? "bg-blue-500/[0.07] border-blue-500/20"
+                          : "bg-violet-500/[0.06] border-violet-500/15"
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-xl select-none shrink-0">{msg.avatar}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${
-                            msg.speaker === "You" ? "text-blue-400" : "text-purple-400"
+                        <div className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-base ${
+                          msg.speaker === "You" 
+                            ? "bg-blue-500/15 border border-blue-500/25" 
+                            : "bg-violet-500/15 border border-violet-500/25"
+                        }`}>
+                          {msg.avatar}
+                        </div>
+                        <div className="flex-1 min-w-0 pt-0.5">
+                          <p className={`text-[10px] font-semibold uppercase tracking-wider mb-1 ${
+                            msg.speaker === "You" ? "text-blue-400" : "text-violet-400"
                           }`}>
                             {msg.speaker}
                           </p>
-                          <p className="text-sm text-gray-300 leading-relaxed">
+                          <p className="text-sm text-gray-200 leading-relaxed">
                             {msg.text}
                           </p>
                         </div>
@@ -544,12 +651,9 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-          )}
-
-        </div>
+          </section>
+        )}
       </main>
-
-     
     </div>
   );
 }

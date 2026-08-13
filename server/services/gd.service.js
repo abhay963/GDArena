@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getRandomTopic } from "./topic.service.js";
 
+import { GD_TOPICS } from "../topics.js";
 // Safely converts AI response into JSON
 function safeJSON(text) {
   try {
@@ -17,10 +17,12 @@ function safeJSON(text) {
 
 // Starts a new Group Discussion
 export async function startGD() {
-  // Get a random topic and its category
-  const { topic, category } = getRandomTopic();
 
-  // Prompt sent to Groq AI
+  // Select random topic from GD_TOPICS
+  const randomIndex = Math.floor(Math.random() * GD_TOPICS.length);
+
+  const topic = GD_TOPICS[randomIndex];
+
   const prompt = `
 Simulate a Group Discussion opening with TWO AI participants.
 
@@ -37,45 +39,36 @@ Rules:
 - Player 2: calm logical analyst
 
 Topic: ${topic}
-Category: ${category}
 `;
 
-  // Call Groq API
   const response = await axios.post(
     "https://api.groq.com/openai/v1/chat/completions",
     {
-      // AI model
       model: "llama-3.3-70b-versatile",
 
-      // Force JSON response
       response_format: {
-        type: "json_object",
+        type: "json_object"
       },
 
-      // Prompt for AI
       messages: [
         {
           role: "user",
-          content: prompt,
-        },
+          content: prompt
+        }
       ],
 
-      // Higher value = more creative responses
-      temperature: 0.9,
+      temperature: 0.4
     },
     {
       headers: {
-        // API key from .env
-        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-      },
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`
+      }
     }
   );
 
-  // Return everything controller needs
   return {
     topic,
-    category,
-    agents: safeJSON(response.data.choices[0].message.content),
+    agents: safeJSON(response.data.choices[0].message.content)
   };
 }
 
