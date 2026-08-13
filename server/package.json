@@ -12,7 +12,6 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@deepgram/sdk": "^5.4.0",
     "axios": "^1.18.1",
     "cors": "^2.8.6",
     "date-fns": "^4.4.0",

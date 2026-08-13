@@ -5,9 +5,6 @@ import axios from "axios";
 // Icons
 import { FaSpinner } from "react-icons/fa";
 
-// Audio Asset
-import introMusic from "../assets/audio/squid game music.mp3";
-
 // Authentication Hook & Firebase Auth Actions
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
@@ -38,7 +35,6 @@ export default function Hero() {
   const [latestStreak, setLatestStreak] = useState(0);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
-  const audioRef = useRef(null);
   const chatEndRef = useRef(null);
 
   // Refs for continuous speech & interruption mechanics
@@ -85,10 +81,6 @@ export default function Hero() {
   }, [step]);
 
   const stopAllAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
     window.speechSynthesis.cancel();
     if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
     
@@ -270,14 +262,6 @@ export default function Hero() {
     }
   };
 
-  const handleEnter = () => {
-    setStep("audio");
-    if (audioRef.current) {
-      audioRef.current.loop = true;
-      audioRef.current.play().catch(() => {});
-    }
-  };
-
   const startGD = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/gd/start`);
@@ -289,7 +273,6 @@ export default function Hero() {
       ];
 
       setHistory(initialPayload);
-      if (audioRef.current) audioRef.current.pause();
       
       // Pivot stage tracking triggers the continuous listening effect chain
       setStep("gd");
@@ -357,8 +340,6 @@ export default function Hero() {
 
   return (
     <div className="relative min-h-screen bg-gray-950 text-gray-100 flex flex-col overflow-x-hidden selection:bg-red-500/30">
-      <audio ref={audioRef} src={introMusic} />
-
       {/* COUNTDOWN POPUP */}
       {showCountdown && (
         <Countdown
@@ -432,7 +413,7 @@ export default function Hero() {
             <div className="space-y-4">
               {[
                 ["1", "Enter Playground", "Begin your interactive speech session environment."],
-                ["2", "Press Start Match", "The workspace prepares audio tracks and initializes context variables."],
+                ["2", "Press Start Match", "The workspace initializes context variables."],
                 ["3", "Dynamic Environment", "AI participants converse naturally. Speak at any moment to express your ideas."],
                 ["4", "Natural Interruptions", "Starting to speak instantly pauses ongoing AI vocal feedback tracks."],
                 ["5", "Fluid Tracking Loop", "Pause for 2.5 seconds to dispatch transcription payloads smoothly to the backend."],
