@@ -12,10 +12,13 @@ export default function Navbar({ user, streak, onLogout, onNavigateHome }) {
   const uid = user?.uid || auth.currentUser?.uid;
 
   // Deterministic DiceBear avatar based on uid or email
-  const avatarSeed = uid || user?.email || "guest";
-  const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(
-    avatarSeed
-  )}&backgroundColor=1e1b4b,312e81,4c1d95&radius=20`;
+  // Neutral cartoon avatar
+
+const avatarSeed = uid || user?.email || "guest";
+
+const avatarUrl = `https://api.dicebear.com/9.x/pixel-art/svg?seed=${encodeURIComponent(
+  avatarSeed
+)}&backgroundColor=1e1b4b,312e81,4c1d95&radius=20`;
 
   // Close profile dropdown when clicking outside
   useEffect(() => {
