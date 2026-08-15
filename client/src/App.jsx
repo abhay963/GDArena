@@ -8,7 +8,7 @@ import VerifyEmail from "./components/VerifyEmail";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./components/NotFound";
-
+import StudyMate from "./pages/StudyMate";
 function App() {
   return (
     <Routes>
@@ -29,6 +29,14 @@ function App() {
         }
       />
 
+<Route
+  path="/studymate"
+  element={
+    <ProtectedRoute>
+      <StudyMate />
+    </ProtectedRoute>
+  }
+/>
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

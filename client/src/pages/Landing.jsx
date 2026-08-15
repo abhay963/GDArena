@@ -241,7 +241,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="bg-[#030014] text-gray-100 min-h-screen font-sans selection:bg-red-500/30 selection:text-red-200 antialiased overflow-x-hidden">
+    <div className="premium-page bg-[#030014] text-gray-100 min-h-screen font-sans selection:bg-red-500/30 selection:text-red-200 antialiased overflow-x-hidden">
 
       {/* =====================================================
           AMBIENT BACKGROUND
@@ -481,7 +481,7 @@ export default function LandingPage() {
           HERO
       ===================================================== */}
 
-      <section className="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-20 px-5 md:px-8 overflow-hidden">
+      <section className="hero-premium relative min-h-screen flex flex-col items-center justify-center pt-28 pb-20 px-5 md:px-8 overflow-hidden">
 
         {/* Grid */}
 

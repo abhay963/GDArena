@@ -1,271 +1,1002 @@
-import { useState, useRef, useEffect } from "react";
-import Performance from "./PerformanceDashboard.jsx";
+import { useEffect, useRef, useState } from "react";
 import { getAuth } from "firebase/auth";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiActivity,
+  FiBarChart2,
+  FiBookOpen,
+  FiChevronDown,
+  FiCheck,
+  FiLogOut,
+  FiMessageCircle,
 
-export default function Navbar({ user, streak, onLogout, onNavigateHome }) {
+  FiX,
+  FiZap,
+} from "react-icons/fi";
+
+import Performance from "./PerformanceDashboard.jsx";
+
+export default function Navbar({
+  user,
+  streak,
+  onLogout,
+  onNavigateHome,
+  activeProduct = "gd",
+}) {
   const [showPerformance, setShowPerformance] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
   const dropdownRef = useRef(null);
 
   const auth = getAuth();
   const uid = user?.uid || auth.currentUser?.uid;
 
-  // Deterministic DiceBear avatar based on uid or email
-  // Neutral cartoon avatar
+  /* =========================================================
+     USER AVATAR
+  ========================================================= */
 
-const avatarSeed = uid || user?.email || "guest";
+  const avatarSeed = uid || user?.email || "guest";
 
-const avatarUrl = `https://api.dicebear.com/9.x/pixel-art/svg?seed=${encodeURIComponent(
-  avatarSeed
-)}&backgroundColor=1e1b4b,312e81,4c1d95&radius=20`;
+  const avatarUrl =
+    `https://api.dicebear.com/9.x/pixel-art/svg?seed=${encodeURIComponent(
+      avatarSeed
+    )}&backgroundColor=09090b,18181b,1e1b4b,312e81&radius=22`;
 
-  // Close profile dropdown when clicking outside
+  const isVerified = Boolean(
+    user?.emailVerified || user?.verified
+  );
+
+  const isStudySync = activeProduct === "studysync";
+
+  /* =========================================================
+     CLOSE DROPDOWN OUTSIDE
+  ========================================================= */
+
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
         setShowDropdown(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
   }, []);
 
-  // Close dropdown on Escape
+  /* =========================================================
+     ESCAPE
+  ========================================================= */
+
   useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === "Escape") setShowDropdown(false);
-    }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
   }, []);
 
-  const isVerified = Boolean(user?.emailVerified || user?.verified);
+  /* =========================================================
+     PRODUCT CONFIG
+  ========================================================= */
+
+  const product = isStudySync
+    ? {
+        name: "StudySync",
+        shortName: "Study",
+        icon: FiBookOpen,
+        accent: "violet",
+        description: "Knowledge intelligence",
+      }
+    : {
+        name: "GD Arena",
+        shortName: "GD",
+        icon: FiMessageCircle,
+        accent: "red",
+        description: "AI discussion arena",
+      };
+
+  const ProductIcon = product.icon;
+
+  /* =========================================================
+     NAVIGATION
+  ========================================================= */
+
+  const goHome = () => {
+    setShowDropdown(false);
+
+    if (onNavigateHome) {
+      onNavigateHome();
+    }
+  };
+
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
+  const handleLogout = async () => {
+    setShowDropdown(false);
+
+    if (onLogout) {
+      await onLogout();
+    }
+  };
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <>
-      <nav className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md px-4 sm:px-6 py-3 flex justify-between items-center selection:bg-red-500/30">
-        {/* Brand Logo / Action */}
+      {/* =====================================================
+          NAVBAR
+      ====================================================== */}
+
+      <motion.header
+        initial={{
+          opacity: 0,
+          y: -12,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.5,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="
+          sticky
+          top-0
+          z-50
+          w-full
+          border-b
+          border-white/[0.06]
+          bg-[#030305]/80
+          backdrop-blur-2xl
+        "
+      >
+        {/* subtle top light */}
+
         <div
-          onClick={onNavigateHome}
-          className="flex items-center gap-2.5 cursor-pointer group select-none active:scale-[0.98] transition-transform"
+          className={`
+            absolute
+            top-0
+            left-1/2
+            -translate-x-1/2
+            w-48
+            h-px
+            bg-gradient-to-r
+            from-transparent
+            ${
+              isStudySync
+                ? "via-violet-400/50"
+                : "via-red-400/50"
+            }
+            to-transparent
+          `}
+        />
+
+        <div
+          className="
+            relative
+            mx-auto
+            max-w-[1400px]
+            px-4
+            sm:px-6
+            lg:px-8
+            h-[68px]
+            flex
+            items-center
+            justify-between
+          "
         >
-          <div className="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center font-black text-white text-sm shadow-md shadow-red-900/40 group-hover:scale-110 group-hover:shadow-red-500/50 transition-all duration-200">
-            Ω
-          </div>
-          <h1 className="text-lg font-black tracking-wider text-white uppercase group-hover:text-red-400 transition-colors duration-200">
-            GD{" "}
-            <span className="text-red-500 group-hover:text-white transition-colors duration-200">
-              Arena
-            </span>
-          </h1>
-        </div>
+          {/* =================================================
+              LEFT — BRAND
+          ================================================== */}
 
-        {/* Global Navigation Controls */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
-          {/* Animated Streak Badge */}
           <button
-            onClick={() => setShowCalendar(true)}
-            className="relative flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 hover:from-orange-500/25 hover:to-amber-500/20 border border-orange-500/30 hover:border-orange-400/50 px-2.5 sm:px-3 py-1.5 rounded-xl text-orange-300 select-none shadow-[0_0_12px_-3px_rgba(249,115,22,0.35)] cursor-pointer transition-all duration-200 active:scale-95 group"
-            title="View Streak Calendar"
+            type="button"
+            onClick={goHome}
+            className="
+              group
+              flex
+              items-center
+              gap-3
+              select-none
+              outline-none
+            "
           >
-            <span className="text-sm group-hover:animate-bounce">🔥</span>
-            <span className="font-mono text-xs font-bold tracking-tight">
-              {streak || 0}d
-            </span>
-            {/* subtle pulse ring */}
-            <span className="absolute inset-0 rounded-xl ring-1 ring-orange-400/20 animate-pulse pointer-events-none" />
-          </button>
+            {/* Logo */}
 
-          {/* Performance Button (desktop) */}
-          <button
-            onClick={() => setShowPerformance(true)}
-            className="hidden sm:flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 active:bg-slate-850 text-slate-200 hover:text-white border border-slate-700/80 hover:border-indigo-500/50 px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-sm hover:shadow-indigo-500/20 cursor-pointer active:scale-95 group"
-          >
-            <svg
-              className="w-3.5 h-3.5 text-indigo-400 group-hover:text-indigo-300 transition-colors"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <div
+              className={`
+                relative
+                w-9
+                h-9
+                rounded-xl
+                flex
+                items-center
+                justify-center
+                border
+                transition-all
+                duration-300
+                ${
+                  isStudySync
+                    ? "bg-violet-500/[0.09] border-violet-400/15 group-hover:bg-violet-500/[0.15] group-hover:border-violet-400/30"
+                    : "bg-red-500/[0.09] border-red-400/15 group-hover:bg-red-500/[0.15] group-hover:border-red-400/30"
+                }
+              `}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              <ProductIcon
+                className={`
+                  w-4
+                  h-4
+                  transition-transform
+                  duration-300
+                  group-hover:scale-110
+                  ${
+                    isStudySync
+                      ? "text-violet-400"
+                      : "text-red-400"
+                  }
+                `}
               />
-            </svg>
-            Performance
-          </button>
 
-          {/* User Profile Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setShowDropdown((v) => !v)}
-              className="flex items-center gap-1.5 p-1 pr-2 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/70 hover:border-slate-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer active:scale-95 group"
-              aria-expanded={showDropdown}
-              aria-haspopup="true"
-            >
-              {/* DiceBear Avatar + glow */}
-              <div className="relative">
-                <img
-                  src={avatarUrl}
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-lg object-cover ring-2 ring-transparent group-hover:ring-indigo-400/60 transition-all duration-300 group-hover:scale-105 shadow-md"
-                  loading="lazy"
-                />
-                {/* hover glow */}
-                <div className="absolute inset-0 rounded-lg bg-indigo-500/0 group-hover:bg-indigo-500/20 blur-md transition-all duration-300 pointer-events-none" />
-                {/* Verified indicator */}
-                {isVerified && (
-                  <span
-                    className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center"
-                    title="Verified"
-                  >
-                    <svg
-                      className="w-2 h-2 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                )}
+              {/* tiny glow */}
+
+              <div
+                className={`
+                  absolute
+                  inset-0
+                  rounded-xl
+                  blur-lg
+                  opacity-0
+                  group-hover:opacity-100
+                  transition-opacity
+                  duration-300
+                  ${
+                    isStudySync
+                      ? "bg-violet-500/20"
+                      : "bg-red-500/20"
+                  }
+                `}
+              />
+            </div>
+
+            {/* Brand text */}
+
+            <div className="text-left">
+              <div className="flex items-center gap-1">
+                <span className="text-[15px] font-semibold tracking-[-0.02em] text-white">
+                  {isStudySync ? "Study" : "GD"}
+                </span>
+
+                <span
+                  className={`
+                    text-[15px]
+                    font-semibold
+                    tracking-[-0.02em]
+                    ${
+                      isStudySync
+                        ? "text-violet-400"
+                        : "text-red-400"
+                    }
+                  `}
+                >
+                  {isStudySync
+                    ? "Sync"
+                    : "Arena"}
+                </span>
               </div>
 
-              <svg
-                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
-                  showDropdown ? "rotate-180" : ""
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
+              <p className="hidden sm:block text-[7px] uppercase tracking-[0.2em] text-white/20 mt-0.5">
+                {product.description}
+              </p>
+            </div>
+          </button>
+
+          {/* =================================================
+              CENTER — PRODUCT SWITCHER
+          ================================================== */}
+
+          <div
+            className="
+              hidden
+              md:flex
+              absolute
+              left-1/2
+              -translate-x-1/2
+              items-center
+              p-1
+              rounded-2xl
+              border
+              border-white/[0.06]
+              bg-white/[0.025]
+            "
+          >
+            {/* GD ARENA */}
+
+            <button
+              type="button"
+              onClick={() => {
+                if (isStudySync) {
+                  window.location.href = "/hero";
+                }
+              }}
+              className={`
+                relative
+                flex
+                items-center
+                gap-2
+                px-3.5
+                py-2
+                rounded-xl
+                text-[11px]
+                font-medium
+                transition-all
+                duration-300
+                ${
+                  !isStudySync
+                    ? "text-white"
+                    : "text-white/30 hover:text-white/60"
+                }
+              `}
+            >
+              {!isStudySync && (
+                <motion.div
+                  layoutId="activeProduct"
+                  className="
+                    absolute
+                    inset-0
+                    rounded-xl
+                    bg-red-500/[0.09]
+                    border
+                    border-red-500/15
+                  "
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                  }}
                 />
-              </svg>
+              )}
+
+              <span className="relative z-10 flex items-center gap-2">
+                <FiMessageCircle
+                  className={`
+                    w-3.5
+                    h-3.5
+                    ${
+                      !isStudySync
+                        ? "text-red-400"
+                        : "text-white/25"
+                    }
+                  `}
+                />
+
+                <span>GD Arena</span>
+              </span>
             </button>
 
-            {/* Dropdown Menu with entrance animation */}
-            {showDropdown && (
-              <div
-                className="absolute right-0 mt-2.5 w-60 origin-top-right bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-1.5 shadow-2xl shadow-black/50 z-50
-                animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
-                style={{
-                  animation: "dropdownIn 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
-                }}
+            {/* STUDYSYNC */}
+
+            <button
+              type="button"
+              onClick={() => {
+                if (!isStudySync) {
+                  window.location.href =
+                    "/studymate";
+                }
+              }}
+              className={`
+                relative
+                flex
+                items-center
+                gap-2
+                px-3.5
+                py-2
+                rounded-xl
+                text-[11px]
+                font-medium
+                transition-all
+                duration-300
+                ${
+                  isStudySync
+                    ? "text-white"
+                    : "text-white/30 hover:text-white/60"
+                }
+              `}
+            >
+              {isStudySync && (
+                <motion.div
+                  layoutId="activeProduct"
+                  className="
+                    absolute
+                    inset-0
+                    rounded-xl
+                    bg-violet-500/[0.09]
+                    border
+                    border-violet-500/15
+                  "
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                  }}
+                />
+              )}
+
+              <span className="relative z-10 flex items-center gap-2">
+                <FiBookOpen
+                  className={`
+                    w-3.5
+                    h-3.5
+                    ${
+                      isStudySync
+                        ? "text-violet-400"
+                        : "text-white/25"
+                    }
+                  `}
+                />
+
+                <span>StudySync</span>
+              </span>
+            </button>
+          </div>
+
+          {/* =================================================
+              RIGHT
+          ================================================== */}
+
+          <div className="flex items-center gap-2">
+            {/* AI STATUS */}
+
+            <div
+              className="
+                hidden
+                lg:flex
+                items-center
+                gap-2
+                px-3
+                py-2
+                rounded-xl
+                border
+                border-emerald-500/10
+                bg-emerald-500/[0.035]
+              "
+            >
+              <span className="relative flex w-1.5 h-1.5">
+                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-50" />
+
+                <span className="relative w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              </span>
+
+              <span className="text-[8px] uppercase tracking-[0.18em] text-emerald-400/60">
+                AI Online
+              </span>
+            </div>
+
+            {/* STREAK */}
+
+            <button
+              type="button"
+              onClick={() => {
+                // Calendar hook can be connected later.
+              }}
+              title="Current streak"
+              className="
+                group
+                relative
+                flex
+                items-center
+                gap-1.5
+                h-9
+                px-3
+                rounded-xl
+                border
+                border-orange-500/10
+                bg-orange-500/[0.045]
+                hover:bg-orange-500/[0.08]
+                hover:border-orange-400/20
+                transition-all
+                duration-200
+                active:scale-95
+              "
+            >
+              <span className="text-sm transition-transform duration-200 group-hover:scale-110">
+                🔥
+              </span>
+
+              <span className="text-[11px] font-semibold tabular-nums text-orange-300">
+                {streak || 0}
+              </span>
+
+              <span className="hidden sm:inline text-[9px] text-orange-300/40 uppercase tracking-wider">
+                days
+              </span>
+            </button>
+
+            {/* PERFORMANCE */}
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowPerformance(true)
+              }
+              className="
+                hidden
+                sm:flex
+                items-center
+                gap-2
+                h-9
+                px-3
+                rounded-xl
+                border
+                border-white/[0.07]
+                bg-white/[0.025]
+                hover:bg-white/[0.05]
+                hover:border-indigo-400/20
+                text-white/45
+                hover:text-white
+                transition-all
+                duration-200
+                active:scale-95
+              "
+            >
+              <FiBarChart2 className="w-3.5 h-3.5 text-indigo-400" />
+
+              <span className="text-[10px] font-medium">
+                Analytics
+              </span>
+            </button>
+
+            {/* =================================================
+                PROFILE
+            ================================================== */}
+
+            <div
+              className="relative"
+              ref={dropdownRef}
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  setShowDropdown((value) => !value)
+                }
+                aria-expanded={showDropdown}
+                aria-haspopup="menu"
+                className={`
+                  group
+                  flex
+                  items-center
+                  gap-2
+                  p-1
+                  pr-2
+                  rounded-xl
+                  border
+                  bg-white/[0.025]
+                  transition-all
+                  duration-200
+                  active:scale-95
+                  ${
+                    showDropdown
+                      ? "border-white/[0.14] bg-white/[0.05]"
+                      : "border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.045]"
+                  }
+                `}
               >
-                {/* Header */}
-                <div className="px-3.5 py-3 border-b border-slate-800/80 mb-1.5">
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src={avatarUrl}
-                      alt=""
-                      className="w-9 h-9 rounded-lg object-cover ring-1 ring-slate-700"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                        Signed in as
-                      </p>
-                      <p className="text-xs text-slate-200 truncate font-medium mt-0.5">
-                        {user?.email || "User Account"}
-                      </p>
-                      {isVerified && (
-                        <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-emerald-400 font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                          Verified
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                {/* Avatar */}
+
+                <div className="relative">
+                  <img
+                    src={avatarUrl}
+                    alt="Profile avatar"
+                    className="
+                      w-8
+                      h-8
+                      rounded-lg
+                      object-cover
+                      bg-black
+                      ring-1
+                      ring-white/[0.08]
+                      group-hover:ring-white/[0.16]
+                      transition-all
+                      duration-300
+                    "
+                    loading="lazy"
+                  />
+
+                  {/* Verified */}
+
+                  {isVerified && (
+                    <span
+                      className="
+                        absolute
+                        -right-1
+                        -bottom-1
+                        flex
+                        items-center
+                        justify-center
+                        w-3.5
+                        h-3.5
+                        rounded-full
+                        bg-emerald-500
+                        border-2
+                        border-[#08080a]
+                      "
+                      title="Verified account"
+                    >
+                      <FiCheck className="w-2 h-2 text-white stroke-[3]" />
+                    </span>
+                  )}
                 </div>
 
-                {/* Mobile-only items */}
-                <button
-                  onClick={() => {
-                    setShowCalendar(true);
-                    setShowDropdown(false);
-                  }}
-                  className="sm:hidden w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 rounded-xl transition-all active:scale-[0.98]"
-                >
-                  <span className="text-orange-400 text-sm">🔥</span>
-                  Streak Calendar
-                </button>
+                <FiChevronDown
+                  className={`
+                    hidden
+                    sm:block
+                    w-3
+                    h-3
+                    text-white/25
+                    transition-transform
+                    duration-200
+                    ${
+                      showDropdown
+                        ? "rotate-180"
+                        : ""
+                    }
+                  `}
+                />
+              </button>
 
-                <button
-                  onClick={() => {
-                    setShowPerformance(true);
-                    setShowDropdown(false);
-                  }}
-                  className="sm:hidden w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 rounded-xl transition-all active:scale-[0.98]"
-                >
-                  <span className="text-indigo-400 text-sm">📊</span>
-                  Analytics Overview
-                </button>
+              {/* =================================================
+                  DROPDOWN
+              ================================================== */}
 
-                {/* Sign Out */}
-                <button
-                  onClick={() => {
-                    onLogout();
-                    setShowDropdown(false);
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-950/30 rounded-xl transition-all active:scale-[0.98] cursor-pointer"
-                >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+              <AnimatePresence>
+                {showDropdown && (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: -6,
+                      scale: 0.97,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -5,
+                      scale: 0.98,
+                    }}
+                    transition={{
+                      duration: 0.16,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="
+                      absolute
+                      right-0
+                      mt-2.5
+                      w-[270px]
+                      rounded-2xl
+                      border
+                      border-white/[0.08]
+                      bg-[#0a0a0d]/95
+                      backdrop-blur-2xl
+                      shadow-[0_30px_80px_rgba(0,0,0,0.55)]
+                      overflow-hidden
+                      z-[100]
+                    "
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    {/* Top accent */}
+
+                    <div
+                      className={`
+                        absolute
+                        top-0
+                        left-1/2
+                        -translate-x-1/2
+                        w-24
+                        h-px
+                        bg-gradient-to-r
+                        from-transparent
+                        ${
+                          isStudySync
+                            ? "via-violet-400/60"
+                            : "via-red-400/60"
+                        }
+                        to-transparent
+                      `}
                     />
-                  </svg>
-                  Sign Out
-                </button>
-              </div>
-            )}
+
+                    {/* Profile header */}
+
+                    <div className="p-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={avatarUrl}
+                          alt=""
+                          className="
+                            w-10
+                            h-10
+                            rounded-xl
+                            object-cover
+                            ring-1
+                            ring-white/10
+                          "
+                        />
+
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[8px] uppercase tracking-[0.18em] text-white/25">
+                            Signed in as
+                          </p>
+
+                          <p className="mt-1 text-xs text-white/80 truncate font-medium">
+                            {user?.email ||
+                              "User Account"}
+                          </p>
+
+                          {isVerified && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+
+                              <span className="text-[9px] text-emerald-400/70">
+                                Verified account
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="h-px bg-white/[0.05]" />
+
+                    {/* Current product */}
+
+                    <div className="p-2">
+                      <div
+                        className={`
+                          flex
+                          items-center
+                          gap-3
+                          px-3
+                          py-2.5
+                          rounded-xl
+                          ${
+                            isStudySync
+                              ? "bg-violet-500/[0.05]"
+                              : "bg-red-500/[0.05]"
+                          }
+                        `}
+                      >
+                        <div
+                          className={`
+                            w-8
+                            h-8
+                            rounded-lg
+                            flex
+                            items-center
+                            justify-center
+                            ${
+                              isStudySync
+                                ? "bg-violet-500/10 text-violet-400"
+                                : "bg-red-500/10 text-red-400"
+                            }
+                          `}
+                        >
+                          <ProductIcon className="w-4 h-4" />
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] font-semibold text-white/70">
+                            {product.name}
+                          </p>
+
+                          <p className="text-[8px] text-white/25 mt-0.5">
+                            Current workspace
+                          </p>
+                        </div>
+
+                        <div className="ml-auto">
+                          <FiZap
+                            className={`
+                              w-3.5
+                              h-3.5
+                              ${
+                                isStudySync
+                                  ? "text-violet-400/50"
+                                  : "text-red-400/50"
+                              }
+                            `}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mobile analytics */}
+
+                    <div className="sm:hidden px-2 pb-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowPerformance(true);
+                          setShowDropdown(false);
+                        }}
+                        className="
+                          w-full
+                          flex
+                          items-center
+                          gap-3
+                          px-3
+                          py-2.5
+                          rounded-xl
+                          text-left
+                          text-white/50
+                          hover:text-white
+                          hover:bg-white/[0.04]
+                          transition-all
+                        "
+                      >
+                        <FiActivity className="w-4 h-4 text-indigo-400" />
+
+                        <span className="text-[11px] font-medium">
+                          Performance Analytics
+                        </span>
+                      </button>
+                    </div>
+
+                    <div className="h-px bg-white/[0.05]" />
+
+                    {/* Logout */}
+
+                    <div className="p-2">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="
+                          w-full
+                          flex
+                          items-center
+                          gap-3
+                          px-3
+                          py-2.5
+                          rounded-xl
+                          text-left
+                          text-red-400/70
+                          hover:text-red-300
+                          hover:bg-red-500/[0.06]
+                          transition-all
+                          active:scale-[0.98]
+                        "
+                      >
+                        <FiLogOut className="w-4 h-4" />
+
+                        <span className="text-[11px] font-medium">
+                          Sign out
+                        </span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
-      </nav>
 
-      {/* Performance Modal */}
-      {showPerformance && (
-        <Performance uid={uid} onClose={() => setShowPerformance(false)} />
-      )}
+        {/* =====================================================
+            MOBILE PRODUCT BAR
+        ====================================================== */}
 
-      {/* Streak Calendar Modal – plug in your calendar component here */}
-      {/* {showCalendar && (
-        <YourCalendarComponent
-          streak={streak}
-          onClose={() => setShowCalendar(false)}
-        />
-      )} */}
+        <div className="md:hidden border-t border-white/[0.04]">
+          <div className="flex items-center justify-center gap-1 px-4 py-2">
+            {/* GD */}
 
-      {/* Local keyframes for dropdown entrance (safe fallback) */}
-      <style>{`
-        @keyframes dropdownIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95) translateY(-6px);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-      `}</style>
+            <button
+              type="button"
+              onClick={() => {
+                if (isStudySync) {
+                  window.location.href = "/hero";
+                }
+              }}
+              className={`
+                flex
+                flex-1
+                max-w-[150px]
+                items-center
+                justify-center
+                gap-2
+                py-1.5
+                rounded-lg
+                text-[9px]
+                font-medium
+                transition-all
+                ${
+                  !isStudySync
+                    ? "bg-red-500/[0.08] text-red-300 border border-red-500/10"
+                    : "text-white/25"
+                }
+              `}
+            >
+              <FiMessageCircle className="w-3 h-3" />
+              GD Arena
+            </button>
+
+            {/* StudySync */}
+
+            <button
+              type="button"
+              onClick={() => {
+                if (!isStudySync) {
+                  window.location.href =
+                    "/studymate";
+                }
+              }}
+              className={`
+                flex
+                flex-1
+                max-w-[150px]
+                items-center
+                justify-center
+                gap-2
+                py-1.5
+                rounded-lg
+                text-[9px]
+                font-medium
+                transition-all
+                ${
+                  isStudySync
+                    ? "bg-violet-500/[0.08] text-violet-300 border border-violet-500/10"
+                    : "text-white/25"
+                }
+              `}
+            >
+              <FiBookOpen className="w-3 h-3" />
+              StudySync
+            </button>
+          </div>
+        </div>
+      </motion.header>
+
+      {/* =====================================================
+          PERFORMANCE MODAL
+      ====================================================== */}
+
+      <AnimatePresence>
+        {showPerformance && (
+          <Performance
+            uid={uid}
+            onClose={() =>
+              setShowPerformance(false)
+            }
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }
