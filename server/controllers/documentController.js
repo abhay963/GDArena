@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import crypto from "crypto";
 
 import {
   loadPDF,
@@ -8,6 +9,7 @@ import {
 
 import {
   createDocument,
+  findDocumentByHash,
   storeDocumentChunks,
   updateDocumentStatus,
   getDocumentStatus,
@@ -15,29 +17,69 @@ import {
 
 import { askStudyMate } from "../services/studyMate.service.js";
 
+const generateFileHash = async (filePath) => {
+  const buffer = await fs.readFile(filePath);
 
-// ========================================================
-// BACKGROUND DOCUMENT PROCESSING
-// ========================================================
+  return crypto
+    .createHash("sha256")
+    .update(buffer)
+    .digest("hex");
+};
+
+const deleteTemporaryFile = async (filePath) => {
+  if (!filePath) {
+    return;
+  }
+
+  try {
+    await fs.unlink(filePath);
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.warn(
+        "Failed to delete temporary file:",
+        error.message
+      );
+    }
+  }
+};
+
+const formatDocument = (document) => {
+  if (!document) {
+    return null;
+  }
+
+  return {
+    id: document.id,
+    originalName:
+      document.file_name,
+    fileName:
+      document.file_name,
+    fileType:
+      document.file_type,
+    fileHash:
+      document.file_hash,
+    status:
+      document.status,
+    processingStage:
+      document.processing_stage,
+    progress:
+      Number(document.progress) || 0,
+    totalChunks:
+      Number(document.total_chunks) || 0,
+    processedChunks:
+      Number(document.processed_chunks) || 0,
+    errorMessage:
+      document.error_message,
+    createdAt:
+      document.created_at,
+  };
+};
 
 const processDocument = async ({
   documentId,
   file,
 }) => {
-
   try {
-
-    console.log("========================================");
-    console.log("🚀 Background document processing started");
-    console.log(`Document ID: ${documentId}`);
-    console.log(`File: ${file.originalname}`);
-    console.log("========================================");
-
-
-    // ======================================================
-    // STEP 1: EXTRACT
-    // ======================================================
-
     await updateDocumentStatus(
       documentId,
       {
@@ -49,24 +91,8 @@ const processDocument = async ({
       }
     );
 
-
-    console.log(
-      "📖 Extracting document text..."
-    );
-
-
     const documents =
       await loadPDF(file.path);
-
-
-    console.log(
-      `✅ Extracted ${documents.length} pages/sections`
-    );
-
-
-    // ======================================================
-    // STEP 2: CHUNK
-    // ======================================================
 
     await updateDocumentStatus(
       documentId,
@@ -77,24 +103,11 @@ const processDocument = async ({
       }
     );
 
-
-    console.log(
-      "✂️ Creating document chunks..."
-    );
-
-
     const chunks =
       await splitDocuments(documents);
 
-
     const totalChunks =
       chunks.length;
-
-
-    console.log(
-      `✅ Created ${totalChunks} chunks`
-    );
-
 
     await updateDocumentStatus(
       documentId,
@@ -106,11 +119,6 @@ const processDocument = async ({
         processedChunks: 0,
       }
     );
-
-
-    // ======================================================
-    // STEP 3: EMBEDDINGS
-    // ======================================================
 
     await updateDocumentStatus(
       documentId,
@@ -123,40 +131,27 @@ const processDocument = async ({
       }
     );
 
-
-    console.log(
-      "🧠 Starting embedding generation..."
-    );
-
-
     const embeddedChunks =
       await embedChunks(
         chunks,
-
         async ({
           processedChunks,
           totalChunks,
-          batchNumber,
-          totalBatches,
         }) => {
-
           const progress =
-            Math.min(
-              70,
-              Math.round(
-                30 +
-                (
-                  processedChunks /
-                  totalChunks
-                ) * 40
-              )
-            );
-
-
-          console.log(
-            `📊 Embedding progress: ${processedChunks}/${totalChunks}`
-          );
-
+            totalChunks > 0
+              ? Math.min(
+                  70,
+                  Math.round(
+                    30 +
+                      (
+                        processedChunks /
+                        totalChunks
+                      ) *
+                        40
+                  )
+                )
+              : 70;
 
           await updateDocumentStatus(
             documentId,
@@ -168,23 +163,8 @@ const processDocument = async ({
               processedChunks,
             }
           );
-
-
-          console.log(
-            `   Batch ${batchNumber}/${totalBatches} saved`
-          );
         }
       );
-
-
-    console.log(
-      `✅ ${embeddedChunks.length} embeddings generated`
-    );
-
-
-    // ======================================================
-    // STEP 4: STORE VECTORS
-    // ======================================================
 
     await updateDocumentStatus(
       documentId,
@@ -198,47 +178,10 @@ const processDocument = async ({
       }
     );
 
-
-    console.log(
-      "💾 Storing vectors in Neon pgvector..."
-    );
-
-
     await storeDocumentChunks(
       documentId,
       embeddedChunks
     );
-
-
-    console.log(
-      `✅ ${embeddedChunks.length} vectors stored`
-    );
-
-
-    // ======================================================
-    // STEP 5: DELETE TEMPORARY FILE
-    // ======================================================
-
-    try {
-
-      await fs.unlink(file.path);
-
-      console.log(
-        `🗑️ Temporary document deleted: ${file.path}`
-      );
-
-    } catch (fileError) {
-
-      console.warn(
-        "⚠️ Could not delete temporary file:",
-        fileError.message
-      );
-    }
-
-
-    // ======================================================
-    // STEP 6: COMPLETE
-    // ======================================================
 
     await updateDocumentStatus(
       documentId,
@@ -253,411 +196,330 @@ const processDocument = async ({
       }
     );
 
+    await deleteTemporaryFile(
+      file.path
+    );
 
-    console.log("========================================");
-    console.log("🎉 DOCUMENT PROCESSING COMPLETE");
-    console.log(`Document ID: ${documentId}`);
-    console.log(`Chunks: ${embeddedChunks.length}`);
-    console.log("========================================");
-
-
+    console.log(
+      `✅ Document processing completed: ${documentId}`
+    );
   } catch (error) {
-
-    console.error("========================================");
-    console.error("❌ DOCUMENT PROCESSING FAILED");
-    console.error(`Document ID: ${documentId}`);
-    console.error(error);
-    console.error("========================================");
-
+    console.error(
+      "❌ Document processing failed:",
+      error
+    );
 
     try {
-
       await updateDocumentStatus(
         documentId,
         {
           status: "failed",
           processingStage: "failed",
+          progress: 0,
           errorMessage:
             error.message ||
             "Document processing failed.",
         }
       );
-
     } catch (statusError) {
-
       console.error(
-        "❌ Failed to update failed status:",
+        "❌ Failed to update document failure status:",
         statusError
       );
     }
 
-
-    try {
-
-      await fs.unlink(file.path);
-
-      console.log(
-        `🗑️ Failed document file deleted: ${file.path}`
-      );
-
-    } catch (fileError) {
-
-      console.warn(
-        "⚠️ Could not delete failed document file:",
-        fileError.message
-      );
-    }
+    await deleteTemporaryFile(
+      file.path
+    );
   }
 };
-
-
-// ========================================================
-// UPLOAD DOCUMENT
-// ========================================================
 
 export const uploadDocument = async (
   req,
   res
 ) => {
+  const file = req.file;
 
   try {
-
-    if (!req.file) {
-
+    if (!file) {
       return res.status(400).json({
         success: false,
-        message: "No document uploaded.",
+        message:
+          "No document uploaded.",
       });
     }
 
+    const userId =
+      req.body.userId || null;
 
-    const file =
-      req.file;
-
-
-    console.log("========================================");
-    console.log("📄 Document upload received");
-    console.log(`File: ${file.originalname}`);
-    console.log(`Type: ${file.mimetype}`);
-    console.log(`Size: ${file.size} bytes`);
-    console.log("========================================");
-
-
-    const document =
-      await createDocument({
-
-        userId:
-          req.body.userId || null,
-
-        fileName:
-          file.originalname,
-
-        fileType:
-          file.mimetype,
-      });
-
-
-    const documentId =
-      document.id;
-
-
-    console.log(
-      `✅ Document ID created: ${documentId}`
-    );
-
-
-    // Start processing WITHOUT await.
-    processDocument({
-      documentId,
-      file,
-    }).catch((error) => {
-
-      console.error(
-        "❌ Unhandled background processing error:",
-        error
+    if (!userId) {
+      await deleteTemporaryFile(
+        file.path
       );
 
-    });
+      return res.status(400).json({
+        success: false,
+        message:
+          "userId is required.",
+      });
+    }
 
+    const fileHash =
+      await generateFileHash(
+        file.path
+      );
+
+    const existingDocument =
+      await findDocumentByHash({
+        userId,
+        fileHash,
+      });
+
+    if (existingDocument) {
+      await deleteTemporaryFile(
+        file.path
+      );
+
+      return res.status(200).json({
+        success: true,
+        duplicate: true,
+        message:
+          "This document is already uploaded. You can continue using it.",
+        document:
+          formatDocument(
+            existingDocument
+          ),
+      });
+    }
+
+    let document;
+
+    try {
+      document =
+        await createDocument({
+          userId,
+          fileName:
+            file.originalname,
+          fileType:
+            file.mimetype,
+          fileHash,
+        });
+    } catch (error) {
+      if (
+        error.code === "23505"
+      ) {
+        const duplicateDocument =
+          await findDocumentByHash({
+            userId,
+            fileHash,
+          });
+
+        await deleteTemporaryFile(
+          file.path
+        );
+
+        if (duplicateDocument) {
+          return res.status(200).json({
+            success: true,
+            duplicate: true,
+            message:
+              "This document is already uploaded. You can continue using it.",
+            document:
+              formatDocument(
+                duplicateDocument
+              ),
+          });
+        }
+      }
+
+      throw error;
+    }
+
+    processDocument({
+      documentId: document.id,
+      file,
+    }).catch((error) => {
+      console.error(
+        "Background processing error:",
+        error
+      );
+    });
 
     return res.status(202).json({
-
       success: true,
-
+      duplicate: false,
       message:
         "Document uploaded. Processing started.",
-
-      document: {
-
-        id:
-          document.id,
-
-        originalName:
-          document.file_name,
-
-        fileType:
-          document.file_type,
-
-        status:
-          "processing",
-
-        processingStage:
-          "uploading",
-
-        progress:
-          0,
-
-        chunks:
-          0,
-
-        createdAt:
-          document.created_at,
-      },
-
+      document:
+        formatDocument({
+          ...document,
+          status: "processing",
+          processing_stage:
+            "uploading",
+          progress: 0,
+          total_chunks: 0,
+          processed_chunks: 0,
+        }),
     });
-
   } catch (error) {
-
     console.error(
       "❌ Document upload error:",
       error
     );
 
+    await deleteTemporaryFile(
+      file?.path
+    );
 
     return res.status(500).json({
-
       success: false,
-
       message:
         "Failed to upload document.",
-
       error:
         error.message,
     });
   }
 };
 
-
-// ========================================================
-// GET DOCUMENT PROCESSING STATUS
-// ========================================================
-
 export const getDocumentProcessingStatus = async (
   req,
   res
 ) => {
-
   try {
-
     const {
       documentId,
     } = req.params;
 
-
-    // ======================================================
-    // VALIDATE ID
-    // ======================================================
-
     if (!documentId) {
-
       return res.status(400).json({
-
         success: false,
-
         message:
           "documentId is required.",
       });
     }
-
-
-    console.log(
-      `📡 Checking document status: ${documentId}`
-    );
-
-
-    // ======================================================
-    // GET STATUS FROM DATABASE
-    // ======================================================
 
     const document =
       await getDocumentStatus(
         documentId
       );
 
-
-    // ======================================================
-    // DOCUMENT NOT FOUND
-    // ======================================================
-
     if (!document) {
-
       return res.status(404).json({
-
         success: false,
-
         message:
           "Document not found.",
       });
     }
 
-
-    // ======================================================
-    // RETURN STATUS
-    // ======================================================
-
     return res.status(200).json({
-
       success: true,
-
-      document: {
-
-        id:
-          document.id,
-
-        fileName:
-          document.file_name,
-
-        fileType:
-          document.file_type,
-
-        status:
-          document.status,
-
-        processingStage:
-          document.processing_stage,
-
-        progress:
-          document.progress,
-
-        totalChunks:
-          document.total_chunks,
-
-        processedChunks:
-          document.processed_chunks,
-
-        errorMessage:
-          document.error_message,
-
-        createdAt:
-          document.created_at,
-      },
-
+      document:
+        formatDocument(document),
     });
-
   } catch (error) {
-
     console.error(
-      "❌ Failed to get document processing status:",
+      "❌ Failed to get document status:",
       error
     );
 
-
     return res.status(500).json({
-
       success: false,
-
       message:
         "Failed to get document status.",
-
       error:
         error.message,
     });
   }
 };
 
-
-// ========================================================
-// ASK STUDYMATE
-// ========================================================
-
 export const askDocument = async (
   req,
   res
 ) => {
-
   try {
-
     const {
       documentId,
       question,
     } = req.body;
 
-
     if (!documentId) {
-
       return res.status(400).json({
-
         success: false,
-
         message:
           "documentId is required.",
       });
     }
 
-
     if (
       !question ||
       !question.trim()
     ) {
-
       return res.status(400).json({
-
         success: false,
-
         message:
           "Question is required.",
       });
     }
 
+    const document =
+      await getDocumentStatus(
+        documentId
+      );
 
-    console.log("========================================");
-    console.log("🤖 StudyMate question received");
-    console.log(`Document ID: ${documentId}`);
-    console.log(`Question: ${question}`);
-    console.log("========================================");
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Document not found.",
+      });
+    }
 
+    if (
+      document.status ===
+      "processing"
+    ) {
+      return res.status(409).json({
+        success: false,
+        message:
+          "This document is still being prepared. Please wait until processing is complete.",
+      });
+    }
+
+    if (
+      document.status ===
+      "failed"
+    ) {
+      return res.status(409).json({
+        success: false,
+        message:
+          "This document could not be processed. Please upload it again.",
+      });
+    }
 
     const result =
       await askStudyMate({
-
         documentId,
-
-        question,
+        question:
+          question.trim(),
       });
 
-
-    console.log("========================================");
-    console.log("✅ StudyMate answer generated");
-    console.log("========================================");
-
-
     return res.status(200).json({
-
       success: true,
-
       answer:
         result.answer,
-
       sources:
         result.sources,
     });
-
-
   } catch (error) {
-
     console.error(
       "❌ StudyMate controller error:",
       error
     );
 
-
     return res.status(500).json({
-
       success: false,
-
       message:
         "Failed to generate StudyMate answer.",
-
       error:
         error.message,
     });

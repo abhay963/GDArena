@@ -5,15 +5,10 @@ import upload from "../middleware/upload.js";
 import {
   uploadDocument,
   askDocument,
+  getDocumentProcessingStatus,
 } from "../controllers/documentController.js";
 
-
 const router = express.Router();
-
-
-// ========================================
-// UPLOAD + INDEX DOCUMENT
-// ========================================
 
 router.post(
   "/upload",
@@ -21,15 +16,14 @@ router.post(
   uploadDocument
 );
 
-
-// ========================================
-// ASK STUDYMATE
-// ========================================
+router.get(
+  "/status/:documentId",
+  getDocumentProcessingStatus
+);
 
 router.post(
   "/ask",
   askDocument
 );
-
 
 export default router;
