@@ -175,7 +175,7 @@ export default function LandingPage() {
     {
       step: "03",
       title: "Upload & Study",
-      desc: "Drop PDFs into StudySync and build your knowledge base.",
+      desc: "Drop PDFs into StudyMate and build your knowledge base.",
     },
     {
       step: "04",
@@ -226,7 +226,7 @@ export default function LandingPage() {
     },
     {
       quote:
-        "StudySync turned my 200-page OS notes into something I could actually interrogate. Game changer for revision.",
+        "StudyMate turned my 200-page OS notes into something I could actually interrogate. Game changer for revision.",
       author: "Rohan Malhotra",
       role: "MBA Aspirant",
       rating: 5,
@@ -319,7 +319,7 @@ export default function LandingPage() {
             {[
               "Home",
               "Features",
-              "StudySync",
+              "StudyMate",
               "How It Works",
               "Metrics",
             ].map((item) => (
@@ -335,8 +335,8 @@ export default function LandingPage() {
                     });
                   } else if (item === "Features") {
                     scrollToSection("features");
-                  } else if (item === "StudySync") {
-                    scrollToSection("studysync");
+                  } else if (item === "StudyMate") {
+                    scrollToSection("studymate");
                   } else if (item === "How It Works") {
                     scrollToSection("how-it-works");
                   } else {
@@ -344,7 +344,7 @@ export default function LandingPage() {
                   }
 
                 }}
-                className="px-4 py-1.5 text-sm text-neutral-400 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200"
+                className="px-4 py-1.5 text-sm text-neutral-400 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200 cursor-pointer"
               >
                 {item}
               </button>
@@ -360,14 +360,14 @@ export default function LandingPage() {
 
             <button
               onClick={() => navigate("/login")}
-              className="text-sm font-medium text-neutral-300 hover:text-white px-4 py-2 transition-colors"
+              className="text-sm font-medium text-neutral-300 hover:text-white px-4 py-2 transition-colors cursor-pointer"
             >
               Login
             </button>
 
             <button
               onClick={() => navigate("/signup")}
-              className="relative group overflow-hidden text-sm bg-white text-black font-bold px-5 py-2.5 rounded-full shadow-lg shadow-white/10 hover:shadow-white/20 transition-all"
+              className="relative group overflow-hidden text-sm bg-white text-black font-bold px-5 py-2.5 rounded-full shadow-lg shadow-white/10 hover:shadow-white/20 transition-all cursor-pointer"
             >
 
               <span className="relative z-10 flex items-center gap-1.5">
@@ -385,7 +385,7 @@ export default function LandingPage() {
           {/* Mobile Menu */}
 
           <button
-            className="lg:hidden text-white p-2"
+            className="lg:hidden text-white p-2 cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? (
@@ -425,7 +425,7 @@ export default function LandingPage() {
                 {[
                   "Home",
                   "Features",
-                  "StudySync",
+                  "StudyMate",
                   "How It Works",
                   "Login",
                 ].map((item) => (
@@ -445,14 +445,14 @@ export default function LandingPage() {
                         setIsOpen(false);
                       } else if (item === "Features") {
                         scrollToSection("features");
-                      } else if (item === "StudySync") {
-                        scrollToSection("studysync");
+                      } else if (item === "StudyMate") {
+                        scrollToSection("studymate");
                       } else {
                         scrollToSection("how-it-works");
                       }
 
                     }}
-                    className="text-left text-neutral-300 py-3 px-3 rounded-xl hover:bg-white/5 transition-colors"
+                    className="text-left text-neutral-300 py-3 px-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     {item}
                   </button>
@@ -461,7 +461,7 @@ export default function LandingPage() {
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="mt-3 w-full bg-gradient-to-r from-red-600 to-rose-600 text-white py-3.5 rounded-xl font-bold"
+                  className="mt-3 w-full bg-gradient-to-r from-red-600 to-rose-600 text-white py-3.5 rounded-xl font-bold cursor-pointer"
                 >
                   Sign Up Free
                 </button>
@@ -581,7 +581,7 @@ export default function LandingPage() {
             className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed mb-10"
           >
             Practice realistic AI group discussions and turn every PDF into
-            an interactive knowledge base with StudySync.
+            an interactive knowledge base with StudyMate.
           </motion.p>
 
 
@@ -605,7 +605,7 @@ export default function LandingPage() {
 
             <button
               onClick={() => navigate("/signup")}
-              className="group relative w-full sm:w-auto overflow-hidden bg-gradient-to-r from-red-600 via-rose-600 to-orange-500 text-white font-bold px-8 py-4 rounded-2xl shadow-2xl shadow-red-500/30 hover:shadow-red-500/50 transition-all active:scale-[0.98]"
+              className="group relative w-full sm:w-auto overflow-hidden bg-gradient-to-r from-red-600 via-rose-600 to-orange-500 text-white font-bold px-8 py-4 rounded-2xl shadow-2xl shadow-red-500/30 hover:shadow-red-500/50 transition-all active:scale-[0.98] cursor-pointer"
             >
 
               <span className="relative z-10 flex items-center justify-center gap-2">
@@ -622,13 +622,13 @@ export default function LandingPage() {
 
 
             <button
-              onClick={() => scrollToSection("studysync")}
-              className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.04] border border-white/10 hover:border-white/20 hover:bg-white/[0.07] text-white font-semibold px-8 py-4 rounded-2xl backdrop-blur-md transition-all"
+              onClick={() => scrollToSection("studymate")}
+              className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.04] border border-white/10 hover:border-white/20 hover:bg-white/[0.07] text-white font-semibold px-8 py-4 rounded-2xl backdrop-blur-md transition-all cursor-pointer"
             >
 
               <BookOpen className="w-4 h-4 text-rose-400" />
 
-              Explore StudySync
+              Explore StudyMate
 
               <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
 
@@ -866,11 +866,11 @@ export default function LandingPage() {
 
 
       {/* =====================================================
-          STUDYSYNC
+          STUDYMATE
       ===================================================== */}
 
       <section
-        id="studysync"
+        id="studymate"
         className="relative py-28 px-5 md:px-8 border-y border-white/5 overflow-hidden"
       >
 
@@ -910,14 +910,14 @@ export default function LandingPage() {
               Meet{" "}
 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">
-                StudySync
+                StudyMate
               </span>
 
             </h2>
 
 
             <p className="text-neutral-400 max-w-2xl mx-auto text-lg leading-relaxed">
-              Upload notes, textbooks, or interview material. StudySync turns
+              Upload notes, textbooks, or interview material. StudyMate turns
               them into a living knowledge base you can talk to.
             </p>
 
@@ -1330,7 +1330,7 @@ export default function LandingPage() {
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="w-full group/btn bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all"
+                  className="w-full group/btn bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
 
                   Practice GDs
@@ -1344,7 +1344,7 @@ export default function LandingPage() {
             </motion.div>
 
 
-            {/* StudySync */}
+            {/* StudyMate */}
 
             <motion.div
               initial={{
@@ -1380,7 +1380,7 @@ export default function LandingPage() {
 
 
                 <h3 className="text-2xl md:text-3xl font-black text-white mb-1">
-                  StudySync
+                  StudyMate
                 </h3>
 
 
@@ -1415,11 +1415,11 @@ export default function LandingPage() {
 
 
                 <button
-                  onClick={() => scrollToSection("studysync")}
-                  className="w-full group/btn bg-white/5 border border-white/15 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all"
+                  onClick={() => scrollToSection("studymate")}
+                  className="w-full group/btn bg-white/5 border border-white/15 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
 
-                  Explore StudySync
+                  Explore StudyMate
 
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
 
@@ -1725,7 +1725,7 @@ export default function LandingPage() {
 
               <button
                 onClick={() => navigate("/signup")}
-                className="group relative overflow-hidden bg-white text-black font-bold px-10 py-4 rounded-2xl shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all active:scale-[0.98]"
+                className="group relative overflow-hidden bg-white text-black font-bold px-10 py-4 rounded-2xl shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all active:scale-[0.98] cursor-pointer"
               >
 
                 <span className="relative z-10 flex items-center gap-2">
@@ -1740,13 +1740,13 @@ export default function LandingPage() {
 
 
               <button
-                onClick={() => scrollToSection("studysync")}
-                className="flex items-center gap-2 bg-white/5 border border-white/15 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-2xl transition-all"
+                onClick={() => scrollToSection("studymate")}
+                className="flex items-center gap-2 bg-white/5 border border-white/15 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-2xl transition-all cursor-pointer"
               >
 
                 <BookOpen className="w-4 h-4 text-rose-400" />
 
-                Explore StudySync
+                Explore StudyMate
 
               </button>
 
@@ -1804,7 +1804,7 @@ export default function LandingPage() {
                   behavior: "smooth",
                 })
               }
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               About
             </button>
@@ -1812,17 +1812,17 @@ export default function LandingPage() {
 
             <button
               onClick={() => scrollToSection("features")}
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               Features
             </button>
 
 
             <button
-              onClick={() => scrollToSection("studysync")}
-              className="hover:text-white transition-colors"
+              onClick={() => scrollToSection("studymate")}
+              className="hover:text-white transition-colors cursor-pointer"
             >
-              StudySync
+              StudyMate
             </button>
 
 

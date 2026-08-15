@@ -347,7 +347,7 @@ export default function Auth() {
 
         {/* Floating product cards */}
         <div className="absolute top-28 right-14 z-20 space-y-5">
-          {/* StudySync card */}
+          {/* StudyMate card */}
           <div
             className={`group w-[270px] p-4 rounded-2xl bg-white/[0.035] border border-white/[0.08] backdrop-blur-xl shadow-2xl shadow-black/50 transition-all duration-500 hover:border-violet-500/35 hover:bg-white/[0.06] hover:shadow-violet-900/20 animate-float-slow ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
@@ -360,7 +360,7 @@ export default function Auth() {
               </div>
               <div className="min-w-0 pt-0.5">
                 <p className="text-[13.5px] font-semibold text-white tracking-tight">
-                  StudySync
+                  StudyMate
                 </p>
                 <p className="text-[11.5px] text-zinc-500 mt-0.5 leading-snug">
                   Learn from your knowledge
@@ -440,7 +440,7 @@ export default function Auth() {
             <div className="flex items-center gap-2.5 group cursor-default">
               <div className="w-2 h-2 rounded-full bg-violet-400/85 shadow-[0_0_10px_rgba(167,139,250,0.5)] transition-transform group-hover:scale-125" />
               <span className="text-[12.5px] text-zinc-500 font-medium tracking-wide group-hover:text-zinc-300 transition-colors">
-                StudySync
+                StudyMate
               </span>
             </div>
             <div className="flex items-center gap-2.5 group cursor-default">
