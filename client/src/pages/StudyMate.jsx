@@ -112,8 +112,8 @@ function DocumentIcon({ fileName }) {
     <div
       className="
         relative
-        w-11
-        h-11
+        w-12
+        h-12
         rounded-xl
         bg-violet-500/10
         border
@@ -123,19 +123,20 @@ function DocumentIcon({ fileName }) {
         justify-center
       "
     >
-      <FiFileText className="w-5 h-5 text-violet-400" />
+      <FiFileText className="w-5.5 h-5.5 text-violet-400" />
 
       <span
         className="
           absolute
           -bottom-1
           -right-1
-          px-1
+          px-1.5
+          py-0.5
           rounded
           bg-[#09090c]
           border
           border-violet-500/20
-          text-[6px]
+          text-[10px]
           font-bold
           text-violet-400
         "
@@ -153,15 +154,15 @@ function DocumentIcon({ fileName }) {
 function IntelligencePipeline() {
   return (
     <div className="mt-8">
-      <div className="flex items-center justify-center gap-2 sm:gap-4">
+      <div className="flex items-center justify-center gap-3 sm:gap-5">
 
         {/* DOCUMENT */}
 
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2.5">
           <div
             className="
-              w-10
-              h-10
+              w-11
+              h-11
               rounded-xl
               bg-violet-500/[0.07]
               border
@@ -171,20 +172,20 @@ function IntelligencePipeline() {
               justify-center
             "
           >
-            <FiFileText className="w-4 h-4 text-violet-400" />
+            <FiFileText className="w-5 h-5 text-violet-400" />
           </div>
 
-          <span className="text-[7px] uppercase tracking-[0.18em] text-white/20">
+          <span className="text-xs uppercase tracking-[0.16em] text-white/35">
             Document
           </span>
         </div>
 
         {/* LINE */}
 
-        <div className="w-8 sm:w-14 h-px bg-gradient-to-r from-violet-500/20 to-cyan-400/30 relative">
+        <div className="w-10 sm:w-16 h-px bg-gradient-to-r from-violet-500/20 to-cyan-400/30 relative">
           <motion.div
             animate={{
-              x: [0, 45, 0],
+              x: [0, 50, 0],
               opacity: [0, 1, 0],
             }}
             transition={{
@@ -194,10 +195,10 @@ function IntelligencePipeline() {
             }}
             className="
               absolute
-              -top-[2px]
+              -top-[3px]
               left-0
-              w-1
-              h-1
+              w-1.5
+              h-1.5
               rounded-full
               bg-cyan-300
             "
@@ -206,11 +207,11 @@ function IntelligencePipeline() {
 
         {/* RAG */}
 
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2.5">
           <div
             className="
-              w-10
-              h-10
+              w-11
+              h-11
               rounded-xl
               bg-cyan-500/[0.06]
               border
@@ -220,20 +221,20 @@ function IntelligencePipeline() {
               justify-center
             "
           >
-            <FiZap className="w-4 h-4 text-cyan-400" />
+            <FiZap className="w-5 h-5 text-cyan-400" />
           </div>
 
-          <span className="text-[7px] uppercase tracking-[0.18em] text-white/20">
+          <span className="text-xs uppercase tracking-[0.16em] text-white/35">
             Retrieval
           </span>
         </div>
 
         {/* LINE */}
 
-        <div className="w-8 sm:w-14 h-px bg-gradient-to-r from-cyan-400/30 to-violet-400/30 relative">
+        <div className="w-10 sm:w-16 h-px bg-gradient-to-r from-cyan-400/30 to-violet-400/30 relative">
           <motion.div
             animate={{
-              x: [0, 45, 0],
+              x: [0, 50, 0],
               opacity: [0, 1, 0],
             }}
             transition={{
@@ -244,10 +245,10 @@ function IntelligencePipeline() {
             }}
             className="
               absolute
-              -top-[2px]
+              -top-[3px]
               left-0
-              w-1
-              h-1
+              w-1.5
+              h-1.5
               rounded-full
               bg-violet-300
             "
@@ -256,11 +257,11 @@ function IntelligencePipeline() {
 
         {/* AI */}
 
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2.5">
           <div
             className="
-              w-10
-              h-10
+              w-11
+              h-11
               rounded-xl
               bg-violet-500/[0.07]
               border
@@ -270,10 +271,10 @@ function IntelligencePipeline() {
               justify-center
             "
           >
-            <FiMessageCircle className="w-4 h-4 text-violet-400" />
+            <FiMessageCircle className="w-5 h-5 text-violet-400" />
           </div>
 
-          <span className="text-[7px] uppercase tracking-[0.18em] text-white/20">
+          <span className="text-xs uppercase tracking-[0.16em] text-white/35">
             AI Answer
           </span>
         </div>
@@ -611,18 +612,18 @@ function StudyMate() {
               className="
                 inline-flex
                 items-center
-                gap-2
-                px-3.5
-                py-1.5
+                gap-2.5
+                px-4
+                py-2
                 rounded-full
                 border
                 border-violet-500/15
                 bg-violet-500/[0.04]
               "
             >
-              <FiBookOpen className="w-3 h-3 text-violet-400" />
+              <FiBookOpen className="w-4 h-4 text-violet-400" />
 
-              <span className="text-[8px] uppercase tracking-[0.25em] text-violet-400/70">
+              <span className="text-xs uppercase tracking-[0.2em] text-violet-400/80">
                 AI document intelligence
               </span>
             </div>
@@ -632,10 +633,10 @@ function StudyMate() {
           <motion.h1
             variants={fadeUp}
             className="
-              mt-7
+              mt-8
               text-4xl
               sm:text-5xl
-              lg:text-[4.4rem]
+              lg:text-[4.6rem]
               font-semibold
               tracking-[-0.065em]
               leading-[0.98]
@@ -665,12 +666,12 @@ function StudyMate() {
             variants={fadeUp}
             className="
               mx-auto
-              mt-6
-              max-w-xl
-              text-sm
-              sm:text-[15px]
-              leading-7
-              text-white/35
+              mt-7
+              max-w-2xl
+              text-base
+              sm:text-lg
+              leading-8
+              text-white/40
             "
           >
             Upload your study material and turn static
@@ -702,7 +703,7 @@ function StudyMate() {
             relative
             max-w-4xl
             mx-auto
-            mt-12
+            mt-14
           "
         >
 
@@ -754,7 +755,7 @@ function StudyMate() {
                 DROP AREA
             ================================================== */}
 
-            <div className="p-5 sm:p-8">
+            <div className="p-6 sm:p-9">
 
               <motion.div
                 animate={{
@@ -767,7 +768,7 @@ function StudyMate() {
                 onDrop={handleDrop}
                 className={`
                   relative
-                  min-h-[330px]
+                  min-h-[360px]
                   rounded-[24px]
                   border
                   border-dashed
@@ -847,9 +848,9 @@ function StudyMate() {
                     }}
                     className="
                       mx-auto
-                      w-16
-                      h-16
-                      rounded-[20px]
+                      w-18
+                      h-18
+                      rounded-[22px]
                       bg-violet-500/[0.08]
                       border
                       border-violet-500/15
@@ -860,19 +861,19 @@ function StudyMate() {
                     "
                   >
                     {isDragging ? (
-                      <FiUploadCloud className="w-7 h-7 text-violet-300" />
+                      <FiUploadCloud className="w-8 h-8 text-violet-300" />
                     ) : (
-                      <FiCloud className="w-7 h-7 text-violet-400" />
+                      <FiCloud className="w-8 h-8 text-violet-400" />
                     )}
                   </motion.div>
 
-                  <p className="text-lg font-semibold text-white mt-6">
+                  <p className="text-xl font-semibold text-white mt-7">
                     {isDragging
                       ? "Drop your document here"
                       : "Bring your knowledge into StudySync"}
                   </p>
 
-                  <p className="text-xs text-white/25 mt-2 max-w-sm mx-auto leading-5">
+                  <p className="text-[15px] text-white/40 mt-3 max-w-md mx-auto leading-7">
                     Drop a file here or choose one from
                     your device. StudySync will prepare
                     it for AI-powered questions.
@@ -894,10 +895,10 @@ function StudyMate() {
                     className="
                       inline-flex
                       items-center
-                      gap-2
-                      mt-7
-                      px-5
-                      py-3
+                      gap-2.5
+                      mt-8
+                      px-6
+                      py-3.5
                       rounded-xl
                       bg-gradient-to-r
                       from-violet-600
@@ -905,7 +906,7 @@ function StudyMate() {
                       hover:from-violet-500
                       hover:to-violet-400
                       text-white
-                      text-xs
+                      text-sm
                       font-semibold
                       cursor-pointer
                       shadow-[0_12px_40px_rgba(139,92,246,0.18)]
@@ -913,17 +914,17 @@ function StudyMate() {
                       transition-all
                     "
                   >
-                    <FiFolder className="w-3.5 h-3.5" />
+                    <FiFolder className="w-4 h-4" />
 
                     Choose document
 
-                    <FiArrowRight className="w-3.5 h-3.5" />
+                    <FiArrowRight className="w-4 h-4" />
                   </label>
 
-                  <p className="text-[8px] text-white/15 mt-4">
+                  <p className="text-xs text-white/30 mt-5">
                     PDF · PPT · PPTX · TXT
 
-                    <span className="mx-2">
+                    <span className="mx-2.5">
                       •
                     </span>
 
@@ -954,16 +955,16 @@ function StudyMate() {
                       y: -10,
                     }}
                     className="
-                      mt-4
+                      mt-5
                       rounded-2xl
                       border
                       border-violet-500/15
                       bg-violet-500/[0.035]
-                      p-4
+                      p-5
                     "
                   >
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
 
                       <DocumentIcon
                         fileName={selectedFile.name}
@@ -971,17 +972,17 @@ function StudyMate() {
 
                       <div className="min-w-0 flex-1">
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
 
-                          <p className="truncate text-xs font-semibold text-white">
+                          <p className="truncate text-sm font-semibold text-white">
                             {selectedFile.name}
                           </p>
 
-                          <FiCheck className="flex-shrink-0 w-3 h-3 text-emerald-400" />
+                          <FiCheck className="flex-shrink-0 w-4 h-4 text-emerald-400" />
 
                         </div>
 
-                        <p className="text-[9px] text-white/25 mt-1">
+                        <p className="text-xs text-white/40 mt-1.5">
 
                           {(
                             selectedFile.size /
@@ -989,7 +990,7 @@ function StudyMate() {
                           ).toFixed(2)}{" "}
                           MB
 
-                          <span className="mx-1.5">
+                          <span className="mx-2">
                             •
                           </span>
 
@@ -1004,8 +1005,8 @@ function StudyMate() {
                         onClick={removeFile}
                         disabled={uploading}
                         className="
-                          w-8
-                          h-8
+                          w-9
+                          h-9
                           rounded-lg
                           border
                           border-white/[0.06]
@@ -1013,13 +1014,13 @@ function StudyMate() {
                           flex
                           items-center
                           justify-center
-                          text-white/20
+                          text-white/30
                           hover:text-white
                           hover:bg-white/[0.05]
                           transition-all
                         "
                       >
-                        <FiX className="w-3.5 h-3.5" />
+                        <FiX className="w-4 h-4" />
                       </button>
 
                     </div>
@@ -1032,9 +1033,9 @@ function StudyMate() {
                       disabled={uploading}
                       className="
                         group
-                        mt-4
+                        mt-5
                         w-full
-                        h-11
+                        h-12
                         rounded-xl
                         bg-gradient-to-r
                         from-violet-600
@@ -1043,12 +1044,12 @@ function StudyMate() {
                         hover:to-indigo-400
                         disabled:opacity-50
                         disabled:cursor-not-allowed
-                        text-xs
+                        text-sm
                         font-semibold
                         flex
                         items-center
                         justify-center
-                        gap-2
+                        gap-2.5
                         transition-all
                         shadow-[0_10px_35px_rgba(139,92,246,0.12)]
                       "
@@ -1066,8 +1067,8 @@ function StudyMate() {
                               ease: "linear",
                             }}
                             className="
-                              w-3.5
-                              h-3.5
+                              w-4
+                              h-4
                               rounded-full
                               border-2
                               border-white/30
@@ -1079,14 +1080,14 @@ function StudyMate() {
                         </>
                       ) : (
                         <>
-                          <FiUploadCloud className="w-3.5 h-3.5" />
+                          <FiUploadCloud className="w-4 h-4" />
 
                           Upload to StudySync
 
                           <FiArrowUpRight
                             className="
-                              w-3.5
-                              h-3.5
+                              w-4
+                              h-4
                               group-hover:translate-x-0.5
                               group-hover:-translate-y-0.5
                               transition-transform
@@ -1120,7 +1121,7 @@ function StudyMate() {
                       opacity: 0,
                     }}
                     className="
-                      mt-4
+                      mt-5
                       flex
                       items-start
                       gap-3
@@ -1128,13 +1129,13 @@ function StudyMate() {
                       border
                       border-white/[0.06]
                       bg-white/[0.025]
-                      px-4
-                      py-3
+                      px-5
+                      py-4
                     "
                   >
-                    <FiInfo className="w-3.5 h-3.5 text-violet-400 mt-0.5 flex-shrink-0" />
+                    <FiInfo className="w-4 h-4 text-violet-400 mt-0.5 flex-shrink-0" />
 
-                    <p className="text-[10px] text-white/40 leading-5">
+                    <p className="text-sm text-white/50 leading-6">
                       {uploadMessage}
                     </p>
                   </motion.div>
@@ -1151,9 +1152,9 @@ function StudyMate() {
               className="
                 border-t
                 border-white/[0.05]
-                px-5
-                sm:px-8
-                py-6
+                px-6
+                sm:px-9
+                py-7
               "
             >
 
@@ -1161,17 +1162,17 @@ function StudyMate() {
 
                 <div>
 
-                  <p className="text-[8px] uppercase tracking-[0.22em] text-violet-400/50">
+                  <p className="text-xs uppercase tracking-[0.2em] text-violet-400/60">
                     How StudySync thinks
                   </p>
 
-                  <p className="text-xs text-white/35 mt-1">
+                  <p className="text-sm text-white/40 mt-1.5">
                     Your documents become searchable knowledge.
                   </p>
 
                 </div>
 
-                <FiZap className="w-4 h-4 text-violet-400/40" />
+                <FiZap className="w-5 h-5 text-violet-400/50" />
 
               </div>
 
@@ -1208,7 +1209,7 @@ function StudyMate() {
             gap-px
             max-w-4xl
             mx-auto
-            mt-5
+            mt-6
             overflow-hidden
             rounded-2xl
             border
@@ -1219,14 +1220,14 @@ function StudyMate() {
 
           {/* FEATURE 1 */}
 
-          <div className="bg-[#08080b] p-5">
+          <div className="bg-[#08080b] p-5 sm:p-6">
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
 
               <div
                 className="
-                  w-8
-                  h-8
+                  w-10
+                  h-10
                   rounded-lg
                   bg-violet-500/[0.07]
                   border
@@ -1236,16 +1237,16 @@ function StudyMate() {
                   justify-center
                 "
               >
-                <FiFileText className="w-3.5 h-3.5 text-violet-400" />
+                <FiFileText className="w-4.5 h-4.5 text-violet-400" />
               </div>
 
               <div>
 
-                <p className="text-[10px] font-semibold text-white/70">
+                <p className="text-sm font-semibold text-white/80">
                   Your material
                 </p>
 
-                <p className="text-[8px] text-white/20 mt-0.5">
+                <p className="text-xs text-white/35 mt-1">
                   PDFs, notes & slides
                 </p>
 
@@ -1257,14 +1258,14 @@ function StudyMate() {
 
           {/* FEATURE 2 */}
 
-          <div className="bg-[#08080b] p-5">
+          <div className="bg-[#08080b] p-5 sm:p-6">
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
 
               <div
                 className="
-                  w-8
-                  h-8
+                  w-10
+                  h-10
                   rounded-lg
                   bg-cyan-500/[0.07]
                   border
@@ -1274,16 +1275,16 @@ function StudyMate() {
                   justify-center
                 "
               >
-                <FiZap className="w-3.5 h-3.5 text-cyan-400" />
+                <FiZap className="w-4.5 h-4.5 text-cyan-400" />
               </div>
 
               <div>
 
-                <p className="text-[10px] font-semibold text-white/70">
+                <p className="text-sm font-semibold text-white/80">
                   Grounded retrieval
                 </p>
 
-                <p className="text-[8px] text-white/20 mt-0.5">
+                <p className="text-xs text-white/35 mt-1">
                   Find relevant context
                 </p>
 
@@ -1295,14 +1296,14 @@ function StudyMate() {
 
           {/* FEATURE 3 */}
 
-          <div className="bg-[#08080b] p-5">
+          <div className="bg-[#08080b] p-5 sm:p-6">
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
 
               <div
                 className="
-                  w-8
-                  h-8
+                  w-10
+                  h-10
                   rounded-lg
                   bg-emerald-500/[0.07]
                   border
@@ -1312,16 +1313,16 @@ function StudyMate() {
                   justify-center
                 "
               >
-                <FiMessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                <FiMessageCircle className="w-4.5 h-4.5 text-emerald-400" />
               </div>
 
               <div>
 
-                <p className="text-[10px] font-semibold text-white/70">
+                <p className="text-sm font-semibold text-white/80">
                   AI answers
                 </p>
 
-                <p className="text-[8px] text-white/20 mt-0.5">
+                <p className="text-xs text-white/35 mt-1">
                   Ask questions naturally
                 </p>
 
@@ -1337,11 +1338,11 @@ function StudyMate() {
             FOOTER NOTE
         ==================================================== */}
 
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-2.5 mt-10">
 
-          <FiMousePointer className="w-3 h-3 text-white/10" />
+          <FiMousePointer className="w-4 h-4 text-white/20" />
 
-          <p className="text-[8px] text-white/15 tracking-wide">
+          <p className="text-sm text-white/30 tracking-wide">
             Upload your material to unlock document-grounded learning
           </p>
 

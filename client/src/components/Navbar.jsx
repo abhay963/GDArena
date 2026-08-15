@@ -9,7 +9,6 @@ import {
   FiCheck,
   FiLogOut,
   FiMessageCircle,
-
   FiX,
   FiZap,
 } from "react-icons/fi";
@@ -208,7 +207,7 @@ export default function Navbar({
             px-4
             sm:px-6
             lg:px-8
-            h-[68px]
+            h-[72px]
             flex
             items-center
             justify-between
@@ -235,8 +234,8 @@ export default function Navbar({
             <div
               className={`
                 relative
-                w-9
-                h-9
+                w-10
+                h-10
                 rounded-xl
                 flex
                 items-center
@@ -253,8 +252,8 @@ export default function Navbar({
             >
               <ProductIcon
                 className={`
-                  w-4
-                  h-4
+                  w-5
+                  h-5
                   transition-transform
                   duration-300
                   group-hover:scale-110
@@ -291,13 +290,13 @@ export default function Navbar({
 
             <div className="text-left">
               <div className="flex items-center gap-1">
-                <span className="text-[15px] font-semibold tracking-[-0.02em] text-white">
+                <span className="text-[17px] font-semibold tracking-[-0.02em] text-white">
                   {isStudySync ? "Study" : "GD"}
                 </span>
 
                 <span
                   className={`
-                    text-[15px]
+                    text-[17px]
                     font-semibold
                     tracking-[-0.02em]
                     ${
@@ -313,7 +312,7 @@ export default function Navbar({
                 </span>
               </div>
 
-              <p className="hidden sm:block text-[7px] uppercase tracking-[0.2em] text-white/20 mt-0.5">
+              <p className="hidden sm:block text-[11px] uppercase tracking-[0.18em] text-white/35 mt-0.5">
                 {product.description}
               </p>
             </div>
@@ -331,7 +330,7 @@ export default function Navbar({
               left-1/2
               -translate-x-1/2
               items-center
-              p-1
+              p-1.5
               rounded-2xl
               border
               border-white/[0.06]
@@ -351,18 +350,18 @@ export default function Navbar({
                 relative
                 flex
                 items-center
-                gap-2
-                px-3.5
-                py-2
+                gap-2.5
+                px-4
+                py-2.5
                 rounded-xl
-                text-[11px]
+                text-sm
                 font-medium
                 transition-all
                 duration-300
                 ${
                   !isStudySync
                     ? "text-white"
-                    : "text-white/30 hover:text-white/60"
+                    : "text-white/40 hover:text-white/70"
                 }
               `}
             >
@@ -385,15 +384,15 @@ export default function Navbar({
                 />
               )}
 
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="relative z-10 flex items-center gap-2.5">
                 <FiMessageCircle
                   className={`
-                    w-3.5
-                    h-3.5
+                    w-4
+                    h-4
                     ${
                       !isStudySync
                         ? "text-red-400"
-                        : "text-white/25"
+                        : "text-white/30"
                     }
                   `}
                 />
@@ -416,18 +415,18 @@ export default function Navbar({
                 relative
                 flex
                 items-center
-                gap-2
-                px-3.5
-                py-2
+                gap-2.5
+                px-4
+                py-2.5
                 rounded-xl
-                text-[11px]
+                text-sm
                 font-medium
                 transition-all
                 duration-300
                 ${
                   isStudySync
                     ? "text-white"
-                    : "text-white/30 hover:text-white/60"
+                    : "text-white/40 hover:text-white/70"
                 }
               `}
             >
@@ -450,15 +449,15 @@ export default function Navbar({
                 />
               )}
 
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="relative z-10 flex items-center gap-2.5">
                 <FiBookOpen
                   className={`
-                    w-3.5
-                    h-3.5
+                    w-4
+                    h-4
                     ${
                       isStudySync
                         ? "text-violet-400"
-                        : "text-white/25"
+                        : "text-white/30"
                     }
                   `}
                 />
@@ -472,7 +471,7 @@ export default function Navbar({
               RIGHT
           ================================================== */}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {/* AI STATUS */}
 
             <div
@@ -480,22 +479,22 @@ export default function Navbar({
                 hidden
                 lg:flex
                 items-center
-                gap-2
-                px-3
-                py-2
+                gap-2.5
+                px-3.5
+                py-2.5
                 rounded-xl
                 border
                 border-emerald-500/10
                 bg-emerald-500/[0.035]
               "
             >
-              <span className="relative flex w-1.5 h-1.5">
+              <span className="relative flex w-2 h-2">
                 <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-50" />
 
-                <span className="relative w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="relative w-2 h-2 rounded-full bg-emerald-400" />
               </span>
 
-              <span className="text-[8px] uppercase tracking-[0.18em] text-emerald-400/60">
+              <span className="text-xs uppercase tracking-[0.16em] text-emerald-400/70">
                 AI Online
               </span>
             </div>
@@ -513,9 +512,9 @@ export default function Navbar({
                 relative
                 flex
                 items-center
-                gap-1.5
-                h-9
-                px-3
+                gap-2
+                h-10
+                px-3.5
                 rounded-xl
                 border
                 border-orange-500/10
@@ -527,15 +526,15 @@ export default function Navbar({
                 active:scale-95
               "
             >
-              <span className="text-sm transition-transform duration-200 group-hover:scale-110">
+              <span className="text-base transition-transform duration-200 group-hover:scale-110">
                 🔥
               </span>
 
-              <span className="text-[11px] font-semibold tabular-nums text-orange-300">
+              <span className="text-sm font-semibold tabular-nums text-orange-300">
                 {streak || 0}
               </span>
 
-              <span className="hidden sm:inline text-[9px] text-orange-300/40 uppercase tracking-wider">
+              <span className="hidden sm:inline text-xs text-orange-300/50 uppercase tracking-wider">
                 days
               </span>
             </button>
@@ -551,25 +550,25 @@ export default function Navbar({
                 hidden
                 sm:flex
                 items-center
-                gap-2
-                h-9
-                px-3
+                gap-2.5
+                h-10
+                px-3.5
                 rounded-xl
                 border
                 border-white/[0.07]
                 bg-white/[0.025]
                 hover:bg-white/[0.05]
                 hover:border-indigo-400/20
-                text-white/45
+                text-white/50
                 hover:text-white
                 transition-all
                 duration-200
                 active:scale-95
               "
             >
-              <FiBarChart2 className="w-3.5 h-3.5 text-indigo-400" />
+              <FiBarChart2 className="w-4 h-4 text-indigo-400" />
 
-              <span className="text-[10px] font-medium">
+              <span className="text-sm font-medium">
                 Analytics
               </span>
             </button>
@@ -594,8 +593,8 @@ export default function Navbar({
                   flex
                   items-center
                   gap-2
-                  p-1
-                  pr-2
+                  p-1.5
+                  pr-2.5
                   rounded-xl
                   border
                   bg-white/[0.025]
@@ -616,8 +615,8 @@ export default function Navbar({
                     src={avatarUrl}
                     alt="Profile avatar"
                     className="
-                      w-8
-                      h-8
+                      w-9
+                      h-9
                       rounded-lg
                       object-cover
                       bg-black
@@ -641,8 +640,8 @@ export default function Navbar({
                         flex
                         items-center
                         justify-center
-                        w-3.5
-                        h-3.5
+                        w-4
+                        h-4
                         rounded-full
                         bg-emerald-500
                         border-2
@@ -650,7 +649,7 @@ export default function Navbar({
                       "
                       title="Verified account"
                     >
-                      <FiCheck className="w-2 h-2 text-white stroke-[3]" />
+                      <FiCheck className="w-2.5 h-2.5 text-white stroke-[3]" />
                     </span>
                   )}
                 </div>
@@ -659,9 +658,9 @@ export default function Navbar({
                   className={`
                     hidden
                     sm:block
-                    w-3
-                    h-3
-                    text-white/25
+                    w-3.5
+                    h-3.5
+                    text-white/35
                     transition-transform
                     duration-200
                     ${
@@ -703,7 +702,7 @@ export default function Navbar({
                       absolute
                       right-0
                       mt-2.5
-                      w-[270px]
+                      w-[280px]
                       rounded-2xl
                       border
                       border-white/[0.08]
@@ -738,13 +737,13 @@ export default function Navbar({
                     {/* Profile header */}
 
                     <div className="p-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3.5">
                         <img
                           src={avatarUrl}
                           alt=""
                           className="
-                            w-10
-                            h-10
+                            w-11
+                            h-11
                             rounded-xl
                             object-cover
                             ring-1
@@ -753,20 +752,20 @@ export default function Navbar({
                         />
 
                         <div className="min-w-0 flex-1">
-                          <p className="text-[8px] uppercase tracking-[0.18em] text-white/25">
+                          <p className="text-[11px] uppercase tracking-[0.16em] text-white/35">
                             Signed in as
                           </p>
 
-                          <p className="mt-1 text-xs text-white/80 truncate font-medium">
+                          <p className="mt-1.5 text-sm text-white/85 truncate font-medium">
                             {user?.email ||
                               "User Account"}
                           </p>
 
                           {isVerified && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400" />
 
-                              <span className="text-[9px] text-emerald-400/70">
+                              <span className="text-xs text-emerald-400/80">
                                 Verified account
                               </span>
                             </div>
@@ -786,7 +785,7 @@ export default function Navbar({
                           items-center
                           gap-3
                           px-3
-                          py-2.5
+                          py-3
                           rounded-xl
                           ${
                             isStudySync
@@ -797,8 +796,8 @@ export default function Navbar({
                       >
                         <div
                           className={`
-                            w-8
-                            h-8
+                            w-9
+                            h-9
                             rounded-lg
                             flex
                             items-center
@@ -810,15 +809,15 @@ export default function Navbar({
                             }
                           `}
                         >
-                          <ProductIcon className="w-4 h-4" />
+                          <ProductIcon className="w-4.5 h-4.5" />
                         </div>
 
                         <div>
-                          <p className="text-[10px] font-semibold text-white/70">
+                          <p className="text-sm font-semibold text-white/80">
                             {product.name}
                           </p>
 
-                          <p className="text-[8px] text-white/25 mt-0.5">
+                          <p className="text-xs text-white/35 mt-0.5">
                             Current workspace
                           </p>
                         </div>
@@ -826,8 +825,8 @@ export default function Navbar({
                         <div className="ml-auto">
                           <FiZap
                             className={`
-                              w-3.5
-                              h-3.5
+                              w-4
+                              h-4
                               ${
                                 isStudySync
                                   ? "text-violet-400/50"
@@ -854,18 +853,18 @@ export default function Navbar({
                           items-center
                           gap-3
                           px-3
-                          py-2.5
+                          py-3
                           rounded-xl
                           text-left
-                          text-white/50
+                          text-white/55
                           hover:text-white
                           hover:bg-white/[0.04]
                           transition-all
                         "
                       >
-                        <FiActivity className="w-4 h-4 text-indigo-400" />
+                        <FiActivity className="w-4.5 h-4.5 text-indigo-400" />
 
-                        <span className="text-[11px] font-medium">
+                        <span className="text-sm font-medium">
                           Performance Analytics
                         </span>
                       </button>
@@ -885,19 +884,19 @@ export default function Navbar({
                           items-center
                           gap-3
                           px-3
-                          py-2.5
+                          py-3
                           rounded-xl
                           text-left
-                          text-red-400/70
+                          text-red-400/80
                           hover:text-red-300
                           hover:bg-red-500/[0.06]
                           transition-all
                           active:scale-[0.98]
                         "
                       >
-                        <FiLogOut className="w-4 h-4" />
+                        <FiLogOut className="w-4.5 h-4.5" />
 
-                        <span className="text-[11px] font-medium">
+                        <span className="text-sm font-medium">
                           Sign out
                         </span>
                       </button>
@@ -914,7 +913,7 @@ export default function Navbar({
         ====================================================== */}
 
         <div className="md:hidden border-t border-white/[0.04]">
-          <div className="flex items-center justify-center gap-1 px-4 py-2">
+          <div className="flex items-center justify-center gap-1.5 px-4 py-2.5">
             {/* GD */}
 
             <button
@@ -927,23 +926,23 @@ export default function Navbar({
               className={`
                 flex
                 flex-1
-                max-w-[150px]
+                max-w-[160px]
                 items-center
                 justify-center
                 gap-2
-                py-1.5
+                py-2
                 rounded-lg
-                text-[9px]
+                text-xs
                 font-medium
                 transition-all
                 ${
                   !isStudySync
                     ? "bg-red-500/[0.08] text-red-300 border border-red-500/10"
-                    : "text-white/25"
+                    : "text-white/35"
                 }
               `}
             >
-              <FiMessageCircle className="w-3 h-3" />
+              <FiMessageCircle className="w-3.5 h-3.5" />
               GD Arena
             </button>
 
@@ -960,23 +959,23 @@ export default function Navbar({
               className={`
                 flex
                 flex-1
-                max-w-[150px]
+                max-w-[160px]
                 items-center
                 justify-center
                 gap-2
-                py-1.5
+                py-2
                 rounded-lg
-                text-[9px]
+                text-xs
                 font-medium
                 transition-all
                 ${
                   isStudySync
                     ? "bg-violet-500/[0.08] text-violet-300 border border-violet-500/10"
-                    : "text-white/25"
+                    : "text-white/35"
                 }
               `}
             >
-              <FiBookOpen className="w-3 h-3" />
+              <FiBookOpen className="w-3.5 h-3.5" />
               StudySync
             </button>
           </div>

@@ -27,7 +27,7 @@ import {
   FiPlay,
   FiRadio,
   FiShield,
- FiAirplay,
+  FiAirplay,
   FiTarget,
   FiTrendingUp,
   FiUsers,
@@ -243,7 +243,7 @@ function ProductCard({
               `}
             />
 
-            <span className="text-[9px] uppercase tracking-[0.2em] text-white/25">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-white/35">
               {type}
             </span>
 
@@ -257,7 +257,7 @@ function ProductCard({
 
           <div className="flex items-center justify-between">
 
-            <h3 className="text-[15px] font-semibold text-white">
+            <h3 className="text-[17px] font-semibold text-white">
               {title}
             </h3>
 
@@ -273,7 +273,7 @@ function ProductCard({
 
           </div>
 
-          <p className="text-xs text-white/35 mt-1.5 leading-relaxed">
+          <p className="text-sm text-white/40 mt-2 leading-relaxed">
             {description}
           </p>
 
@@ -321,8 +321,8 @@ function StreakBadge({
     >
       <div
         className="
-          w-8
-          h-8
+          w-9
+          h-9
           rounded-xl
           bg-orange-500/10
           border
@@ -331,6 +331,7 @@ function StreakBadge({
           items-center
           justify-center
           text-orange-400
+          text-lg
         "
       >
         🔥
@@ -338,11 +339,11 @@ function StreakBadge({
 
       <div className="text-left">
 
-        <p className="text-sm font-bold text-white">
+        <p className="text-base font-bold text-white">
           {streak}
         </p>
 
-        <p className="text-[8px] uppercase tracking-[0.16em] text-white/25">
+        <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">
           Day streak
         </p>
 
@@ -350,8 +351,8 @@ function StreakBadge({
 
       <FiChevronRight
         className="
-          w-3.5
-          h-3.5
+          w-4
+          h-4
           text-white/20
           group-hover:text-orange-400
           transition-colors
@@ -967,8 +968,8 @@ export default function Hero() {
 
           <div
             className="
-              w-12
-              h-12
+              w-14
+              h-14
               rounded-2xl
               border
               border-red-500/20
@@ -978,10 +979,10 @@ export default function Hero() {
               justify-center
             "
           >
-            <FaSpinner className="animate-spin text-red-400" />
+            <FaSpinner className="animate-spin text-red-400 text-xl" />
           </div>
 
-          <p className="mt-5 text-[9px] uppercase tracking-[0.3em] text-white/25">
+          <p className="mt-5 text-sm uppercase tracking-[0.25em] text-white/35">
             Preparing your workspace
           </p>
 
@@ -1128,7 +1129,7 @@ export default function Hero() {
                 relative
                 overflow-hidden
                 w-full
-                max-w-[380px]
+                max-w-[400px]
                 rounded-[28px]
                 border
                 border-orange-500/20
@@ -1174,19 +1175,19 @@ export default function Hero() {
                   🔥
                 </div>
 
-                <p className="text-[9px] uppercase tracking-[0.3em] text-orange-400/70 mt-7">
+                <p className="text-sm uppercase tracking-[0.25em] text-orange-400/80 mt-7">
                   Consistency unlocked
                 </p>
 
-                <h2 className="text-7xl font-black tracking-[-0.07em] text-white mt-1">
+                <h2 className="text-7xl font-black tracking-[-0.07em] text-white mt-2">
                   {latestStreak}
                 </h2>
 
-                <p className="text-xs text-white/30 uppercase tracking-[0.25em]">
+                <p className="text-sm text-white/40 uppercase tracking-[0.2em] mt-1">
                   Day streak
                 </p>
 
-                <p className="text-sm text-white/45 leading-6 mt-5">
+                <p className="text-[15px] text-white/50 leading-7 mt-5">
                   {latestStreak === 1 &&
                     "Nice start. Consistency begins today."}
 
@@ -1202,7 +1203,7 @@ export default function Hero() {
                     "Excellent discipline. Don't break the chain."}
                 </p>
 
-                <div className="mt-7 h-1 rounded-full bg-white/[0.05] overflow-hidden">
+                <div className="mt-7 h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
 
                   <motion.div
                     initial={{
@@ -1347,8 +1348,8 @@ export default function Hero() {
                   absolute
                   top-5
                   right-5
-                  w-9
-                  h-9
+                  w-10
+                  h-10
                   rounded-xl
                   border
                   border-white/[0.07]
@@ -1356,21 +1357,21 @@ export default function Hero() {
                   flex
                   items-center
                   justify-center
-                  text-white/30
+                  text-white/40
                   hover:text-white
                   hover:bg-white/[0.06]
                   transition-all
                 "
               >
-                <FiX className="w-4 h-4" />
+                <FiX className="w-5 h-5" />
               </button>
 
               <div className="mb-8">
 
                 <div
                   className="
-                    w-11
-                    h-11
+                    w-12
+                    h-12
                     rounded-[14px]
                     bg-red-500/10
                     border
@@ -1382,18 +1383,18 @@ export default function Hero() {
                     mb-5
                   "
                 >
-                  <FiHelpCircle className="w-5 h-5" />
+                  <FiHelpCircle className="w-6 h-6" />
                 </div>
 
-                <p className="text-[9px] uppercase tracking-[0.25em] text-red-400/70">
+                <p className="text-sm uppercase tracking-[0.2em] text-red-400/80">
                   Arena guide
                 </p>
 
-                <h2 className="text-2xl font-semibold tracking-tight text-white mt-2">
+                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mt-2">
                   How the Arena works
                 </h2>
 
-                <p className="text-xs text-white/30 mt-2 leading-5">
+                <p className="text-[15px] text-white/40 mt-3 leading-6">
                   A natural voice-driven discussion
                   environment designed to simulate
                   real group discussions.
@@ -1401,7 +1402,7 @@ export default function Hero() {
 
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
 
                 {[
                   [
@@ -1450,8 +1451,8 @@ export default function Hero() {
                       <div
                         className="
                           flex-shrink-0
-                          w-9
-                          h-9
+                          w-10
+                          h-10
                           rounded-xl
                           bg-red-500/[0.08]
                           border
@@ -1461,18 +1462,18 @@ export default function Hero() {
                           justify-center
                         "
                       >
-                        <span className="text-[10px] font-bold text-red-400">
+                        <span className="text-sm font-bold text-red-400">
                           {num}
                         </span>
                       </div>
 
                       <div>
 
-                        <p className="text-sm font-semibold text-white">
+                        <p className="text-[15px] font-semibold text-white">
                           {title}
                         </p>
 
-                        <p className="text-[11px] text-white/30 leading-5 mt-1">
+                        <p className="text-sm text-white/40 leading-6 mt-1">
                           {desc}
                         </p>
 
@@ -1563,8 +1564,8 @@ export default function Hero() {
                       inline-flex
                       items-center
                       gap-2.5
-                      px-3.5
-                      py-1.5
+                      px-4
+                      py-2
                       rounded-full
                       border
                       border-red-500/15
@@ -1577,8 +1578,8 @@ export default function Hero() {
                       className="
                         relative
                         flex
-                        w-1.5
-                        h-1.5
+                        w-2
+                        h-2
                       "
                     >
 
@@ -1593,11 +1594,11 @@ export default function Hero() {
                         "
                       />
 
-                      <span className="relative w-1.5 h-1.5 rounded-full bg-red-400" />
+                      <span className="relative w-2 h-2 rounded-full bg-red-400" />
 
                     </span>
 
-                    <span className="text-[9px] uppercase tracking-[0.24em] text-red-400/80 font-medium">
+                    <span className="text-xs uppercase tracking-[0.2em] text-red-400/90 font-medium">
                       AI communication workspace
                     </span>
 
@@ -1607,7 +1608,7 @@ export default function Hero() {
                     className="
                       text-4xl
                       sm:text-5xl
-                      lg:text-[4.3rem]
+                      lg:text-[4.5rem]
                       leading-[0.95]
                       tracking-[-0.06em]
                       font-semibold
@@ -1635,7 +1636,7 @@ export default function Hero() {
 
                   </h1>
 
-                  <p className="mt-6 text-sm sm:text-[15px] text-white/35 leading-7 max-w-xl">
+                  <p className="mt-6 text-base sm:text-lg text-white/40 leading-8 max-w-xl">
                     Build communication confidence through
                     real-time discussions, AI feedback,
                     and deliberate practice.
@@ -1673,7 +1674,7 @@ export default function Hero() {
                     group
                     relative
                     overflow-hidden
-                    min-h-[390px]
+                    min-h-[420px]
                     rounded-[30px]
                     border
                     border-red-500/15
@@ -1724,8 +1725,8 @@ export default function Hero() {
 
                       <div
                         className="
-                          w-12
-                          h-12
+                          w-13
+                          h-13
                           rounded-2xl
                           bg-red-500/10
                           border
@@ -1736,7 +1737,7 @@ export default function Hero() {
                           text-red-400
                         "
                       >
-                        <FiMic className="w-5 h-5" />
+                        <FiMic className="w-6 h-6" />
                       </div>
 
                       <div
@@ -1744,8 +1745,8 @@ export default function Hero() {
                           flex
                           items-center
                           gap-2
-                          px-3
-                          py-1.5
+                          px-3.5
+                          py-2
                           rounded-full
                           bg-emerald-500/[0.05]
                           border
@@ -1753,9 +1754,9 @@ export default function Hero() {
                         "
                       >
 
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
 
-                        <span className="text-[8px] uppercase tracking-[0.18em] text-emerald-400/70">
+                        <span className="text-xs uppercase tracking-[0.16em] text-emerald-400/80">
                           Live
                         </span>
 
@@ -1765,7 +1766,7 @@ export default function Hero() {
 
                     <div className="mt-auto max-w-xl">
 
-                      <p className="text-[9px] uppercase tracking-[0.25em] text-red-400/60 font-medium">
+                      <p className="text-sm uppercase tracking-[0.2em] text-red-400/70 font-medium">
                         GD Arena
                       </p>
 
@@ -1773,14 +1774,14 @@ export default function Hero() {
                         Practice under pressure.
                       </h2>
 
-                      <p className="text-xs sm:text-sm text-white/30 leading-6 mt-4 max-w-lg">
+                      <p className="text-[15px] sm:text-base text-white/40 leading-7 mt-4 max-w-lg">
                         Enter a live AI-moderated group
                         discussion. Speak, interrupt,
                         challenge ideas, and receive
                         performance insights.
                       </p>
 
-                      <div className="flex flex-wrap gap-2 mt-6">
+                      <div className="flex flex-wrap gap-2.5 mt-6">
 
                         {[
                           "Real-time voice",
@@ -1790,14 +1791,14 @@ export default function Hero() {
                           <span
                             key={item}
                             className="
-                              px-3
-                              py-1.5
+                              px-3.5
+                              py-2
                               rounded-lg
                               bg-white/[0.03]
                               border
                               border-white/[0.06]
-                              text-[9px]
-                              text-white/30
+                              text-xs
+                              text-white/40
                             "
                           >
                             {item}
@@ -1806,8 +1807,7 @@ export default function Hero() {
 
                       </div>
 
-                      <div className="flex  
-                      items-center gap-3 mt-7">
+                      <div className="flex items-center gap-3 mt-8">
 
                         <motion.button
                           type="button"
@@ -1823,33 +1823,32 @@ export default function Hero() {
                           className="
                            cursor-pointer
                             group/button
-                            h-12
-                            
-                            px-6
+                            h-13
+                            px-7
                             rounded-xl
                             bg-gradient-to-r
                             from-red-600
                             to-orange-500
                             text-white
-                            text-xs
+                            text-sm
                             font-semibold
                             flex
                             items-center
-                            gap-2
+                            gap-2.5
                             shadow-[0_12px_40px_rgba(220,38,38,0.18)]
                             hover:shadow-[0_16px_50px_rgba(220,38,38,0.28)]
                             transition-shadow
                           "
                         >
 
-                          <FiPlay className=" w-3.5 h-3.5 fill-current" />
+                          <FiPlay className="w-4 h-4 fill-current" />
 
                           Start GD
 
                           <FiArrowRight
                             className="
-                              w-3.5
-                              h-3.5
+                              w-4
+                              h-4
                               group-hover/button:translate-x-0.5
                               transition-transform
                             "
@@ -1864,25 +1863,25 @@ export default function Hero() {
                           }
                           className="
                            cursor-pointer
-                            h-12
-                            px-5
+                            h-13
+                            px-6
                             rounded-xl
                             border
                             border-white/[0.08]
                             bg-white/[0.025]
                             hover:bg-white/[0.05]
-                            text-white/40
+                            text-white/50
                             hover:text-white
-                            text-xs
+                            text-sm
                             font-medium
                             flex
                             items-center
-                            gap-2
+                            gap-2.5
                             transition-all
                           "
                         >
 
-                          <FiHelpCircle className="  w-3.5 h-3.5" />
+                          <FiHelpCircle className="w-4 h-4" />
 
                           How it works
 
@@ -1922,7 +1921,7 @@ export default function Hero() {
                         <div
                           className="
                             flex-1
-                            h-9
+                            h-10
                             rounded-xl
                             border
                             border-violet-500/10
@@ -1934,26 +1933,26 @@ export default function Hero() {
                           "
                         >
 
-                          <FiFileText className="w-3.5 h-3.5 text-violet-400/70" />
+                          <FiFileText className="w-4 h-4 text-violet-400/70" />
 
                           <div className="flex-1">
 
-                            <div className="h-1 w-16 rounded-full bg-white/10" />
+                            <div className="h-1.5 w-20 rounded-full bg-white/10" />
 
-                            <div className="h-1 w-10 rounded-full bg-white/5 mt-1.5" />
+                            <div className="h-1.5 w-12 rounded-full bg-white/5 mt-1.5" />
 
                           </div>
 
                         </div>
 
-                        <span className="text-violet-400/40">
+                        <span className="text-violet-400/50 text-sm">
                           →
                         </span>
 
                         <div
                           className="
-                            w-9
-                            h-9
+                            w-10
+                            h-10
                             rounded-xl
                             bg-violet-500/10
                             border
@@ -1963,30 +1962,30 @@ export default function Hero() {
                             justify-center
                           "
                         >
-                          <FiMessageCircle className="w-4 h-4 text-violet-400" />
+                          <FiMessageCircle className="w-4.5 h-4.5 text-violet-400" />
                         </div>
 
                       </div>
 
-                      <div className="flex items-center gap-2 mt-3">
+                      <div className="flex items-center gap-2.5 mt-3.5">
 
-                        <span className="text-[8px] text-white/20">
+                        <span className="text-xs text-white/30">
                           PDF
                         </span>
 
-                        <span className="text-white/10">
+                        <span className="text-white/15">
                           →
                         </span>
 
-                        <span className="text-[8px] text-white/20">
+                        <span className="text-xs text-white/30">
                           RAG
                         </span>
 
-                        <span className="text-white/10">
+                        <span className="text-white/15">
                           →
                         </span>
 
-                        <span className="text-[8px] text-violet-400/60">
+                        <span className="text-xs text-violet-400/70">
                           AI ANSWERS
                         </span>
 
@@ -2013,11 +2012,11 @@ export default function Hero() {
 
                       <div>
 
-                        <p className="text-[8px] uppercase tracking-[0.2em] text-white/20">
+                        <p className="text-xs uppercase tracking-[0.18em] text-white/30">
                           Your progress
                         </p>
 
-                        <p className="text-lg font-semibold text-white mt-1">
+                        <p className="text-xl font-semibold text-white mt-1.5">
                           Keep building.
                         </p>
 
@@ -2025,8 +2024,8 @@ export default function Hero() {
 
                       <div
                         className="
-                          w-10
-                          h-10
+                          w-11
+                          h-11
                           rounded-xl
                           bg-emerald-500/10
                           border
@@ -2037,44 +2036,44 @@ export default function Hero() {
                           text-emerald-400
                         "
                       >
-                        <FiTrendingUp className="w-4 h-4" />
+                        <FiTrendingUp className="w-5 h-5" />
                       </div>
 
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 mt-5">
+                    <div className="grid grid-cols-3 gap-2.5 mt-5">
 
-                      <div className="rounded-xl bg-white/[0.025] p-3">
+                      <div className="rounded-xl bg-white/[0.025] p-3.5">
 
-                        <p className="text-sm font-bold text-white">
+                        <p className="text-lg font-bold text-white">
                           {streak}
                         </p>
 
-                        <p className="text-[8px] text-white/20 mt-1">
+                        <p className="text-xs text-white/30 mt-1">
                           Streak
                         </p>
 
                       </div>
 
-                      <div className="rounded-xl bg-white/[0.025] p-3">
+                      <div className="rounded-xl bg-white/[0.025] p-3.5">
 
-                        <p className="text-sm font-bold text-white">
+                        <p className="text-lg font-bold text-white">
                           AI
                         </p>
 
-                        <p className="text-[8px] text-white/20 mt-1">
+                        <p className="text-xs text-white/30 mt-1">
                           Powered
                         </p>
 
                       </div>
 
-                      <div className="rounded-xl bg-white/[0.025] p-3">
+                      <div className="rounded-xl bg-white/[0.025] p-3.5">
 
-                        <p className="text-sm font-bold text-white">
+                        <p className="text-lg font-bold text-white">
                           24/7
                         </p>
 
-                        <p className="text-[8px] text-white/20 mt-1">
+                        <p className="text-xs text-white/30 mt-1">
                           Practice
                         </p>
 
@@ -2099,9 +2098,9 @@ export default function Hero() {
                   flex-wrap
                   items-center
                   justify-center
-                  gap-x-6
+                  gap-x-7
                   gap-y-3
-                  mt-8
+                  mt-10
                 "
               >
 
@@ -2126,12 +2125,12 @@ export default function Hero() {
                   ([Icon, text]) => (
                     <div
                       key={text}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2.5"
                     >
 
-                      <Icon className="w-3 h-3 text-white/20" />
+                      <Icon className="w-4 h-4 text-white/30" />
 
-                      <span className="text-[9px] text-white/25">
+                      <span className="text-sm text-white/35">
                         {text}
                       </span>
 
@@ -2181,41 +2180,41 @@ export default function Hero() {
                 ARENA HEADER
             ================================================== */}
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
 
               <div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
 
-                  <span className="relative flex w-2 h-2">
+                  <span className="relative flex w-2.5 h-2.5">
 
                     <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-60" />
 
-                    <span className="relative w-2 h-2 rounded-full bg-red-400" />
+                    <span className="relative w-2.5 h-2.5 rounded-full bg-red-400" />
 
                   </span>
 
-                  <span className="text-[9px] uppercase tracking-[0.25em] text-red-400/70">
+                  <span className="text-sm uppercase tracking-[0.2em] text-red-400/80">
                     Live Arena
                   </span>
 
                 </div>
 
-                <h1 className="text-xl sm:text-2xl font-semibold text-white tracking-tight mt-2">
+                <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight mt-2">
                   Group discussion
                 </h1>
 
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
 
                 <div
                   className="
                     flex
                     items-center
-                    gap-2
-                    px-3
-                    py-2
+                    gap-2.5
+                    px-3.5
+                    py-2.5
                     rounded-xl
                     border
                     border-emerald-500/10
@@ -2223,9 +2222,9 @@ export default function Hero() {
                   "
                 >
 
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
 
-                  <span className="text-[9px] uppercase tracking-[0.16em] text-emerald-400/70">
+                  <span className="text-xs uppercase tracking-[0.14em] text-emerald-400/80">
                     Connected
                   </span>
 
@@ -2235,16 +2234,16 @@ export default function Hero() {
                   onClick={handleExit}
                   className="
                   cursor-pointer
-                    px-3
-                    py-2
+                    px-4
+                    py-2.5
                     rounded-xl
                     border
                     border-white/[0.07]
                     bg-white/[0.025]
-                    text-[9px]
+                    text-xs
                     uppercase
-                    tracking-[0.16em]
-                    text-white/30
+                    tracking-[0.14em]
+                    text-white/40
                     hover:text-red-400
                     hover:border-red-500/20
                     transition-all
@@ -2270,7 +2269,8 @@ export default function Hero() {
                 border-red-500/10
                 bg-red-500/[0.025]
                 p-5
-                mb-4
+                sm:p-6
+                mb-5
               "
             >
 
@@ -2289,17 +2289,17 @@ export default function Hero() {
 
               <div className="relative">
 
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2.5 mb-2.5">
 
-                  <FiTarget className="w-3 h-3 text-red-400/60" />
+                  <FiTarget className="w-4 h-4 text-red-400/70" />
 
-                  <span className="text-[8px] uppercase tracking-[0.2em] text-red-400/60">
+                  <span className="text-sm uppercase tracking-[0.16em] text-red-400/70">
                     Discussion topic
                   </span>
 
                 </div>
 
-                <p className="text-base sm:text-lg font-medium text-white leading-relaxed">
+                <p className="text-lg sm:text-xl font-medium text-white leading-relaxed">
                   {topic}
                 </p>
 
@@ -2318,24 +2318,24 @@ export default function Hero() {
                 items-center
                 justify-between
                 gap-3
-                p-3
+                p-3.5
                 rounded-[18px]
                 border
                 border-white/[0.06]
                 bg-white/[0.02]
-                mb-4
+                mb-5
               "
             >
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2.5">
 
                 <div
                   className="
                     flex
                     items-center
-                    gap-2
-                    px-3
-                    py-2
+                    gap-2.5
+                    px-3.5
+                    py-2.5
                     rounded-xl
                     bg-blue-500/[0.06]
                     border
@@ -2343,9 +2343,9 @@ export default function Hero() {
                   "
                 >
 
-                  <FiMic className="w-3 h-3 text-blue-400" />
+                  <FiMic className="w-4 h-4 text-blue-400" />
 
-                  <span className="text-[8px] uppercase tracking-[0.16em] text-blue-400/70">
+                  <span className="text-xs uppercase tracking-[0.14em] text-blue-400/80">
                     Listening
                   </span>
 
@@ -2356,9 +2356,9 @@ export default function Hero() {
                     className="
                       flex
                       items-center
-                      gap-2
-                      px-3
-                      py-2
+                      gap-2.5
+                      px-3.5
+                      py-2.5
                       rounded-xl
                       bg-violet-500/[0.06]
                       border
@@ -2366,9 +2366,9 @@ export default function Hero() {
                     "
                   >
 
-                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
 
-                    <span className="text-[8px] uppercase tracking-[0.16em] text-violet-400/70">
+                    <span className="text-xs uppercase tracking-[0.14em] text-violet-400/80">
                       {activeAiSpeaker}
                     </span>
 
@@ -2378,9 +2378,9 @@ export default function Hero() {
                     className="
                       flex
                       items-center
-                      gap-2
-                      px-3
-                      py-2
+                      gap-2.5
+                      px-3.5
+                      py-2.5
                       rounded-xl
                       bg-white/[0.025]
                       border
@@ -2388,9 +2388,9 @@ export default function Hero() {
                     "
                   >
 
-                    <FiMessageCircle className="w-3 h-3 text-white/25" />
+                    <FiMessageCircle className="w-4 h-4 text-white/35" />
 
-                    <span className="text-[8px] uppercase tracking-[0.16em] text-white/25">
+                    <span className="text-xs uppercase tracking-[0.14em] text-white/40">
                       Discussion open
                     </span>
 
@@ -2404,9 +2404,9 @@ export default function Hero() {
                   className="
                     flex
                     items-center
-                    gap-2
-                    px-3
-                    py-2
+                    gap-2.5
+                    px-3.5
+                    py-2.5
                     rounded-xl
                     bg-amber-500/[0.05]
                     border
@@ -2414,9 +2414,9 @@ export default function Hero() {
                   "
                 >
 
-                  <FaSpinner className="animate-spin text-amber-400 text-[9px]" />
+                  <FaSpinner className="animate-spin text-amber-400 text-sm" />
 
-                  <span className="text-[8px] uppercase tracking-[0.16em] text-amber-400/70">
+                  <span className="text-xs uppercase tracking-[0.14em] text-amber-400/80">
                     AI processing
                   </span>
 
@@ -2457,12 +2457,12 @@ export default function Hero() {
                 "
               >
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
 
                   <div
                     className="
-                      w-8
-                      h-8
+                      w-9
+                      h-9
                       rounded-lg
                       bg-white/[0.04]
                       border
@@ -2472,16 +2472,16 @@ export default function Hero() {
                       justify-center
                     "
                   >
-                    <FiMessageCircle className="w-3.5 h-3.5 text-white/30" />
+                    <FiMessageCircle className="w-4.5 h-4.5 text-white/40" />
                   </div>
 
                   <div>
 
-                    <p className="text-[10px] font-semibold text-white">
+                    <p className="text-sm font-semibold text-white">
                       Discussion stream
                     </p>
 
-                    <p className="text-[8px] text-white/20 mt-0.5">
+                    <p className="text-xs text-white/35 mt-0.5">
                       Live conversation transcript
                     </p>
 
@@ -2489,11 +2489,11 @@ export default function Hero() {
 
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
 
-                  <FiClock className="w-3 h-3 text-white/15" />
+                  <FiClock className="w-4 h-4 text-white/25" />
 
-                  <span className="text-[8px] text-white/20">
+                  <span className="text-xs text-white/35">
                     Live
                   </span>
 
@@ -2510,7 +2510,7 @@ export default function Hero() {
                   overflow-y-auto
                   p-4
                   sm:p-5
-                  space-y-3
+                  space-y-3.5
                   scrollbar-thin
                   scrollbar-thumb-white/10
                   scrollbar-track-transparent
@@ -2522,9 +2522,9 @@ export default function Hero() {
 
                     <div className="text-center">
 
-                      <FiMessageCircle className="w-8 h-8 text-white/10 mx-auto" />
+                      <FiMessageCircle className="w-10 h-10 text-white/15 mx-auto" />
 
-                      <p className="text-xs text-white/20 mt-3">
+                      <p className="text-sm text-white/30 mt-4">
                         Waiting for the discussion...
                       </p>
 
@@ -2555,6 +2555,7 @@ export default function Hero() {
                         }}
                         className={`
                           p-4
+                          sm:p-5
                           rounded-[18px]
                           border
                           ${
@@ -2565,18 +2566,18 @@ export default function Hero() {
                         `}
                       >
 
-                        <div className="flex gap-3">
+                        <div className="flex gap-3.5">
 
                           <div
                             className={`
                               flex-shrink-0
-                              w-9
-                              h-9
+                              w-10
+                              h-10
                               rounded-xl
                               flex
                               items-center
                               justify-center
-                              text-sm
+                              text-base
                               ${
                                 isUser
                                   ? "bg-blue-500/10 border border-blue-500/10"
@@ -2589,18 +2590,18 @@ export default function Hero() {
 
                           <div className="min-w-0 flex-1">
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2.5">
 
                               <p
                                 className={`
-                                  text-[9px]
+                                  text-xs
                                   uppercase
-                                  tracking-[0.16em]
+                                  tracking-[0.14em]
                                   font-semibold
                                   ${
                                     isUser
-                                      ? "text-blue-400/80"
-                                      : "text-violet-400/80"
+                                      ? "text-blue-400/90"
+                                      : "text-violet-400/90"
                                   }
                                 `}
                               >
@@ -2608,14 +2609,14 @@ export default function Hero() {
                               </p>
 
                               {isUser && (
-                                <span className="text-[7px] uppercase tracking-wider text-blue-400/40">
+                                <span className="text-[10px] uppercase tracking-wider text-blue-400/50">
                                   You
                                 </span>
                               )}
 
                             </div>
 
-                            <p className="text-[13px] text-white/65 leading-6 mt-1.5">
+                            <p className="text-[15px] text-white/70 leading-7 mt-2">
                               {msg.text}
                             </p>
 
@@ -2637,20 +2638,20 @@ export default function Hero() {
               <div
                 className="
                   px-5
-                  py-3
+                  py-3.5
                   border-t
                   border-white/[0.05]
                   flex
                   items-center
                   justify-center
-                  gap-2
+                  gap-2.5
                 "
               >
 
                 <span
                   className={`
-                    w-1.5
-                    h-1.5
+                    w-2
+                    h-2
                     rounded-full
                     ${
                       isAiSpeaking
@@ -2660,7 +2661,7 @@ export default function Hero() {
                   `}
                 />
 
-                <span className="text-[8px] uppercase tracking-[0.2em] text-white/20">
+                <span className="text-xs uppercase tracking-[0.16em] text-white/35">
                   {isAiSpeaking
                     ? `${activeAiSpeaker} is speaking`
                     : "Microphone active — speak naturally"}
