@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
+
 import {
   FiActivity,
   FiBarChart2,
@@ -9,11 +10,11 @@ import {
   FiCheck,
   FiLogOut,
   FiMessageCircle,
-  FiX,
   FiZap,
 } from "react-icons/fi";
 
 import Performance from "./PerformanceDashboard.jsx";
+import { getStreak } from "../services/streak.service.js";
 
 export default function Navbar({
   user,
@@ -24,8 +25,11 @@ export default function Navbar({
 }) {
   const [showPerformance, setShowPerformance] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showStreakPopup, setShowStreakPopup] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState(0);
 
   const dropdownRef = useRef(null);
+  const streakRef = useRef(null);
 
   const auth = getAuth();
   const uid = user?.uid || auth.currentUser?.uid;
@@ -45,10 +49,74 @@ export default function Navbar({
     user?.emailVerified || user?.verified
   );
 
-  const isStudySync = activeProduct === "studysync";
+  /* =========================================================
+     PRODUCT
+     
+     Supports BOTH:
+     - "studymate"
+     - old "studysync"
+     
+     So you don't have to immediately change the parent.
+  ========================================================= */
+
+  const isStudyMate =
+    activeProduct === "studymate" ||
+    activeProduct === "studysync";
 
   /* =========================================================
-     CLOSE DROPDOWN OUTSIDE
+     FETCH STREAK
+  ========================================================= */
+
+  useEffect(() => {
+    if (!uid) return;
+
+    const fetchStreak = async () => {
+      try {
+        const data = await getStreak(uid);
+
+        console.log("🔥 Streak API response:", data);
+
+        const fetchedStreak =
+          data?.streak ??
+          data?.currentStreak ??
+          data?.current_streak ??
+          0;
+
+        setCurrentStreak(Number(fetchedStreak) || 0);
+      } catch (error) {
+        console.error("❌ Failed to fetch streak:", error);
+
+        setCurrentStreak(Number(streak) || 0);
+      }
+    };
+
+    fetchStreak();
+  }, [uid, streak]);
+
+  /* =========================================================
+     PRODUCT CONFIG
+  ========================================================= */
+
+  const product = isStudyMate
+    ? {
+        name: "StudyMate",
+        shortName: "Study",
+        icon: FiBookOpen,
+        accent: "violet",
+        description: "Knowledge intelligence",
+      }
+    : {
+        name: "GD Arena",
+        shortName: "GD",
+        icon: FiMessageCircle,
+        accent: "red",
+        description: "AI discussion arena",
+      };
+
+  const ProductIcon = product.icon;
+
+  /* =========================================================
+     CLOSE DROPDOWNS OUTSIDE
   ========================================================= */
 
   useEffect(() => {
@@ -58,6 +126,13 @@ export default function Navbar({
         !dropdownRef.current.contains(event.target)
       ) {
         setShowDropdown(false);
+      }
+
+      if (
+        streakRef.current &&
+        !streakRef.current.contains(event.target)
+      ) {
+        setShowStreakPopup(false);
       }
     };
 
@@ -82,6 +157,7 @@ export default function Navbar({
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         setShowDropdown(false);
+        setShowStreakPopup(false);
       }
     };
 
@@ -99,37 +175,30 @@ export default function Navbar({
   }, []);
 
   /* =========================================================
-     PRODUCT CONFIG
-  ========================================================= */
-
-  const product = isStudySync
-    ? {
-        name: "StudySync",
-        shortName: "Study",
-        icon: FiBookOpen,
-        accent: "violet",
-        description: "Knowledge intelligence",
-      }
-    : {
-        name: "GD Arena",
-        shortName: "GD",
-        icon: FiMessageCircle,
-        accent: "red",
-        description: "AI discussion arena",
-      };
-
-  const ProductIcon = product.icon;
-
-  /* =========================================================
      NAVIGATION
   ========================================================= */
 
   const goHome = () => {
     setShowDropdown(false);
+    setShowStreakPopup(false);
 
     if (onNavigateHome) {
       onNavigateHome();
     }
+  };
+
+  const goToGDArena = () => {
+    setShowDropdown(false);
+    setShowStreakPopup(false);
+
+    window.location.href = "/hero";
+  };
+
+  const goToStudyMate = () => {
+    setShowDropdown(false);
+    setShowStreakPopup(false);
+
+    window.location.href = "/studymate";
   };
 
   /* =========================================================
@@ -138,6 +207,7 @@ export default function Navbar({
 
   const handleLogout = async () => {
     setShowDropdown(false);
+    setShowStreakPopup(false);
 
     if (onLogout) {
       await onLogout();
@@ -178,7 +248,7 @@ export default function Navbar({
           backdrop-blur-2xl
         "
       >
-        {/* subtle top light */}
+        {/* Top light */}
 
         <div
           className={`
@@ -191,7 +261,7 @@ export default function Navbar({
             bg-gradient-to-r
             from-transparent
             ${
-              isStudySync
+              isStudyMate
                 ? "via-violet-400/50"
                 : "via-red-400/50"
             }
@@ -227,6 +297,7 @@ export default function Navbar({
               gap-3
               select-none
               outline-none
+              cursor-pointer
             "
           >
             {/* Logo */}
@@ -244,7 +315,7 @@ export default function Navbar({
                 transition-all
                 duration-300
                 ${
-                  isStudySync
+                  isStudyMate
                     ? "bg-violet-500/[0.09] border-violet-400/15 group-hover:bg-violet-500/[0.15] group-hover:border-violet-400/30"
                     : "bg-red-500/[0.09] border-red-400/15 group-hover:bg-red-500/[0.15] group-hover:border-red-400/30"
                 }
@@ -258,14 +329,12 @@ export default function Navbar({
                   duration-300
                   group-hover:scale-110
                   ${
-                    isStudySync
+                    isStudyMate
                       ? "text-violet-400"
                       : "text-red-400"
                   }
                 `}
               />
-
-              {/* tiny glow */}
 
               <div
                 className={`
@@ -278,7 +347,7 @@ export default function Navbar({
                   transition-opacity
                   duration-300
                   ${
-                    isStudySync
+                    isStudyMate
                       ? "bg-violet-500/20"
                       : "bg-red-500/20"
                   }
@@ -286,12 +355,12 @@ export default function Navbar({
               />
             </div>
 
-            {/* Brand text */}
+            {/* Brand */}
 
             <div className="text-left">
               <div className="flex items-center gap-1">
                 <span className="text-[17px] font-semibold tracking-[-0.02em] text-white">
-                  {isStudySync ? "Study" : "GD"}
+                  {isStudyMate ? "Study" : "GD"}
                 </span>
 
                 <span
@@ -300,15 +369,13 @@ export default function Navbar({
                     font-semibold
                     tracking-[-0.02em]
                     ${
-                      isStudySync
+                      isStudyMate
                         ? "text-violet-400"
                         : "text-red-400"
                     }
                   `}
                 >
-                  {isStudySync
-                    ? "Sync"
-                    : "Arena"}
+                  {isStudyMate ? "Mate" : "Arena"}
                 </span>
               </div>
 
@@ -337,15 +404,13 @@ export default function Navbar({
               bg-white/[0.025]
             "
           >
-            {/* GD ARENA */}
+            {/* =================================================
+                GD ARENA
+            ================================================== */}
 
             <button
               type="button"
-              onClick={() => {
-                if (isStudySync) {
-                  window.location.href = "/hero";
-                }
-              }}
+              onClick={goToGDArena}
               className={`
                 relative
                 flex
@@ -358,14 +423,15 @@ export default function Navbar({
                 font-medium
                 transition-all
                 duration-300
+                cursor-pointer
                 ${
-                  !isStudySync
+                  !isStudyMate
                     ? "text-white"
                     : "text-white/40 hover:text-white/70"
                 }
               `}
             >
-              {!isStudySync && (
+              {!isStudyMate && (
                 <motion.div
                   layoutId="activeProduct"
                   className="
@@ -390,7 +456,7 @@ export default function Navbar({
                     w-4
                     h-4
                     ${
-                      !isStudySync
+                      !isStudyMate
                         ? "text-red-400"
                         : "text-white/30"
                     }
@@ -401,16 +467,13 @@ export default function Navbar({
               </span>
             </button>
 
-            {/* STUDYSYNC */}
+            {/* =================================================
+                STUDYMATE
+            ================================================== */}
 
             <button
               type="button"
-              onClick={() => {
-                if (!isStudySync) {
-                  window.location.href =
-                    "/studymate";
-                }
-              }}
+              onClick={goToStudyMate}
               className={`
                 relative
                 flex
@@ -423,14 +486,15 @@ export default function Navbar({
                 font-medium
                 transition-all
                 duration-300
+                cursor-pointer
                 ${
-                  isStudySync
+                  isStudyMate
                     ? "text-white"
                     : "text-white/40 hover:text-white/70"
                 }
               `}
             >
-              {isStudySync && (
+              {isStudyMate && (
                 <motion.div
                   layoutId="activeProduct"
                   className="
@@ -455,14 +519,14 @@ export default function Navbar({
                     w-4
                     h-4
                     ${
-                      isStudySync
+                      isStudyMate
                         ? "text-violet-400"
                         : "text-white/30"
                     }
                   `}
                 />
 
-                <span>StudySync</span>
+                <span>StudyMate</span>
               </span>
             </button>
           </div>
@@ -472,57 +536,164 @@ export default function Navbar({
           ================================================== */}
 
           <div className="flex items-center gap-2.5">
-            {/* AI STATUS */}
 
-          
+            {/* =================================================
+                STREAK
+            ================================================== */}
 
-            {/* STREAK */}
-
-            <button
-              type="button"
-              onClick={() => {
-                // Calendar hook can be connected later.
-              }}
-              title="Current streak"
-              className="
-                group
-                relative
-                flex
-                items-center
-                gap-2
-                h-10
-                px-3.5
-                rounded-xl
-                border
-                border-orange-500/10
-                bg-orange-500/[0.045]
-                hover:bg-orange-500/[0.08]
-                hover:border-orange-400/20
-                transition-all
-                duration-200
-                active:scale-95
-              "
+            <div
+              className="relative"
+              ref={streakRef}
             >
-              <span className="text-base transition-transform duration-200 group-hover:scale-110">
-                🔥
-              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowStreakPopup((prev) => !prev);
+                  setShowDropdown(false);
+                }}
+                title="Current streak"
+                className="
+                  group
+                  relative
+                  flex
+                  items-center
+                  gap-2
+                  h-10
+                  px-3.5
+                  rounded-xl
+                  border
+                  border-orange-500/10
+                  bg-orange-500/[0.045]
+                  hover:bg-orange-500/[0.08]
+                  hover:border-orange-400/20
+                  transition-all
+                  duration-200
+                  active:scale-95
+                  cursor-pointer
+                "
+              >
+                <span className="text-base transition-transform duration-200 group-hover:scale-110">
+                  🔥
+                </span>
 
-              <span className="text-sm font-semibold tabular-nums text-orange-300">
-                {streak || 0}
-              </span>
+                <span className="text-sm font-semibold tabular-nums text-orange-300">
+                  {currentStreak}
+                </span>
 
-              <span className="hidden sm:inline text-xs text-orange-300/50 uppercase tracking-wider">
-                days
-              </span>
-            </button>
+                <span className="hidden sm:inline text-xs text-orange-300/50 uppercase tracking-wider">
+                  days
+                </span>
+              </button>
 
-            {/* PERFORMANCE */}
+              {/* STREAK POPUP */}
+
+              <AnimatePresence>
+                {showStreakPopup && (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: -6,
+                      scale: 0.97,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -5,
+                      scale: 0.98,
+                    }}
+                    transition={{
+                      duration: 0.16,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="
+                      absolute
+                      right-0
+                      top-[48px]
+                      w-[230px]
+                      rounded-2xl
+                      border
+                      border-orange-400/[0.10]
+                      bg-[#0a0a0d]/95
+                      backdrop-blur-2xl
+                      shadow-[0_30px_80px_rgba(0,0,0,0.55)]
+                      overflow-hidden
+                      z-[100]
+                    "
+                  >
+                    <div
+                      className="
+                        absolute
+                        top-0
+                        left-1/2
+                        -translate-x-1/2
+                        w-20
+                        h-px
+                        bg-gradient-to-r
+                        from-transparent
+                        via-orange-400/60
+                        to-transparent
+                      "
+                    />
+
+                    <div className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="
+                            w-11
+                            h-11
+                            rounded-xl
+                            flex
+                            items-center
+                            justify-center
+                            bg-orange-500/[0.08]
+                            border
+                            border-orange-400/[0.10]
+                          "
+                        >
+                          <span className="text-2xl">
+                            🔥
+                          </span>
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.16em] text-white/35">
+                            Current streak
+                          </p>
+
+                          <p className="mt-1 text-xl font-bold text-orange-300">
+                            {currentStreak} days
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-white/[0.05]">
+                        {currentStreak > 0 ? (
+                          <p className="text-xs leading-relaxed text-white/40">
+                            Keep going! Don't break your streak.
+                          </p>
+                        ) : (
+                          <p className="text-xs leading-relaxed text-white/40">
+                            Start practicing today to build your streak.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* =================================================
+                ANALYTICS
+            ================================================== */}
 
             <button
               type="button"
-              onClick={() =>
-                setShowPerformance(true)
-              }
+              onClick={() => setShowPerformance(true)}
               className="
                 hidden
                 sm:flex
@@ -541,6 +712,7 @@ export default function Navbar({
                 transition-all
                 duration-200
                 active:scale-95
+                cursor-pointer
               "
             >
               <FiBarChart2 className="w-4 h-4 text-indigo-400" />
@@ -560,9 +732,10 @@ export default function Navbar({
             >
               <button
                 type="button"
-                onClick={() =>
-                  setShowDropdown((value) => !value)
-                }
+                onClick={() => {
+                  setShowDropdown((value) => !value);
+                  setShowStreakPopup(false);
+                }}
                 aria-expanded={showDropdown}
                 aria-haspopup="menu"
                 className={`
@@ -578,6 +751,7 @@ export default function Navbar({
                   transition-all
                   duration-200
                   active:scale-95
+                  cursor-pointer
                   ${
                     showDropdown
                       ? "border-white/[0.14] bg-white/[0.05]"
@@ -585,8 +759,6 @@ export default function Navbar({
                   }
                 `}
               >
-                {/* Avatar */}
-
                 <div className="relative">
                   <img
                     src={avatarUrl}
@@ -605,8 +777,6 @@ export default function Navbar({
                     "
                     loading="lazy"
                   />
-
-                  {/* Verified */}
 
                   {isVerified && (
                     <span
@@ -649,9 +819,7 @@ export default function Navbar({
                 />
               </button>
 
-              {/* =================================================
-                  DROPDOWN
-              ================================================== */}
+              {/* DROPDOWN */}
 
               <AnimatePresence>
                 {showDropdown && (
@@ -703,7 +871,7 @@ export default function Navbar({
                         bg-gradient-to-r
                         from-transparent
                         ${
-                          isStudySync
+                          isStudyMate
                             ? "via-violet-400/60"
                             : "via-red-400/60"
                         }
@@ -711,7 +879,7 @@ export default function Navbar({
                       `}
                     />
 
-                    {/* Profile header */}
+                    {/* Profile */}
 
                     <div className="p-4">
                       <div className="flex items-center gap-3.5">
@@ -734,8 +902,7 @@ export default function Navbar({
                           </p>
 
                           <p className="mt-1.5 text-sm text-white/85 truncate font-medium">
-                            {user?.email ||
-                              "User Account"}
+                            {user?.email || "User Account"}
                           </p>
 
                           {isVerified && (
@@ -765,7 +932,7 @@ export default function Navbar({
                           py-3
                           rounded-xl
                           ${
-                            isStudySync
+                            isStudyMate
                               ? "bg-violet-500/[0.05]"
                               : "bg-red-500/[0.05]"
                           }
@@ -780,7 +947,7 @@ export default function Navbar({
                             items-center
                             justify-center
                             ${
-                              isStudySync
+                              isStudyMate
                                 ? "bg-violet-500/10 text-violet-400"
                                 : "bg-red-500/10 text-red-400"
                             }
@@ -805,7 +972,7 @@ export default function Navbar({
                               w-4
                               h-4
                               ${
-                                isStudySync
+                                isStudyMate
                                   ? "text-violet-400/50"
                                   : "text-red-400/50"
                               }
@@ -837,6 +1004,7 @@ export default function Navbar({
                           hover:text-white
                           hover:bg-white/[0.04]
                           transition-all
+                          cursor-pointer
                         "
                       >
                         <FiActivity className="w-4.5 h-4.5 text-indigo-400" />
@@ -869,6 +1037,7 @@ export default function Navbar({
                           hover:bg-red-500/[0.06]
                           transition-all
                           active:scale-[0.98]
+                          cursor-pointer
                         "
                       >
                         <FiLogOut className="w-4.5 h-4.5" />
@@ -891,15 +1060,12 @@ export default function Navbar({
 
         <div className="md:hidden border-t border-white/[0.04]">
           <div className="flex items-center justify-center gap-1.5 px-4 py-2.5">
-            {/* GD */}
+
+            {/* GD ARENA */}
 
             <button
               type="button"
-              onClick={() => {
-                if (isStudySync) {
-                  window.location.href = "/hero";
-                }
-              }}
+              onClick={goToGDArena}
               className={`
                 flex
                 flex-1
@@ -912,27 +1078,24 @@ export default function Navbar({
                 text-xs
                 font-medium
                 transition-all
+                cursor-pointer
                 ${
-                  !isStudySync
+                  !isStudyMate
                     ? "bg-red-500/[0.08] text-red-300 border border-red-500/10"
                     : "text-white/35"
                 }
               `}
             >
               <FiMessageCircle className="w-3.5 h-3.5" />
+
               GD Arena
             </button>
 
-            {/* StudySync */}
+            {/* STUDYMATE */}
 
             <button
               type="button"
-              onClick={() => {
-                if (!isStudySync) {
-                  window.location.href =
-                    "/studymate";
-                }
-              }}
+              onClick={goToStudyMate}
               className={`
                 flex
                 flex-1
@@ -945,15 +1108,17 @@ export default function Navbar({
                 text-xs
                 font-medium
                 transition-all
+                cursor-pointer
                 ${
-                  isStudySync
+                  isStudyMate
                     ? "bg-violet-500/[0.08] text-violet-300 border border-violet-500/10"
                     : "text-white/35"
                 }
               `}
             >
               <FiBookOpen className="w-3.5 h-3.5" />
-              StudySync
+
+              StudyMate
             </button>
           </div>
         </div>
@@ -967,9 +1132,7 @@ export default function Navbar({
         {showPerformance && (
           <Performance
             uid={uid}
-            onClose={() =>
-              setShowPerformance(false)
-            }
+            onClose={() => setShowPerformance(false)}
           />
         )}
       </AnimatePresence>
