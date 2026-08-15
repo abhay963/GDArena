@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 // Import all route files
 import gdRoutes from "./routes/gd.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
-
+import documentRoutes from "./routes/documentRoutes.js";
 
 import performanceRoutes from "./routes/performance.routes.js";
 
@@ -39,6 +39,7 @@ app.use("/api/streak", streakRoutes);
 
 
 app.use("/api/performance", performanceRoutes);
+app.use("/api/documents", documentRoutes);
 // Default route to check whether backend is running
 app.get("/", (req, res) => {
   res.send("🚀 GD Arena Backend is Running...");
