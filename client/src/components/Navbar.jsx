@@ -474,30 +474,7 @@ export default function Navbar({
           <div className="flex items-center gap-2.5">
             {/* AI STATUS */}
 
-            <div
-              className="
-                hidden
-                lg:flex
-                items-center
-                gap-2.5
-                px-3.5
-                py-2.5
-                rounded-xl
-                border
-                border-emerald-500/10
-                bg-emerald-500/[0.035]
-              "
-            >
-              <span className="relative flex w-2 h-2">
-                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-50" />
-
-                <span className="relative w-2 h-2 rounded-full bg-emerald-400" />
-              </span>
-
-              <span className="text-xs uppercase tracking-[0.16em] text-emerald-400/70">
-                AI Online
-              </span>
-            </div>
+          
 
             {/* STREAK */}
 

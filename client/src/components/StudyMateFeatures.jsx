@@ -137,8 +137,8 @@ function PipelineStep({
           h-10
           rounded-xl
           border
-          border-white/[0.06]
-          bg-white/[0.025]
+          border-white/[0.07]
+          bg-white/[0.03]
           flex
           items-center
           justify-center
@@ -256,15 +256,15 @@ function FeatureCard({
         group
         relative
         overflow-hidden
-        rounded-2xl
+        rounded-[22px]
         border
-        border-white/[0.06]
-        bg-[#09090c]
-        p-6
+        border-white/[0.07]
+        bg-[#09090c]/90
+        p-5 sm:p-6
         transition-all
         duration-300
-        hover:border-white/[0.11]
-        hover:bg-[#0b0b10]
+        hover:border-white/[0.13]
+        hover:bg-[#0c0c11]
       "
     >
 
@@ -300,7 +300,7 @@ function FeatureCard({
           flex
           items-center
           justify-between
-          mb-8
+          mb-6
         "
       >
 
@@ -377,10 +377,10 @@ function FeatureCard({
 
         <p
           className="
-            mt-3
+            mt-2.5
             text-sm
             leading-6
-            text-white/30
+            text-white/32
           "
         >
           {feature.description}
@@ -440,8 +440,8 @@ function StudyMateFeatures() {
         px-4
         sm:px-6
         lg:px-8
-        mt-20
-        pb-16
+        mt-14
+        pb-14
       "
     >
 
@@ -467,10 +467,10 @@ function StudyMateFeatures() {
           ease,
         }}
         className="
-          text-center
-          max-w-2xl
+          max-w-3xl
           mx-auto
-          mb-10
+          mb-8
+          text-center
         "
       >
 
@@ -548,10 +548,10 @@ function StudyMateFeatures() {
 
         <p
           className="
-            mt-3
+            mt-2.5
             text-sm
             leading-6
-            text-white/30
+            text-white/32
           "
         >
           StudySync transforms static study material
@@ -612,12 +612,13 @@ function StudyMateFeatures() {
           ease,
         }}
         className="
-          mt-5
-          rounded-2xl
+          mt-4
+          rounded-[22px]
           border
-          border-white/[0.06]
-          bg-white/[0.012]
+          border-white/[0.07]
+          bg-[#09090c]/80
           overflow-hidden
+          shadow-[0_20px_60px_rgba(0,0,0,0.18)]
         "
       >
 
@@ -661,8 +662,8 @@ function StudyMateFeatures() {
 
         <div
           className="
-            p-5
-            sm:p-6
+            p-4
+            sm:p-5
             flex
             flex-col
             md:flex-row
@@ -723,7 +724,7 @@ function StudyMateFeatures() {
           delay: 0.2,
         }}
         className="
-          mt-8
+          mt-6
           text-center
           text-xs
           text-white/20

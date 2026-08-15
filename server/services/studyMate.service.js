@@ -9,7 +9,6 @@ import {
 
 dotenv.config();
 
-
 // ========================================
 // GEMINI CLIENT
 // ========================================
@@ -18,18 +17,17 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+const GEMINI_MODEL = "gemini-3.6-flash";
 
 // ========================================
-// STEP 16: ASK STUDYMATE
+// ASK STUDYMATE - DOCUMENT RAG MODE
 // ========================================
 
 export const askStudyMate = async ({
   documentId,
   question,
 }) => {
-
   try {
-
     // ------------------------------------
     // 1. VALIDATE INPUT
     // ------------------------------------
@@ -40,13 +38,11 @@ export const askStudyMate = async ({
       );
     }
 
-
     if (!question || !question.trim()) {
       throw new Error(
         "Question is required"
       );
     }
-
 
     // ------------------------------------
     // 2. RETRIEVE RELEVANT CHUNKS
@@ -59,7 +55,6 @@ export const askStudyMate = async ({
         5
       );
 
-
     // ------------------------------------
     // 3. BUILD CONTEXT
     // ------------------------------------
@@ -67,13 +62,11 @@ export const askStudyMate = async ({
     const context =
       buildContext(chunks);
 
-
     // ------------------------------------
     // 4. CHECK IF CONTEXT EXISTS
     // ------------------------------------
 
     if (!context) {
-
       return {
         answer:
           "I couldn't find relevant information in the uploaded document.",
@@ -81,7 +74,6 @@ export const askStudyMate = async ({
         sources: [],
       };
     }
-
 
     // ------------------------------------
     // 5. CREATE RAG PROMPT
@@ -115,49 +107,126 @@ ${question}
 Now answer the user's question.
 `;
 
-
     // ------------------------------------
     // 6. GENERATE ANSWER
     // ------------------------------------
 
     const response =
       await ai.models.generateContent({
-
-        model: "gemini-3.6-flash",
-
+        model: GEMINI_MODEL,
         contents: prompt,
-
       });
 
-
     const answer =
-      response.text;
-
+      response.text || "";
 
     // ------------------------------------
     // 7. RETURN ANSWER + SOURCES
     // ------------------------------------
 
     return {
-
       answer,
 
       sources: chunks.map(
         (chunk) => ({
           id: chunk.id,
+
           similarity:
             Number(chunk.similarity),
+
           content:
             chunk.content,
         })
       ),
-
     };
-
   } catch (error) {
-
     console.error(
-      "❌ StudyMate error:",
+      "❌ StudyMate RAG error:",
+      error
+    );
+
+    throw error;
+  }
+};
+
+// ========================================
+// ASK STUDYMATE - GENERAL AI MODE
+// ========================================
+
+export const askGeneralStudyMate = async ({
+  question,
+}) => {
+  try {
+    // ------------------------------------
+    // 1. VALIDATE INPUT
+    // ------------------------------------
+
+    if (!question || !question.trim()) {
+      throw new Error(
+        "Question is required"
+      );
+    }
+
+    // ------------------------------------
+    // 2. GENERAL AI PROMPT
+    // ------------------------------------
+
+    const prompt = `
+You are StudyMate, an AI study assistant.
+
+The user has not selected a document.
+
+Answer the user's question using your
+general knowledge and reasoning.
+
+Your response should be:
+
+- Clear
+- Accurate
+- Student-friendly
+- Well structured
+- Easy to understand
+
+For technical questions, include examples
+when useful.
+
+For programming questions, prefer practical
+solutions and explain the important reasoning.
+
+Do not pretend that information comes from
+an uploaded document because no document
+context is available.
+
+USER QUESTION:
+${question.trim()}
+
+Now answer the user's question.
+`;
+
+    // ------------------------------------
+    // 3. GENERATE ANSWER
+    // ------------------------------------
+
+    const response =
+      await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: prompt,
+      });
+
+    const answer =
+      response.text || "";
+
+    // ------------------------------------
+    // 4. RETURN GENERAL ANSWER
+    // ------------------------------------
+
+    return {
+      answer,
+      sources: [],
+    };
+  } catch (error) {
+    console.error(
+      "❌ StudyMate general AI error:",
       error
     );
 

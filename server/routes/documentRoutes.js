@@ -10,16 +10,28 @@ import {
 
 const router = express.Router();
 
+// =====================================================
+// DOCUMENT UPLOAD
+// =====================================================
+
 router.post(
   "/upload",
   upload.single("document"),
   uploadDocument
 );
 
+// =====================================================
+// DOCUMENT PROCESSING STATUS
+// =====================================================
+
 router.get(
   "/status/:documentId",
   getDocumentProcessingStatus
 );
+
+// =====================================================
+// DOCUMENT RAG QUESTION
+// =====================================================
 
 router.post(
   "/ask",
