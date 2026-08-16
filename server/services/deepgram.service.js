@@ -1,11 +1,31 @@
 import { DeepgramClient } from "@deepgram/sdk";
 
+/* =========================================================
+   DEEPGRAM CLIENT
+========================================================= */
+
+if (!process.env.DEEPGRAM_API_KEY) {
+  console.warn(
+    "⚠️ DEEPGRAM_API_KEY is not loaded yet."
+  );
+}
+
 const deepgram = new DeepgramClient({
   apiKey: process.env.DEEPGRAM_API_KEY,
 });
 
+/* =========================================================
+   CREATE STREAMING CONNECTION
+========================================================= */
+
 export async function createDeepgramConnection() {
-  console.log("🔵 Creating Deepgram connection...");
+  console.log(
+    "🔵 Creating Deepgram connection..."
+  );
+
+  /* -------------------------------------------------------
+     Validate API key
+  ------------------------------------------------------- */
 
   if (!process.env.DEEPGRAM_API_KEY) {
     throw new Error(
@@ -13,35 +33,86 @@ export async function createDeepgramConnection() {
     );
   }
 
-  const connection = await deepgram.listen.v1.connect({
-    model: "nova-3",
-    language: "en-US",
+  /* -------------------------------------------------------
+     Create Deepgram Live STT connection
+  ------------------------------------------------------- */
 
-    smart_format: "true",
-    punctuate: "true",
+  const connection =
+    await deepgram.listen.v1.connect({
+      model: "nova-3",
 
-    // Send partial/interim transcripts
-    interim_results: "true",
+      language: "en-US",
 
-    // Detect pauses
-    endpointing: "500",
+      /* Formatting */
 
-    // Backup utterance detection
-    utterance_end_ms: "1000",
+      smart_format: true,
 
-    // Detect speech start
-    vad_events: "true",
-  });
+      punctuate: true,
+
+      /* ---------------------------------------------------
+         INTERIM RESULTS
+
+         Deepgram continuously sends partial transcripts.
+
+         Example:
+
+         "I"
+         "I think"
+         "I think it's"
+         "I think it's not working"
+
+         These are NOT final user messages.
+      --------------------------------------------------- */
+
+      interim_results: true,
+
+      /* ---------------------------------------------------
+         ENDPOINTING
+
+         After approximately 500ms of silence,
+         Deepgram can mark the current speech segment
+         as speech_final: true.
+      --------------------------------------------------- */
+
+      endpointing: 500,
+
+      /* ---------------------------------------------------
+         UTTERANCE END
+
+         Backup end-of-speech detection.
+
+         Deepgram sends an UtteranceEnd event when
+         it detects the configured silence gap.
+      --------------------------------------------------- */
+
+      utterance_end_ms: "1000",
+
+      /* ---------------------------------------------------
+         VAD EVENTS
+
+         Allows us to receive SpeechStarted events.
+      --------------------------------------------------- */
+
+      vad_events: true,
+    });
 
   console.log(
     "🔵 Deepgram connection object created"
   );
 
-  // IMPORTANT:
-  // Explicitly open the Deepgram WebSocket.
+  /* =======================================================
+     OPEN CONNECTION
+  ======================================================= */
+
   connection.connect();
 
-  // Wait until the socket is actually OPEN.
+  /* -------------------------------------------------------
+     IMPORTANT
+
+     Do not send microphone audio until the Deepgram
+     WebSocket is actually OPEN.
+  ------------------------------------------------------- */
+
   await connection.waitForOpen();
 
   console.log(
