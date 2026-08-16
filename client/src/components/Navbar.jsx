@@ -74,7 +74,7 @@ export default function Navbar({
       try {
         const data = await getStreak(uid);
 
-        console.log("🔥 Streak API response:", data);
+       
 
         const fetchedStreak =
           data?.streak ??
@@ -84,7 +84,7 @@ export default function Navbar({
 
         setCurrentStreak(Number(fetchedStreak) || 0);
       } catch (error) {
-        console.error("❌ Failed to fetch streak:", error);
+       
 
         setCurrentStreak(Number(streak) || 0);
       }

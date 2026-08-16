@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import http from "http";
 
 import gdRoutes from "./routes/gd.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
@@ -8,6 +9,10 @@ import documentRoutes from "./routes/documentRoutes.js";
 import performanceRoutes from "./routes/performance.routes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import studymateRoutes from "./routes/studymate.routes.js";
+
+import {
+  setupDeepgramWebSocket,
+} from "./websocket/deepgram.ws.js";
 
 dotenv.config();
 
@@ -102,11 +107,20 @@ app.get(
 const PORT =
   process.env.PORT || 5000;
 
-app.listen(
+const server = http.createServer(app);
+
+// Setup Deepgram WebSocket
+setupDeepgramWebSocket(server);
+
+server.listen(
   PORT,
   () => {
     console.log(
       `🚀 Server running on port ${PORT}`
+    );
+
+    console.log(
+      `🎙️ Deepgram WS: ws://localhost:${PORT}/ws/deepgram`
     );
   }
 );

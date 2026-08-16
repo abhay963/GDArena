@@ -43,9 +43,18 @@ import {
 
 import { auth } from "../firebase/firebase";
 
+// Deepgram streaming speech service
+import {
+  startSpeech,
+  stopSpeech,
+} from "../services/speech.service.js";
+
 // Custom Components
 import Navbar from "../components/Navbar";
 import Countdown from "../components/Countdown";
+import GDHeader from "../components/GDHeader";
+import GDStatusBar from "../components/GDStatusBar";
+import DiscussionStream from "../components/DiscussionStream";
 
 /* =========================================================
    ANIMATION CONFIG
@@ -58,9 +67,11 @@ const fadeUp = {
     opacity: 0,
     y: 24,
   },
+
   visible: {
     opacity: 1,
     y: 0,
+
     transition: {
       duration: 0.65,
       ease,
@@ -70,6 +81,7 @@ const fadeUp = {
 
 const stagger = {
   hidden: {},
+
   visible: {
     transition: {
       staggerChildren: 0.08,
@@ -319,6 +331,7 @@ function StreakBadge({
         transition-all
       "
     >
+
       <div
         className="
           w-9
@@ -368,6 +381,7 @@ function StreakBadge({
 ========================================================= */
 
 export default function Hero() {
+
   const navigate = useNavigate();
 
   const {
@@ -376,6 +390,7 @@ export default function Hero() {
   } = useAuth();
 
   const [streak, setStreak] = useState(0);
+
   const [lastShownStreak, setLastShownStreak] =
     useState(0);
 
@@ -412,19 +427,17 @@ export default function Hero() {
   const [showHowToPlay, setShowHowToPlay] =
     useState(false);
 
-  const chatEndRef =
+  const chatContainerRef =
     useRef(null);
 
-  const recognitionRef =
-    useRef(null);
-
-  const silenceTimeoutRef =
-    useRef(null);
+  // Deepgram streaming speech lifecycle
+  const speechServiceRef =
+    useRef(false);
 
   const isUserSpeakingRef =
     useRef(false);
 
-  const fullSpeechRef =
+  const interimTranscriptRef =
     useRef("");
 
   const aiSpeechQueue =
@@ -438,6 +451,7 @@ export default function Hero() {
   ======================================================= */
 
   useEffect(() => {
+
     if (!user) return;
 
     axios
@@ -445,12 +459,16 @@ export default function Hero() {
         `${import.meta.env.VITE_API_URL}/api/streak/${user.uid}`
       )
       .then((res) => {
+
         setStreak(res.data.streak);
+
         setLastShownStreak(
           res.data.streak
         );
+
       })
       .catch(console.error);
+
   }, [user?.uid]);
 
   /* =======================================================
@@ -458,12 +476,20 @@ export default function Hero() {
   ======================================================= */
 
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({
+
+    const container = chatContainerRef.current;
+
+    if (!container) return;
+
+    requestAnimationFrame(() => {
+
+      container.scrollTo({
+        top: container.scrollHeight,
         behavior: "smooth",
-        block: "end",
       });
-    }
+
+    });
+
   }, [history]);
 
   /* =======================================================
@@ -471,6 +497,7 @@ export default function Hero() {
   ======================================================= */
 
   useEffect(() => {
+
     if (step === "gd") {
       startContinuousListening();
     } else {
@@ -480,146 +507,187 @@ export default function Hero() {
     return () => {
       stopAllAudio();
     };
+
   }, [step]);
 
   const stopAllAudio = () => {
+
     window.speechSynthesis.cancel();
 
-    if (silenceTimeoutRef.current) {
-      clearTimeout(
-        silenceTimeoutRef.current
-      );
-    }
-
     aiSpeechQueue.current = [];
+
     isProcessingQueue.current = false;
+
     isUserSpeakingRef.current = false;
-    fullSpeechRef.current = "";
+
+    interimTranscriptRef.current = "";
 
     setIsAiSpeaking(false);
+
     setActiveAiSpeaker("");
 
-    if (recognitionRef.current) {
+    if (speechServiceRef.current) {
+
       try {
-        recognitionRef.current.onstart =
-          null;
 
-        recognitionRef.current.onresult =
-          null;
+        stopSpeech();
 
-        recognitionRef.current.onerror =
-          null;
+      } catch (error) {
 
-        recognitionRef.current.onend =
-          null;
+        console.error(
+          "Failed to stop speech service:",
+          error
+        );
 
-        recognitionRef.current.stop();
-      } catch (e) {}
+      }
 
-      recognitionRef.current = null;
+      speechServiceRef.current = false;
     }
   };
 
   /* =======================================================
-     SPEECH RECOGNITION
+     DEEPGRAM STREAMING SPEECH
   ======================================================= */
 
-  const startContinuousListening = () => {
-    const SR =
-      window.SpeechRecognition ||
-      window.webkitSpeechRecognition;
+  const startContinuousListening = async () => {
 
-    if (!SR) {
-      alert(
-        "Speech Recognition not supported in this browser."
-      );
-
+    if (speechServiceRef.current) {
       return;
     }
 
-    if (recognitionRef.current) return;
-
-    const recognition =
-      new SR();
-
-    recognitionRef.current =
-      recognition;
-
-    recognition.lang = "en-US";
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    recognition.onstart = () => {
-      console.log(
-        "Continuous microphone engine live."
-      );
-    };
-
-    recognition.onresult = (e) => {
-      if (!isUserSpeakingRef.current) {
-        isUserSpeakingRef.current =
-          true;
-
-        window.speechSynthesis.cancel();
-
-        isProcessingQueue.current =
-          false;
-
-        setIsAiSpeaking(false);
-        setActiveAiSpeaker("");
-      }
-
-      if (silenceTimeoutRef.current) {
-        clearTimeout(
-          silenceTimeoutRef.current
-        );
-      }
-
-      silenceTimeoutRef.current =
-        setTimeout(() => {
-          handleUserUtteranceComplete();
-        }, 2500);
-
-      for (
-        let i = e.resultIndex;
-        i < e.results.length;
-        i++
-      ) {
-        if (e.results[i].isFinal) {
-          fullSpeechRef.current +=
-            " " +
-            e.results[i][0].transcript;
-        }
-      }
-    };
-
-    recognition.onerror = (e) => {
-      if (e.error !== "no-speech") {
-        console.error(
-          "Speech recognition engine glitch:",
-          e.error
-        );
-      }
-    };
-
-    recognition.onend = () => {
-      if (
-        step === "gd" &&
-        recognitionRef.current
-      ) {
-        try {
-          recognition.start();
-        } catch (err) {}
-      }
-    };
+    if (step !== "gd") {
+      return;
+    }
 
     try {
-      recognition.start();
-    } catch (e) {
+
+      speechServiceRef.current = true;
+
+      await startSpeech({
+
+        // ==============================================
+        // INTERIM TRANSCRIPT
+        // ==============================================
+
+        onInterim: (text) => {
+
+          interimTranscriptRef.current =
+            text || "";
+
+          console.log(
+            "📝 Interim transcript:",
+            text
+          );
+
+        },
+
+        // ==============================================
+        // USER STARTED SPEAKING
+        // ==============================================
+
+        onSpeechStarted: () => {
+
+          isUserSpeakingRef.current = true;
+
+          // Interrupt AI immediately when the user
+          // starts speaking.
+
+          window.speechSynthesis.cancel();
+
+          aiSpeechQueue.current = [];
+
+          isProcessingQueue.current = false;
+
+          setIsAiSpeaking(false);
+
+          setActiveAiSpeaker("");
+
+          console.log(
+            "🎤 User started speaking"
+          );
+
+        },
+
+        // ==============================================
+        // DEEPGRAM READY
+        // ==============================================
+
+        onReady: () => {
+
+          console.log(
+            "🟢 Deepgram speech stream ready"
+          );
+
+        },
+
+        // ==============================================
+        // COMPLETE USER UTTERANCE
+        // ==============================================
+
+        onFinal: async (text) => {
+
+          const speechText =
+            text?.trim();
+
+          interimTranscriptRef.current = "";
+
+          if (!speechText) {
+
+            isUserSpeakingRef.current = false;
+
+            processSpeechQueue();
+
+            return;
+          }
+
+          console.log(
+            "🎯 User speech complete:",
+            speechText
+          );
+
+          await handleUserUtteranceComplete(
+            speechText
+          );
+
+        },
+
+        // ==============================================
+        // SPEECH ERROR
+        // ==============================================
+
+        onError: (error) => {
+
+          console.error(
+            "❌ Deepgram speech error:",
+            error
+          );
+
+          speechServiceRef.current = false;
+
+          if (step === "gd") {
+
+            // The speech service itself owns the
+            // WebSocket/microphone lifecycle.
+
+            setIsAiSpeaking(false);
+
+            setActiveAiSpeaker("");
+
+          }
+
+        },
+
+      });
+
+    } catch (error) {
+
+      speechServiceRef.current = false;
+
       console.error(
-        "Failed to boot speech capture:",
-        e
+        "❌ Failed to start Deepgram speech:",
+        error
       );
+
     }
   };
 
@@ -628,17 +696,18 @@ export default function Hero() {
   ======================================================= */
 
   const handleUserUtteranceComplete =
-    async () => {
+    async (speechText) => {
+
       isUserSpeakingRef.current =
         false;
 
-      const speechText =
-        fullSpeechRef.current.trim();
+      const cleanedSpeech =
+        speechText?.trim();
 
-      fullSpeechRef.current = "";
+      if (!cleanedSpeech) {
 
-      if (!speechText) {
         processSpeechQueue();
+
         return;
       }
 
@@ -646,7 +715,7 @@ export default function Hero() {
         ...prev,
         {
           speaker: "You",
-          text: speechText,
+          text: cleanedSpeech,
           avatar: "👤",
         },
       ]);
@@ -654,35 +723,41 @@ export default function Hero() {
       setLoadingAI(true);
 
       aiSpeechQueue.current = [];
+
       isProcessingQueue.current = false;
 
       try {
+
         const ai =
           await axios.post(
             `${import.meta.env.VITE_API_URL}/api/gd`,
             {
               sessionId,
               userSpeech:
-                speechText,
+                cleanedSpeech,
             },
           );
 
         const payloads = [];
 
         if (ai.data["Player 1"]) {
+
           payloads.push({
             speaker: "Player 1",
             text: ai.data["Player 1"],
             avatar: "🤖",
           });
+
         }
 
         if (ai.data["Player 2"]) {
+
           payloads.push({
             speaker: "Player 2",
             text: ai.data["Player 2"],
             avatar: "🤖",
           });
+
         }
 
         setHistory((prev) => [
@@ -698,6 +773,7 @@ export default function Hero() {
         processSpeechQueue();
 
       } catch (error) {
+
         console.error(
           "Failed to process dialogue:",
           error
@@ -706,7 +782,9 @@ export default function Hero() {
         processSpeechQueue();
 
       } finally {
+
         setLoadingAI(false);
+
       }
     };
 
@@ -715,6 +793,7 @@ export default function Hero() {
   ======================================================= */
 
   const processSpeechQueue = () => {
+
     if (
       isUserSpeakingRef.current ||
       isProcessingQueue.current ||
@@ -736,6 +815,7 @@ export default function Hero() {
     setIsAiSpeaking(true);
 
     try {
+
       window.speechSynthesis.cancel();
 
       const speech =
@@ -744,27 +824,35 @@ export default function Hero() {
         );
 
       speech.lang = "en-US";
+
       speech.pitch = 0.9;
+
       speech.rate = 0.95;
 
       speech.onend = () => {
+
         isProcessingQueue.current =
           false;
 
         setIsAiSpeaking(false);
+
         setActiveAiSpeaker("");
 
         processSpeechQueue();
+
       };
 
       speech.onerror = () => {
+
         isProcessingQueue.current =
           false;
 
         setIsAiSpeaking(false);
+
         setActiveAiSpeaker("");
 
         processSpeechQueue();
+
       };
 
       window.speechSynthesis.speak(
@@ -772,6 +860,7 @@ export default function Hero() {
       );
 
     } catch (err) {
+
       console.error(
         "SpeechSynthesis error:",
         err
@@ -781,9 +870,11 @@ export default function Hero() {
         false;
 
       setIsAiSpeaking(false);
+
       setActiveAiSpeaker("");
 
       processSpeechQueue();
+
     }
   };
 
@@ -792,18 +883,25 @@ export default function Hero() {
   ======================================================= */
 
   const startGD = async () => {
+
     try {
+
       const res =
         await axios.get(
           `${import.meta.env.VITE_API_URL}/api/gd/start`
         );
+
+      console.log(
+        "🔥 GD START RESPONSE:",
+        res.data
+      );
 
       setSessionId(
         res.data.sessionId
       );
 
       setTopic(
-        res.data.topic
+        res.data.topic || ""
       );
 
       const initialPayload = [
@@ -815,6 +913,7 @@ export default function Hero() {
             ],
           avatar: "🤖",
         },
+
         {
           speaker: "Player 2",
           text:
@@ -840,10 +939,12 @@ export default function Hero() {
       }, 400);
 
     } catch (error) {
+
       console.error(
         "Failed to start GD:",
         error
       );
+
     }
   };
 
@@ -852,14 +953,19 @@ export default function Hero() {
   ======================================================= */
 
   const handleLogout = async () => {
+
     await signOut(auth);
 
     stopAllAudio();
 
     setSessionId(null);
+
     setHistory([]);
+
     setTopic("");
+
     setStep("enter");
+
   };
 
   /* =======================================================
@@ -867,9 +973,11 @@ export default function Hero() {
   ======================================================= */
 
   const handleExit = async () => {
+
     stopAllAudio();
 
     try {
+
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/performance`,
         {
@@ -892,12 +1000,14 @@ export default function Hero() {
         res.data.streak;
 
       setStreak(newStreak);
+
       setSessionId(null);
 
       if (
         newStreak >
         lastShownStreak
       ) {
+
         setLatestStreak(
           newStreak
         );
@@ -911,21 +1021,29 @@ export default function Hero() {
         );
 
         setTimeout(() => {
+
           setShowStreakPopup(
             false
           );
 
           setStep("enter");
+
         }, 2200);
+
       } else {
+
         setStep("enter");
+
       }
 
     } catch (err) {
+
       console.error(err);
 
       setSessionId(null);
+
       setStep("enter");
+
     }
   };
 
@@ -934,6 +1052,7 @@ export default function Hero() {
   ======================================================= */
 
   if (loading) {
+
     return (
       <div className="fixed inset-0 bg-[#030305] flex items-center justify-center overflow-hidden">
 
@@ -1082,7 +1201,9 @@ export default function Hero() {
       ====================================================== */}
 
       <AnimatePresence>
+
         {showStreakPopup && (
+
           <motion.div
             initial={{
               opacity: 0,
@@ -1188,6 +1309,7 @@ export default function Hero() {
                 </p>
 
                 <p className="text-[15px] text-white/50 leading-7 mt-5">
+
                   {latestStreak === 1 &&
                     "Nice start. Consistency begins today."}
 
@@ -1201,6 +1323,7 @@ export default function Hero() {
 
                   {latestStreak >= 7 &&
                     "Excellent discipline. Don't break the chain."}
+
                 </p>
 
                 <div className="mt-7 h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
@@ -1235,6 +1358,7 @@ export default function Hero() {
 
           </motion.div>
         )}
+
       </AnimatePresence>
 
       {/* =====================================================
@@ -1246,12 +1370,17 @@ export default function Hero() {
         streak={streak}
         onLogout={handleLogout}
         onNavigateHome={() => {
+
           stopAllAudio();
 
           setSessionId(null);
+
           setHistory([]);
+
           setTopic("");
+
           setStep("enter");
+
         }}
       />
 
@@ -1260,7 +1389,9 @@ export default function Hero() {
       ====================================================== */}
 
       <AnimatePresence>
+
         {showHowToPlay && (
+
           <motion.div
             initial={{
               opacity: 0,
@@ -1432,6 +1563,7 @@ export default function Hero() {
                   ],
                 ].map(
                   ([num, title, desc]) => (
+
                     <div
                       key={num}
                       className="
@@ -1462,9 +1594,11 @@ export default function Hero() {
                           justify-center
                         "
                       >
+
                         <span className="text-sm font-bold text-red-400">
                           {num}
                         </span>
+
                       </div>
 
                       <div>
@@ -1480,6 +1614,7 @@ export default function Hero() {
                       </div>
 
                     </div>
+
                   )
                 )}
 
@@ -1488,7 +1623,9 @@ export default function Hero() {
             </motion.div>
 
           </motion.div>
+
         )}
+
       </AnimatePresence>
 
       {/* =====================================================
@@ -1502,6 +1639,7 @@ export default function Hero() {
         ==================================================== */}
 
         {step === "enter" && (
+
           <motion.section
             initial="hidden"
             animate="visible"
@@ -1650,10 +1788,12 @@ export default function Hero() {
                   variants={fadeUp}
                   className="self-start lg:self-auto"
                 >
+
                   <StreakBadge
                     streak={streak}
                     onClick={() => {}}
                   />
+
                 </motion.div>
 
               </div>
@@ -1737,7 +1877,9 @@ export default function Hero() {
                           text-red-400
                         "
                       >
+
                         <FiMic className="w-6 h-6" />
+
                       </div>
 
                       <div
@@ -1788,6 +1930,7 @@ export default function Hero() {
                           "AI participants",
                           "Performance analysis",
                         ].map((item) => (
+
                           <span
                             key={item}
                             className="
@@ -1803,6 +1946,7 @@ export default function Hero() {
                           >
                             {item}
                           </span>
+
                         ))}
 
                       </div>
@@ -1821,7 +1965,7 @@ export default function Hero() {
                             scale: 0.98,
                           }}
                           className="
-                           cursor-pointer
+                            cursor-pointer
                             group/button
                             h-13
                             px-7
@@ -1862,7 +2006,7 @@ export default function Hero() {
                             setShowHowToPlay(true)
                           }
                           className="
-                           cursor-pointer
+                            cursor-pointer
                             h-13
                             px-6
                             rounded-xl
@@ -1962,7 +2106,9 @@ export default function Hero() {
                             justify-center
                           "
                         >
+
                           <FiMessageCircle className="w-4.5 h-4.5 text-violet-400" />
+
                         </div>
 
                       </div>
@@ -2036,7 +2182,9 @@ export default function Hero() {
                           text-emerald-400
                         "
                       >
+
                         <FiTrendingUp className="w-5 h-5" />
+
                       </div>
 
                     </div>
@@ -2123,6 +2271,7 @@ export default function Hero() {
                   ],
                 ].map(
                   ([Icon, text]) => (
+
                     <div
                       key={text}
                       className="flex items-center gap-2.5"
@@ -2135,6 +2284,7 @@ export default function Hero() {
                       </span>
 
                     </div>
+
                   )
                 )}
 
@@ -2143,6 +2293,7 @@ export default function Hero() {
             </div>
 
           </motion.section>
+
         )}
 
         {/* ===================================================
@@ -2150,6 +2301,7 @@ export default function Hero() {
         ==================================================== */}
 
         {step === "gd" && (
+
           <motion.section
             initial={{
               opacity: 0,
@@ -2165,6 +2317,7 @@ export default function Hero() {
             }}
             className="
               min-h-[calc(100vh-70px)]
+              h-auto
               w-full
               max-w-5xl
               mx-auto
@@ -2173,88 +2326,11 @@ export default function Hero() {
               py-7
               flex
               flex-col
+              overflow-visible
             "
           >
 
-            {/* =================================================
-                ARENA HEADER
-            ================================================== */}
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-
-              <div>
-
-                <div className="flex items-center gap-2.5">
-
-                  <span className="relative flex w-2.5 h-2.5">
-
-                    <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-60" />
-
-                    <span className="relative w-2.5 h-2.5 rounded-full bg-red-400" />
-
-                  </span>
-
-                  <span className="text-sm uppercase tracking-[0.2em] text-red-400/80">
-                    Live Arena
-                  </span>
-
-                </div>
-
-                <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight mt-2">
-                  Group discussion
-                </h1>
-
-              </div>
-
-              <div className="flex items-center gap-2.5">
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-2.5
-                    px-3.5
-                    py-2.5
-                    rounded-xl
-                    border
-                    border-emerald-500/10
-                    bg-emerald-500/[0.04]
-                  "
-                >
-
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-
-                  <span className="text-xs uppercase tracking-[0.14em] text-emerald-400/80">
-                    Connected
-                  </span>
-
-                </div>
-
-                <button
-                  onClick={handleExit}
-                  className="
-                  cursor-pointer
-                    px-4
-                    py-2.5
-                    rounded-xl
-                    border
-                    border-white/[0.07]
-                    bg-white/[0.025]
-                    text-xs
-                    uppercase
-                    tracking-[0.14em]
-                    text-white/40
-                    hover:text-red-400
-                    hover:border-red-500/20
-                    transition-all
-                  "
-                >
-                  Exit
-                </button>
-
-              </div>
-
-            </div>
+            <GDHeader onExit={handleExit} />
 
             {/* =================================================
                 TOPIC
@@ -2300,378 +2376,28 @@ export default function Hero() {
                 </div>
 
                 <p className="text-lg sm:text-xl font-medium text-white leading-relaxed">
-                  {topic}
+                  {topic || "Loading discussion topic..."}
                 </p>
 
               </div>
 
             </div>
 
-            {/* =================================================
-                STATUS BAR
-            ================================================== */}
-
-            <div
-              className="
-                flex
-                flex-wrap
-                items-center
-                justify-between
-                gap-3
-                p-3.5
-                rounded-[18px]
-                border
-                border-white/[0.06]
-                bg-white/[0.02]
-                mb-5
-              "
-            >
-
-              <div className="flex flex-wrap items-center gap-2.5">
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-2.5
-                    px-3.5
-                    py-2.5
-                    rounded-xl
-                    bg-blue-500/[0.06]
-                    border
-                    border-blue-500/10
-                  "
-                >
-
-                  <FiMic className="w-4 h-4 text-blue-400" />
-
-                  <span className="text-xs uppercase tracking-[0.14em] text-blue-400/80">
-                    Listening
-                  </span>
-
-                </div>
-
-                {isAiSpeaking ? (
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-2.5
-                      px-3.5
-                      py-2.5
-                      rounded-xl
-                      bg-violet-500/[0.06]
-                      border
-                      border-violet-500/10
-                    "
-                  >
-
-                    <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
-
-                    <span className="text-xs uppercase tracking-[0.14em] text-violet-400/80">
-                      {activeAiSpeaker}
-                    </span>
-
-                  </div>
-                ) : (
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-2.5
-                      px-3.5
-                      py-2.5
-                      rounded-xl
-                      bg-white/[0.025]
-                      border
-                      border-white/[0.06]
-                    "
-                  >
-
-                    <FiMessageCircle className="w-4 h-4 text-white/35" />
-
-                    <span className="text-xs uppercase tracking-[0.14em] text-white/40">
-                      Discussion open
-                    </span>
-
-                  </div>
-                )}
-
-              </div>
-
-              {loadingAI && (
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-2.5
-                    px-3.5
-                    py-2.5
-                    rounded-xl
-                    bg-amber-500/[0.05]
-                    border
-                    border-amber-500/10
-                  "
-                >
-
-                  <FaSpinner className="animate-spin text-amber-400 text-sm" />
-
-                  <span className="text-xs uppercase tracking-[0.14em] text-amber-400/80">
-                    AI processing
-                  </span>
-
-                </div>
-              )}
-
-            </div>
-
-            {/* =================================================
-                DISCUSSION STREAM
-            ================================================== */}
-
-            <div
-              className="
-                flex-1
-                min-h-[400px]
-                rounded-[24px]
-                border
-                border-white/[0.06]
-                bg-white/[0.015]
-                overflow-hidden
-                flex
-                flex-col
-              "
-            >
-
-              {/* Stream Header */}
-
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  px-5
-                  py-4
-                  border-b
-                  border-white/[0.05]
-                "
-              >
-
-                <div className="flex items-center gap-3.5">
-
-                  <div
-                    className="
-                      w-9
-                      h-9
-                      rounded-lg
-                      bg-white/[0.04]
-                      border
-                      border-white/[0.06]
-                      flex
-                      items-center
-                      justify-center
-                    "
-                  >
-                    <FiMessageCircle className="w-4.5 h-4.5 text-white/40" />
-                  </div>
-
-                  <div>
-
-                    <p className="text-sm font-semibold text-white">
-                      Discussion stream
-                    </p>
-
-                    <p className="text-xs text-white/35 mt-0.5">
-                      Live conversation transcript
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <div className="flex items-center gap-2.5">
-
-                  <FiClock className="w-4 h-4 text-white/25" />
-
-                  <span className="text-xs text-white/35">
-                    Live
-                  </span>
-
-                </div>
-
-              </div>
-
-              {/* Messages */}
-
-              <div
-                className="
-                  flex-1
-                  min-h-0
-                  overflow-y-auto
-                  p-4
-                  sm:p-5
-                  space-y-3.5
-                  scrollbar-thin
-                  scrollbar-thumb-white/10
-                  scrollbar-track-transparent
-                "
-              >
-
-                {history.length === 0 && (
-                  <div className="h-full flex items-center justify-center">
-
-                    <div className="text-center">
-
-                      <FiMessageCircle className="w-10 h-10 text-white/15 mx-auto" />
-
-                      <p className="text-sm text-white/30 mt-4">
-                        Waiting for the discussion...
-                      </p>
-
-                    </div>
-
-                  </div>
-                )}
-
-                {history.map(
-                  (msg, index) => {
-                    const isUser =
-                      msg.speaker === "You";
-
-                    return (
-                      <motion.div
-                        key={index}
-                        initial={{
-                          opacity: 0,
-                          y: 12,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          y: 0,
-                        }}
-                        transition={{
-                          duration: 0.35,
-                          ease,
-                        }}
-                        className={`
-                          p-4
-                          sm:p-5
-                          rounded-[18px]
-                          border
-                          ${
-                            isUser
-                              ? "bg-blue-500/[0.045] border-blue-500/10"
-                              : "bg-violet-500/[0.035] border-violet-500/10"
-                          }
-                        `}
-                      >
-
-                        <div className="flex gap-3.5">
-
-                          <div
-                            className={`
-                              flex-shrink-0
-                              w-10
-                              h-10
-                              rounded-xl
-                              flex
-                              items-center
-                              justify-center
-                              text-base
-                              ${
-                                isUser
-                                  ? "bg-blue-500/10 border border-blue-500/10"
-                                  : "bg-violet-500/10 border border-violet-500/10"
-                              }
-                            `}
-                          >
-                            {msg.avatar}
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-
-                            <div className="flex items-center gap-2.5">
-
-                              <p
-                                className={`
-                                  text-xs
-                                  uppercase
-                                  tracking-[0.14em]
-                                  font-semibold
-                                  ${
-                                    isUser
-                                      ? "text-blue-400/90"
-                                      : "text-violet-400/90"
-                                  }
-                                `}
-                              >
-                                {msg.speaker}
-                              </p>
-
-                              {isUser && (
-                                <span className="text-[10px] uppercase tracking-wider text-blue-400/50">
-                                  You
-                                </span>
-                              )}
-
-                            </div>
-
-                            <p className="text-[15px] text-white/70 leading-7 mt-2">
-                              {msg.text}
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                      </motion.div>
-                    );
-                  }
-                )}
-
-                <div ref={chatEndRef} />
-
-              </div>
-
-              {/* Bottom status */}
-
-              <div
-                className="
-                  px-5
-                  py-3.5
-                  border-t
-                  border-white/[0.05]
-                  flex
-                  items-center
-                  justify-center
-                  gap-2.5
-                "
-              >
-
-                <span
-                  className={`
-                    w-2
-                    h-2
-                    rounded-full
-                    ${
-                      isAiSpeaking
-                        ? "bg-violet-400 animate-pulse"
-                        : "bg-emerald-400"
-                    }
-                  `}
-                />
-
-                <span className="text-xs uppercase tracking-[0.16em] text-white/35">
-                  {isAiSpeaking
-                    ? `${activeAiSpeaker} is speaking`
-                    : "Microphone active — speak naturally"}
-                </span>
-
-              </div>
-
-            </div>
+            <GDStatusBar
+              isAiSpeaking={isAiSpeaking}
+              activeAiSpeaker={activeAiSpeaker}
+              loadingAI={loadingAI}
+            />
+
+            <DiscussionStream
+              history={history}
+              chatContainerRef={chatContainerRef}
+              isAiSpeaking={isAiSpeaking}
+              activeAiSpeaker={activeAiSpeaker}
+            />
 
           </motion.section>
+
         )}
 
       </main>
