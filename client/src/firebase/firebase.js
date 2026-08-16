@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
 import {
-  getAuth,
-  setPersistence,
+  initializeAuth,
   browserLocalPersistence,
+  browserPopupRedirectResolver,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -16,7 +16,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
-
-// Keep user logged in after refresh
-setPersistence(auth, browserLocalPersistence).catch(console.error);
+export const auth = initializeAuth(app, {
+  persistence: browserLocalPersistence,
+  popupRedirectResolver: browserPopupRedirectResolver,
+});

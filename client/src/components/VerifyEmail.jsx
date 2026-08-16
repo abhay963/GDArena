@@ -5,7 +5,8 @@ import { FiMail, FiRefreshCw, FiLogOut } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 import { auth } from "../firebase/firebase";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
+
 import {
   resendVerificationEmail,
   logout,
@@ -34,7 +35,7 @@ export default function VerifyEmail() {
     );
   }
 
-  // If there is no logged-in user, go to login
+  // If there is no logged-in user, redirect to login
   if (!user) {
     navigate("/login", { replace: true });
     return null;
@@ -70,9 +71,14 @@ export default function VerifyEmail() {
         );
       }
     } catch (error) {
-      console.error("Verification Check Error:", error);
+      console.error(
+        "Verification Check Error:",
+        error
+      );
 
-      toast.error("Unable to check verification status.");
+      toast.error(
+        "Unable to check verification status."
+      );
     } finally {
       setLoading(false);
     }
@@ -85,12 +91,18 @@ export default function VerifyEmail() {
 
       await resendVerificationEmail();
 
-      toast.success("Verification email sent again!");
+      toast.success(
+        "Verification email sent again!"
+      );
     } catch (error) {
-      console.error("Resend Verification Error:", error);
+      console.error(
+        "Resend Verification Error:",
+        error
+      );
 
       toast.error(
-        error.message || "Failed to resend verification email."
+        error.message ||
+          "Failed to resend verification email."
       );
     } finally {
       setResending(false);
@@ -102,9 +114,14 @@ export default function VerifyEmail() {
     try {
       await logout();
 
-      navigate("/login", { replace: true });
+      navigate("/login", {
+        replace: true,
+      });
     } catch (error) {
-      console.error("Logout Error:", error);
+      console.error(
+        "Logout Error:",
+        error
+      );
 
       toast.error("Failed to logout.");
     }
@@ -112,9 +129,7 @@ export default function VerifyEmail() {
 
   return (
     <div className="min-h-screen bg-[#030014] text-gray-200 flex items-center justify-center px-6">
-
       <div className="w-full max-w-md">
-
         <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center shadow-2xl">
 
           {/* Email Icon */}
@@ -139,9 +154,10 @@ export default function VerifyEmail() {
 
           {/* Instructions */}
           <p className="mt-5 text-gray-500 text-sm leading-6">
-            Please check your inbox and click the verification
-            link. After verifying your email, come back here and
-            click the button below.
+            Please check your inbox and click the
+            verification link. After verifying your
+            email, come back here and click the button
+            below.
           </p>
 
           {/* Check Verification */}
@@ -189,9 +205,7 @@ export default function VerifyEmail() {
           </button>
 
         </div>
-
       </div>
-
     </div>
   );
 }

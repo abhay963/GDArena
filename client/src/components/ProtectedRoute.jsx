@@ -1,15 +1,15 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
-  // Firebase is still checking the current authentication state
+  // Firebase is restoring the saved authentication session
   if (loading) {
     return (
       <div className="min-h-screen bg-[#030014] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-14 h-14 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-14 h-14 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
 
           <h2 className="mt-6 text-xl font-semibold text-white">
             Loading...
@@ -23,16 +23,16 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  // User is not logged in
+  // No authenticated user
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // User is logged in but email is not verified
+  // Authenticated but email is not verified
   if (!user.emailVerified) {
     return <Navigate to="/verify-email" replace />;
   }
 
-  // User is authenticated and email is verified
+  // Authenticated and verified
   return children;
 }

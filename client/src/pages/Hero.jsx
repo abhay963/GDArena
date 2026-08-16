@@ -38,7 +38,7 @@ import {
 } from "react-icons/fi";
 
 // Authentication
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import {
   signOut,
 } from "firebase/auth";
