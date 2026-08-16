@@ -3,6 +3,7 @@ let mediaRecorder = null;
 let mediaStream = null;
 
 let isStopping = false;
+let isPaused = false;
 
 /* =========================================================
    START SPEECH
@@ -17,6 +18,7 @@ export async function startSpeech({
 }) {
   try {
     isStopping = false;
+    isPaused = false;
 
     /* =====================================================
        1. MICROPHONE
@@ -34,7 +36,9 @@ export async function startSpeech({
         },
       });
 
-    console.log("🎤 Microphone permission granted");
+    console.log(
+      "🎤 Microphone permission granted"
+    );
 
     /* =====================================================
        2. CREATE WEBSOCKET
@@ -69,12 +73,13 @@ export async function startSpeech({
     let resolveReady;
     let rejectReady;
 
-    const readyPromise = new Promise(
-      (resolve, reject) => {
-        resolveReady = resolve;
-        rejectReady = reject;
-      }
-    );
+    const readyPromise =
+      new Promise(
+        (resolve, reject) => {
+          resolveReady = resolve;
+          rejectReady = reject;
+        }
+      );
 
     /* =====================================================
        WEBSOCKET OPEN
@@ -100,11 +105,13 @@ export async function startSpeech({
           data.type
         );
 
-        /* =================================================
+        /* ================================================
            DEEPGRAM READY
         ================================================= */
 
-        if (data.type === "ready") {
+        if (
+          data.type === "ready"
+        ) {
           console.log(
             "🎙️ Deepgram ready"
           );
@@ -116,15 +123,34 @@ export async function startSpeech({
           return;
         }
 
-        /* =================================================
+        /* ================================================
            INTERIM TRANSCRIPT
         ================================================= */
 
-        if (data.type === "interim") {
+        if (
+          data.type === "interim"
+        ) {
           const transcript =
             data.transcript?.trim();
 
           if (!transcript) {
+            return;
+          }
+
+          /*
+           * Safety check.
+           *
+           * While AI is speaking, the recorder is paused.
+           * Therefore normally no Deepgram transcript should
+           * arrive here.
+           */
+
+          if (isPaused) {
+            console.log(
+              "🔇 Ignoring interim while AI is speaking:",
+              transcript
+            );
+
             return;
           }
 
@@ -133,20 +159,38 @@ export async function startSpeech({
             transcript
           );
 
-          onInterim?.(transcript);
+          onInterim?.(
+            transcript
+          );
 
           return;
         }
 
-        /* =================================================
+        /* ================================================
            FINAL TRANSCRIPT
         ================================================= */
 
-        if (data.type === "final") {
+        if (
+          data.type === "final"
+        ) {
           const transcript =
             data.transcript?.trim();
 
           if (!transcript) {
+            return;
+          }
+
+          /*
+           * NEVER allow a transcript through while
+           * AI is speaking.
+           */
+
+          if (isPaused) {
+            console.log(
+              "🔇 Ignoring final while AI is speaking:",
+              transcript
+            );
+
             return;
           }
 
@@ -155,18 +199,33 @@ export async function startSpeech({
             transcript
           );
 
-          onFinal?.(transcript);
+          onFinal?.(
+            transcript
+          );
 
           return;
         }
 
-        /* =================================================
+        /* ================================================
            SPEECH STARTED
         ================================================= */
 
         if (
-          data.type === "speech-started"
+          data.type ===
+          "speech-started"
         ) {
+          /*
+           * If AI is speaking, ignore this completely.
+           */
+
+          if (isPaused) {
+            console.log(
+              "🔇 Ignoring speech-started — AI is speaking"
+            );
+
+            return;
+          }
+
           console.log(
             "🗣️ Speech started"
           );
@@ -176,41 +235,28 @@ export async function startSpeech({
           return;
         }
 
-        /* =================================================
+        /* ================================================
            UTTERANCE END
         ================================================= */
 
         if (
-          data.type === "utterance-end"
+          data.type ===
+          "utterance-end"
         ) {
           console.log(
             "🛑 Utterance ended"
           );
 
-          /*
-           * IMPORTANT:
-           *
-           * We DO NOT create a final transcript here.
-           *
-           * The server should send:
-           *
-           * {
-           *   type: "final",
-           *   transcript: "..."
-           * }
-           *
-           * when Deepgram has assembled the final
-           * transcript.
-           */
-
           return;
         }
 
-        /* =================================================
+        /* ================================================
            SERVER ERROR
         ================================================= */
 
-        if (data.type === "error") {
+        if (
+          data.type === "error"
+        ) {
           const message =
             data.message ||
             "Speech recognition error";
@@ -220,18 +266,17 @@ export async function startSpeech({
             message
           );
 
-          rejectReady(
-            new Error(message)
-          );
+          const error =
+            new Error(message);
 
-          onError?.(
-            new Error(message)
-          );
+          rejectReady(error);
+
+          onError?.(error);
 
           return;
         }
 
-        /* =================================================
+        /* ================================================
            SERVER CLOSED
         ================================================= */
 
@@ -244,6 +289,7 @@ export async function startSpeech({
 
           return;
         }
+
       } catch (error) {
         console.error(
           "❌ Invalid Speech WebSocket message:",
@@ -267,9 +313,13 @@ export async function startSpeech({
           "Speech WebSocket connection failed"
         );
 
-      rejectReady(speechError);
+      rejectReady(
+        speechError
+      );
 
-      onError?.(speechError);
+      onError?.(
+        speechError
+      );
     };
 
     /* =====================================================
@@ -363,6 +413,17 @@ export async function startSpeech({
         return;
       }
 
+      /*
+       * CRITICAL:
+       *
+       * If AI is speaking, don't send microphone
+       * audio to Deepgram.
+       */
+
+      if (isPaused) {
+        return;
+      }
+
       if (
         !socket ||
         socket.readyState !==
@@ -376,7 +437,9 @@ export async function startSpeech({
       }
 
       try {
-        socket.send(event.data);
+        socket.send(
+          event.data
+        );
       } catch (error) {
         console.error(
           "❌ Failed to send audio chunk:",
@@ -406,6 +469,26 @@ export async function startSpeech({
     };
 
     /* =====================================================
+       RECORDER PAUSE
+    ===================================================== */
+
+    mediaRecorder.onpause = () => {
+      console.log(
+        "⏸️ MediaRecorder paused"
+      );
+    };
+
+    /* =====================================================
+       RECORDER RESUME
+    ===================================================== */
+
+    mediaRecorder.onresume = () => {
+      console.log(
+        "▶️ MediaRecorder resumed"
+      );
+    };
+
+    /* =====================================================
        RECORDER ERROR
     ===================================================== */
 
@@ -427,15 +510,16 @@ export async function startSpeech({
 
     /* =====================================================
        START RECORDING
-       
-       250ms gives relatively low latency.
     ===================================================== */
 
-    mediaRecorder.start(250);
+    mediaRecorder.start(
+      250
+    );
 
     console.log(
       "🎙️ Speech pipeline fully active"
     );
+
   } catch (error) {
     console.error(
       "❌ Failed to start speech:",
@@ -444,9 +528,122 @@ export async function startSpeech({
 
     stopSpeech();
 
-    onError?.(error);
+    onError?.(
+      error
+    );
 
     throw error;
+  }
+}
+
+/* =========================================================
+   PAUSE SPEECH
+========================================================= */
+
+/*
+ * Called immediately BEFORE AI TTS starts.
+ *
+ * IMPORTANT:
+ *
+ * We DO NOT close:
+ *
+ * ❌ Microphone permission
+ * ❌ WebSocket
+ * ❌ Deepgram connection
+ *
+ * We only pause MediaRecorder.
+ *
+ * Therefore the entire Deepgram connection remains alive.
+ */
+
+export function pauseSpeech() {
+
+  if (isStopping) {
+    return;
+  }
+
+  if (isPaused) {
+    console.log(
+      "ℹ️ Speech already paused"
+    );
+
+    return;
+  }
+
+  isPaused = true;
+
+  console.log(
+    "🔇 Speech input PAUSED — AI is speaking"
+  );
+
+  if (
+    mediaRecorder &&
+    mediaRecorder.state ===
+      "recording"
+  ) {
+    try {
+      mediaRecorder.pause();
+
+      console.log(
+        "⏸️ MediaRecorder paused"
+      );
+
+    } catch (error) {
+      console.error(
+        "❌ Failed to pause MediaRecorder:",
+        error
+      );
+    }
+  }
+}
+
+/* =========================================================
+   RESUME SPEECH
+========================================================= */
+
+/*
+ * Called ONLY after the ENTIRE AI speech queue
+ * has finished.
+ */
+
+export function resumeSpeech() {
+
+  if (isStopping) {
+    return;
+  }
+
+  if (!isPaused) {
+    console.log(
+      "ℹ️ Speech is already active"
+    );
+
+    return;
+  }
+
+  isPaused = false;
+
+  console.log(
+    "🎤 Speech input RESUMED — user's turn"
+  );
+
+  if (
+    mediaRecorder &&
+    mediaRecorder.state ===
+      "paused"
+  ) {
+    try {
+      mediaRecorder.resume();
+
+      console.log(
+        "▶️ MediaRecorder resumed"
+      );
+
+    } catch (error) {
+      console.error(
+        "❌ Failed to resume MediaRecorder:",
+        error
+      );
+    }
   }
 }
 
@@ -455,15 +652,17 @@ export async function startSpeech({
 ========================================================= */
 
 export function stopSpeech() {
+
   console.log(
     "🛑 Stopping speech recognition"
   );
 
   isStopping = true;
+  isPaused = false;
 
-  /* =======================================================
+  /* =====================================================
      STOP MEDIA RECORDER
-  ======================================================= */
+  ===================================================== */
 
   if (
     mediaRecorder &&
@@ -472,6 +671,7 @@ export function stopSpeech() {
   ) {
     try {
       mediaRecorder.stop();
+
     } catch (error) {
       console.warn(
         "⚠️ Failed to stop MediaRecorder:",
@@ -482,30 +682,36 @@ export function stopSpeech() {
 
   mediaRecorder = null;
 
-  /* =======================================================
+  /* =====================================================
      STOP MICROPHONE
-  ======================================================= */
+  ===================================================== */
 
   if (mediaStream) {
+
     mediaStream
       .getTracks()
-      .forEach((track) => {
-        try {
-          track.stop();
-        } catch (error) {
-          console.warn(
-            "⚠️ Failed to stop microphone track:",
-            error
-          );
+      .forEach(
+        (track) => {
+
+          try {
+            track.stop();
+
+          } catch (error) {
+            console.warn(
+              "⚠️ Failed to stop microphone track:",
+              error
+            );
+          }
+
         }
-      });
+      );
 
     mediaStream = null;
   }
 
-  /* =======================================================
+  /* =====================================================
      CLOSE WEBSOCKET
-  ======================================================= */
+  ===================================================== */
 
   if (
     socket &&
@@ -517,12 +723,16 @@ export function stopSpeech() {
     )
   ) {
     try {
+
       socket.close();
+
     } catch (error) {
+
       console.warn(
         "⚠️ Failed to close Speech WebSocket:",
         error
       );
+
     }
   }
 

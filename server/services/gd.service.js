@@ -126,7 +126,7 @@ Player 2:
 
 Rules:
 - Each player speaks once.
-- Maximum 2-3 sentences.
+- Maximum 1-2 sentences.
 - Natural spoken English.
 - No greetings.
 - No conclusion.
