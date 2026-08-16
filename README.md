@@ -1,323 +1,443 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=800&size=38&duration=2800&pause=900&color=6366F1&center=true&vCenter=true&width=850&height=70&lines=GD+ARENA;AI-Powered+Interview+Preparation;Practice+%7C+Learn+%7C+Analyze+%7C+Improve" alt="GD Arena" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4F46E5,50:7C3AED,100:9333EA&height=220&section=header&text=GD%20ARENA&fontSize=64&fontColor=ffffff&fontAlignY=38&desc=AI-Powered%20Interview%20Preparation%20Platform&descAlignY=58&descSize=18&animation=fadeIn" width="100%"/>
 
 <br/>
 
+<h2>🧠 Practice. Learn. Analyze. Improve.</h2>
+
 <p>
-  <b>One platform for Group Discussion practice + AI-powered learning.</b>
+  <b>AI-powered Group Discussions + RAG-powered Study Assistant</b>
 </p>
 
 <br/>
 
 <a href="https://gd-arena-cgh4.vercel.app/">
-<img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-6366F1?style=for-the-badge" />
+<img src="https://img.shields.io/badge/%E2%9C%A8%20LIVE%20DEMO-4F46E5?style=for-the-badge&logo=vercel&logoColor=white" />
 </a>
 &nbsp;
 <a href="https://github.com/abhay963/GD-ARENA-frontend">
-<img src="https://img.shields.io/badge/GITHUB-181717?style=for-the-badge&logo=github&logoColor=white" />
+<img src="https://img.shields.io/badge/%E2%98%85%20SOURCE%20CODE-111827?style=for-the-badge&logo=github&logoColor=white" />
 </a>
 
 <br/><br/>
 
-<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" />
-<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white" />
-<img src="https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white" />
-<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white" />
-<img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black" />
-<img src="https://img.shields.io/badge/Groq-F55036?style=flat-square" />
-<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=flat-square" />
-<img src="https://img.shields.io/badge/pgvector-336791?style=flat-square" />
+<img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=111827"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white"/>
+<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white"/>
+<img src="https://img.shields.io/badge/Groq-F55036?style=flat-square"/>
+<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=flat-square"/>
+<img src="https://img.shields.io/badge/pgvector-336791?style=flat-square"/>
+<img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=111827"/>
+
+<br/><br/>
+
+<img src="https://komarev.com/ghpvc/?username=abhay963&label=Project%20Views&color=4F46E5&style=flat-square" />
 
 </div>
 
 ---
 
-## ⚡ What is GD Arena?
+<br/>
 
-**GD Arena** is an AI-powered platform built for placement and interview preparation.
+# 🎯 The Idea
+
+**GD Arena** brings two important parts of placement preparation into one platform.
+
+<table>
+<tr>
+<td width="50%" align="center">
+
+## 🗣️ GD Arena
+
+### Practice Communication
+
+AI-powered group discussions with real-time voice interaction, intelligent participants and performance analysis.
+
+**Speak → Discuss → Analyze → Improve**
+
+</td>
+
+<td width="50%" align="center">
+
+## 📚 StudyMate
+
+### Build Knowledge
+
+Upload your study material and interact with it using a RAG-powered AI assistant.
+
+**Upload → Retrieve → Ask → Learn**
+
+</td>
+</tr>
+</table>
+
+<br/>
+
+<div align="center">
+
+### One platform. Two preparation engines.
 
 ```text
-                    ┌─────────────────────┐
-                    │      GD ARENA       │
-                    │  AI Interview Prep  │
-                    └──────────┬──────────┘
-                               │
-                ┌──────────────┴──────────────┐
-                │                             │
-                ▼                             ▼
-       ┌─────────────────┐           ┌─────────────────┐
-       │   🗣️ GD ARENA   │           │  📚 STUDYMATE   │
-       │                 │           │                 │
-       │ AI Discussions  │           │ PDF → RAG → AI  │
-       │ Voice Practice  │           │ Vector Search   │
-       │ AI Participants │           │ AI Study Tutor  │
-       └────────┬────────┘           └────────┬────────┘
-                │                             │
-                ▼                             ▼
-          📊 ANALYTICS                 🧠 KNOWLEDGE
-                │                             │
-                └──────────────┬──────────────┘
-                               ▼
-                         🚀 BETTER PREP
+                    ┌──────────────────────────┐
+                    │        GD ARENA           │
+                    │   Interview Preparation   │
+                    └────────────┬─────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │                         │
+                    ▼                         ▼
+             ┌─────────────┐           ┌─────────────┐
+             │  🗣️  GD     │           │  📚 StudyMate│
+             │             │           │             │
+             │  Practice   │           │    Learn    │
+             └──────┬──────┘           └──────┬──────┘
+                    │                         │
+                    ▼                         ▼
+             📊 Analytics              🧠 Knowledge
+                    │                         │
+                    └───────────┬─────────────┘
+                                ▼
+                         🚀 Better Preparation
 ```
+
+</div>
 
 ---
 
 # 🗣️ GD Arena
 
-### Practice real Group Discussions with AI.
+<div align="center">
+
+### Your AI-powered Group Discussion room.
+
+</div>
 
 ```text
-👤 User
-  │
-  ├── 🎤 Voice
-  │
-  ▼
-Deepgram STT
-  │
-  ▼
-WebSocket
-  │
-  ▼
-Node.js + Express
-  │
-  ▼
-Groq LLM
-  │
-  ▼
-🤖 AI Participants
-  │
-  ▼
-💬 Real-Time Discussion
-  │
-  ▼
-📊 Performance Analysis
+       🎤 USER
+          │
+          ▼
+   ┌──────────────┐
+   │  Microphone  │
+   └──────┬───────┘
+          │
+          ▼
+   ┌──────────────┐
+   │   Deepgram   │
+   │  Streaming   │
+   │     STT      │
+   └──────┬───────┘
+          │
+          ▼
+   ┌──────────────┐
+   │  WebSocket   │
+   └──────┬───────┘
+          │
+          ▼
+   ┌──────────────┐
+   │ Node / Express│
+   └──────┬───────┘
+          │
+          ▼
+   ┌──────────────┐
+   │    Groq AI   │
+   └──────┬───────┘
+          │
+          ▼
+      🤖 AI
+   Participants
+          │
+          ▼
+     💬 Response
+          │
+          ▼
+     📊 Analysis
 ```
 
-### Features
+### ✨ Built for realistic practice
 
-* 🤖 AI-powered participants
-* 🎙️ Streaming voice interaction
-* ⚡ Real-time conversation
-* 🧠 Context-aware responses
-* 📊 Performance analytics
-* 🔥 Daily streaks
-* 📜 Discussion history
+|     | Capability                  |
+| --- | --------------------------- |
+| 🤖  | AI discussion participants  |
+| 🎙️ | Streaming voice interaction |
+| ⚡   | Real-time communication     |
+| 🧠  | Context-aware responses     |
+| 📊  | Performance analysis        |
+| 🔥  | Daily practice streaks      |
+| 📜  | Discussion history          |
 
 ---
 
 # 📚 StudyMate
 
-### Turn your PDFs into an AI-powered study assistant.
+<div align="center">
+
+### Turn your PDFs into an AI-powered knowledge base.
+
+</div>
 
 ```text
-📄 PDF
-  │
-  ▼
-Text Extraction
-  │
-  ▼
-Chunking
-  │
-  ▼
-Gemini Embeddings
-  │
-  ▼
-PostgreSQL + pgvector
-  │
-  ▼
-🔎 Semantic Search
-  │
-  ▼
-Relevant Chunks
-  │
-  ▼
-LangChain
-  │
-  ▼
-LLM
-  │
-  ▼
-🤖 StudyMate
+              📄 PDF
+                │
+                ▼
+        ┌───────────────┐
+        │ Text Extraction│
+        └───────┬───────┘
+                │
+                ▼
+           ✂️ Chunking
+                │
+                ▼
+       🧠 Gemini Embeddings
+                │
+                ▼
+      ┌───────────────────┐
+      │ PostgreSQL        │
+      │       +           │
+      │     pgvector      │
+      └─────────┬─────────┘
+                │
+                │  🔎 Similarity Search
+                │
+                ▼
+          Relevant Context
+                │
+                ▼
+           🔗 LangChain
+                │
+                ▼
+             🤖 LLM
+                │
+                ▼
+          📚 StudyMate
 ```
 
-### Features
+### ✨ RAG-powered learning
 
-* 📄 PDF upload
-* ✂️ Intelligent chunking
+* 📄 PDF ingestion
+* ✂️ Document chunking
 * 🧠 Gemini embeddings
 * 🔎 Vector similarity search
 * 🗄️ PostgreSQL + pgvector
-* 🔗 LangChain RAG
-* 🤖 LLM-powered answers
-* 📖 Document-grounded responses
+* 🔗 LangChain orchestration
+* 🤖 LLM generation
+* 📖 Context-aware answers
 
 ---
 
-# 🧠 RAG Architecture
-
-```text
-                    USER QUESTION
-                          │
-                          ▼
-                  ┌───────────────┐
-                  │    Embedding  │
-                  └───────┬───────┘
-                          │
-                          ▼
-                  ┌───────────────┐
-                  │   pgvector    │
-                  │ Vector Search │
-                  └───────┬───────┘
-                          │
-                          ▼
-                  Relevant Context
-                          │
-                          ▼
-                     LangChain
-                          │
-                          ▼
-                         LLM
-                          │
-                          ▼
-                    📚 StudyMate
-```
-
----
-
-# 🏗️ System Architecture
-
-```text
-                         🌐 CLIENT
-                            │
-                            ▼
-                   ┌─────────────────┐
-                   │  React + Vite   │
-                   └────────┬────────┘
-                            │
-                  REST API / WebSocket
-                            │
-                            ▼
-                   ┌─────────────────┐
-                   │ Node + Express  │
-                   └───────┬─┬───────┘
-                           │ │
-              ┌────────────┘ └─────────────┐
-              ▼                            ▼
-        ┌───────────┐                ┌────────────┐
-        │  GD AI    │                │  StudyMate │
-        │   Groq    │                │  LangChain │
-        └─────┬─────┘                └──────┬─────┘
-              │                             │
-              │                             ▼
-              │                       Gemini Embeddings
-              │                             │
-              │                             ▼
-              │                    ┌──────────────────┐
-              └───────────────────►│ PostgreSQL       │
-                                   │      +           │
-                                   │    pgvector      │
-                                   └──────────────────┘
-```
-
----
-
-# 🛠️ Tech Stack
+# 🧠 Inside StudyMate
 
 <div align="center">
 
-### Frontend
+```text
+                     USER
+                      │
+                      ▼
+               "Explain this topic"
+                      │
+                      ▼
+               Query Embedding
+                      │
+                      ▼
+              ┌───────────────┐
+              │   pgvector    │
+              │   Retrieval   │
+              └───────┬───────┘
+                      │
+                      ▼
+              Relevant Chunks
+                      │
+                      ▼
+                 LangChain
+                      │
+                      ▼
+                    LLM
+                      │
+                      ▼
+               Grounded Answer
+```
 
-<img src="https://skillicons.dev/icons?i=react,vite,tailwind,js,html,css" height="55"/>
+</div>
 
-<br/><br/>
+> Instead of blindly sending the entire PDF to the LLM, StudyMate retrieves the most relevant information first.
 
-### Backend
+---
 
-<img src="https://skillicons.dev/icons?i=nodejs,express,js" height="55"/>
+# 🏗️ Architecture
 
-<br/><br/>
+<div align="center">
 
-### Database & Authentication
-
-<img src="https://skillicons.dev/icons?i=postgresql,firebase" height="55"/>
-
-<br/><br/>
-
-### AI / RAG
-
-<img src="https://img.shields.io/badge/Groq-F55036?style=for-the-badge&logoColor=white" />
-<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge" />
-<img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" />
-<img src="https://img.shields.io/badge/pgvector-336791?style=for-the-badge" />
-<img src="https://img.shields.io/badge/Deepgram-101010?style=for-the-badge" />
-
-<br/><br/>
-
-### Deployment
-
-<img src="https://skillicons.dev/icons?i=vercel" height="55"/>
-
-<img src="https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" />
-<img src="https://img.shields.io/badge/Neon-00E599?style=for-the-badge" />
+```text
+                         🌐 USER
+                            │
+                            ▼
+                   ┌────────────────┐
+                   │ React + Vite   │
+                   │ Tailwind CSS   │
+                   └───────┬────────┘
+                           │
+                  REST API / WebSocket
+                           │
+                           ▼
+                   ┌────────────────┐
+                   │ Node + Express │
+                   └───────┬────────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+              ▼            ▼            ▼
+           🤖 Groq     🔗 LangChain   🔐 Firebase
+              │            │
+              │            ▼
+              │       🧠 Gemini
+              │       Embeddings
+              │            │
+              └──────┬─────┘
+                     ▼
+              ┌───────────────┐
+              │  PostgreSQL   │
+              │      +        │
+              │   pgvector    │
+              └───────────────┘
+```
 
 </div>
 
 ---
 
-# 🔥 Core Stack
+# ⚙️ Technology Stack
 
-| Area              | Technology        |
-| :---------------- | :---------------- |
-| 🎨 UI             | React + Vite      |
-| 🎨 Styling        | Tailwind CSS      |
-| ✨ Animation       | Framer Motion     |
-| 🔌 Backend        | Node.js + Express |
-| 🤖 GD AI          | Groq              |
-| 🧠 RAG            | LangChain         |
-| 📐 Embeddings     | Gemini            |
-| 🔎 Vector DB      | pgvector          |
-| 🗄️ Database      | PostgreSQL / Neon |
-| 🔐 Authentication | Firebase          |
-| 🎙️ Speech        | Deepgram          |
-| 📡 Real-Time      | WebSocket         |
-| 📊 Charts         | Recharts          |
-| ▲ Frontend        | Vercel            |
-| 🚂 Backend        | Railway           |
+<div align="center">
+
+## Frontend
+
+<img src="https://skillicons.dev/icons?i=react,vite,tailwind,js,html,css&theme=dark" />
+
+<br/><br/>
+
+## Backend
+
+<img src="https://skillicons.dev/icons?i=nodejs,express,js&theme=dark" />
+
+<br/><br/>
+
+## Database & Authentication
+
+<img src="https://skillicons.dev/icons?i=postgresql,firebase&theme=dark" />
+
+<br/><br/>
+
+## AI / RAG / Voice
+
+<img src="https://img.shields.io/badge/Groq-F55036?style=for-the-badge&logoColor=white"/>
+<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white"/>
+<img src="https://img.shields.io/badge/pgvector-336791?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Deepgram-101010?style=for-the-badge"/>
+
+<br/><br/>
+
+## Deployment
+
+<img src="https://skillicons.dev/icons?i=vercel&theme=dark" />
+
+<img src="https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/>
+<img src="https://img.shields.io/badge/Neon-00E599?style=for-the-badge"/>
+
+</div>
 
 ---
 
-# 📈 Performance
+# 📊 Performance Engine
+
+<div align="center">
 
 ```text
-              GD SESSION
-                   │
-                   ▼
-              Transcript
-                   │
-                   ▼
-            AI Analysis
-                   │
-       ┌───────────┼───────────┐
-       ▼           ▼           ▼
-    Messages      Words      Score
-       │           │           │
-       └───────────┼───────────┘
-                   ▼
-              PostgreSQL
-                   │
-                   ▼
+             🗣️ GD SESSION
+                    │
+                    ▼
+               Transcript
+                    │
+                    ▼
+             AI Analysis
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+    Messages       Words       Score
+       │            │            │
+       └────────────┼────────────┘
+                    ▼
+               PostgreSQL
+                    │
+                    ▼
               📊 Dashboard
+                    │
+                    ▼
+           📈 Track Progress
 ```
 
-**Track**
+<br/>
 
 `Sessions` · `Messages` · `Words` · `Average Score` · `Best Score` · `Improvement` · `Streak`
 
+</div>
+
 ---
 
-# 📁 Project Structure
+# 🔥 Practice Loop
+
+<div align="center">
+
+### Every session contributes to improvement.
+
+```text
+       🗣️ PRACTICE
+            ↓
+       🤖 AI DISCUSSION
+            ↓
+       📊 PERFORMANCE
+            ↓
+       🔎 IDENTIFY GAPS
+            ↓
+       📚 STUDYMATE
+            ↓
+       🧠 LEARN
+            ↓
+       🔄 PRACTICE AGAIN
+```
+
+</div>
+
+---
+
+# 🌐 Deployment
+
+<div align="center">
+
+```text
+                     🌍 INTERNET
+                          │
+               ┌──────────┴──────────┐
+               ▼                     ▼
+          ▲ VERCEL               🚂 RAILWAY
+          Frontend                Backend
+               │                     │
+               └──────────┬──────────┘
+                          │
+             ┌────────────┼────────────┐
+             ▼            ▼            ▼
+         🔐 Firebase   🤖 Groq      🗄️ Neon
+             Auth        AI        PostgreSQL
+                                      │
+                                      ▼
+                                   pgvector
+```
+
+</div>
+
+---
+
+# 🧩 Project Structure
 
 ```text
 GD-Arena/
@@ -351,39 +471,48 @@ GD-Arena/
 
 ---
 
-# 🌐 Deployment
+# 🚀 Quick Start
+
+```bash
+git clone https://github.com/abhay963/GD-ARENA-frontend.git
+
+cd GD-ARENA-frontend
+
+npm install
+
+npm run dev
+```
+
+### Environment
+
+Configure the required environment variables for:
 
 ```text
-             🌍 INTERNET
-                  │
-        ┌─────────┴─────────┐
-        ▼                   ▼
-     ▲ Vercel            🚂 Railway
-     Frontend             Backend
-        │                   │
-        └─────────┬─────────┘
-                  │
-          ┌───────┼────────┐
-          ▼       ▼        ▼
-       Firebase  Groq    NeonDB
-         Auth     AI    + pgvector
+Firebase
+Groq
+Gemini
+Deepgram
+NeonDB
+Backend API
 ```
+
+> 🔒 Never commit secrets or production credentials.
 
 ---
 
-# 🚀 Live Demo
+# 🎥 Product
 
 <div align="center">
 
 <a href="https://gd-arena-cgh4.vercel.app/">
 
-<img src="https://img.shields.io/badge/🚀%20TRY%20GD%20ARENA-6366F1?style=for-the-badge&logo=vercel&logoColor=white" />
+<img src="https://img.shields.io/badge/🚀%20ENTER%20THE%20ARENA-4F46E5?style=for-the-badge&logo=vercel&logoColor=white" />
 
 </a>
 
 <br/><br/>
 
-**https://gd-arena-cgh4.vercel.app/**
+### https://gd-arena-cgh4.vercel.app/
 
 </div>
 
@@ -391,38 +520,16 @@ GD-Arena/
 
 # 🗺️ Roadmap
 
-```text
-          CURRENT
-             │
-             ▼
-    ┌─────────────────┐
-    │ 🗣️ GD Arena     │
-    │ 📚 StudyMate    │
-    │ 📊 Analytics    │
-    │ 🔥 Streaks      │
-    └────────┬────────┘
-             │
-             ▼
-       NEXT GENERATION
-             │
-    ┌────────┼────────┐
-    ▼        ▼        ▼
- 🎯 AI      📈 Deep   🧠 Personalized
- Coaching   Analytics   Learning
-```
+<div align="center">
 
-* [x] AI Group Discussions
-* [x] Voice interaction
-* [x] Performance analytics
-* [x] Daily streaks
-* [x] PDF upload
-* [x] RAG pipeline
-* [x] Gemini embeddings
-* [x] pgvector search
-* [x] LangChain integration
-* [ ] Advanced speaking analysis
-* [ ] Personalized AI coaching
-* [ ] Advanced StudyMate features
+|    🗣️ GD Arena   |    📚 StudyMate   |    📈 Intelligence    |
+| :---------------: | :---------------: | :-------------------: |
+|   AI Discussions  |      PDF RAG      |    Advanced Scoring   |
+| Voice Interaction |   Vector Search   |   Speaking Analysis   |
+|    Performance    | Gemini Embeddings | Personalized Coaching |
+|      Streaks      |     LangChain     |  Improvement Insights |
+
+</div>
 
 ---
 
@@ -430,19 +537,19 @@ GD-Arena/
 
 <div align="center">
 
-### Abhay Kumar Yadav
+<img src="https://capsule-render.vercel.app/api?type=soft&color=gradient&height=100&section=header&text=Abhay%20Kumar%20Yadav&fontSize=30&fontColor=ffffff&animation=fadeIn" />
 
 <a href="https://github.com/abhay963">
-<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
 </a>
 
 <a href="https://www.linkedin.com/in/abhay9631">
-<img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" />
+<img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
 </a>
 
 <br/><br/>
 
-⭐ **If you like GD Arena, consider giving it a star!**
+⭐ **If you like GD Arena, give it a star!**
 
 </div>
 
@@ -450,10 +557,12 @@ GD-Arena/
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=6366F1&height=100&section=footer"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4F46E5,50:7C3AED,100:9333EA&height=140&section=footer&animation=fadeIn" />
 
 ### `Practice • Learn • Analyze • Improve`
 
-**Built with React · Node.js · PostgreSQL · LangChain · AI**
+**GD Arena**
+
+<sub>Built with React · Node.js · PostgreSQL · LangChain · AI</sub>
 
 </div>
