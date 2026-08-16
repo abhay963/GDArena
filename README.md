@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=42&duration=2500&pause=1000&color=6366F1&center=true&vCenter=true&width=800&height=80&lines=GD+ARENA;AI-Powered+Interview+Preparation;Practice.+Learn.+Analyze.+Improve." alt="GD Arena" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=42&duration=2500&pause=1000&color=6366F1&center=true&vCenter=true&width=800&height=80&lines=GD+ARENA;AI-Powered+Interview+Preparation;Learn.+Analyze.+Improve." alt="GD Arena" />
 
 <br/>
 
