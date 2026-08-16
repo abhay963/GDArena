@@ -26,36 +26,54 @@ export async function startSpeech({
 
     console.log("🎤 Requesting microphone...");
 
-    mediaStream =
-      await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          channelCount: 1,
-        },
-      });
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        channelCount: 1,
+      },
+    });
 
-    console.log(
-      "🎤 Microphone permission granted"
-    );
+    console.log("🎤 Microphone permission granted");
 
     /* =====================================================
        2. CREATE WEBSOCKET
     ===================================================== */
 
-    const wsProtocol =
-      window.location.protocol === "https:"
-        ? "wss"
-        : "ws";
+    /*
+     * Backend URL comes from Vite environment variable.
+     *
+     * Local:
+     * VITE_API_URL=http://localhost:5000
+     *
+     * Production:
+     * VITE_API_URL=https://gdarena-production.up.railway.app
+     */
 
-    const wsHost =
-      window.location.hostname === "localhost"
-        ? "localhost:5000"
-        : window.location.host;
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    if (!API_URL) {
+      throw new Error(
+        "VITE_API_URL is not configured"
+      );
+    }
+
+    /*
+     * Convert:
+     *
+     * http://localhost:5000
+     *        ↓
+     * ws://localhost:5000
+     *
+     * https://gdarena-production.up.railway.app
+     *        ↓
+     * wss://gdarena-production.up.railway.app
+     */
 
     const wsUrl =
-      `${wsProtocol}://${wsHost}/ws/deepgram`;
+      API_URL.replace(/^http/, "ws") +
+      "/ws/deepgram";
 
     console.log(
       "🔵 Connecting Speech WebSocket:",
@@ -73,13 +91,12 @@ export async function startSpeech({
     let resolveReady;
     let rejectReady;
 
-    const readyPromise =
-      new Promise(
-        (resolve, reject) => {
-          resolveReady = resolve;
-          rejectReady = reject;
-        }
-      );
+    const readyPromise = new Promise(
+      (resolve, reject) => {
+        resolveReady = resolve;
+        rejectReady = reject;
+      }
+    );
 
     /* =====================================================
        WEBSOCKET OPEN
@@ -97,8 +114,7 @@ export async function startSpeech({
 
     socket.onmessage = (event) => {
       try {
-        const data =
-          JSON.parse(event.data);
+        const data = JSON.parse(event.data);
 
         console.log(
           "📨 Speech server message:",
@@ -109,9 +125,7 @@ export async function startSpeech({
            DEEPGRAM READY
         ================================================= */
 
-        if (
-          data.type === "ready"
-        ) {
+        if (data.type === "ready") {
           console.log(
             "🎙️ Deepgram ready"
           );
@@ -127,9 +141,7 @@ export async function startSpeech({
            INTERIM TRANSCRIPT
         ================================================= */
 
-        if (
-          data.type === "interim"
-        ) {
+        if (data.type === "interim") {
           const transcript =
             data.transcript?.trim();
 
@@ -138,8 +150,6 @@ export async function startSpeech({
           }
 
           /*
-           * Safety check.
-           *
            * While AI is speaking, the recorder is paused.
            * Therefore normally no Deepgram transcript should
            * arrive here.
@@ -159,9 +169,7 @@ export async function startSpeech({
             transcript
           );
 
-          onInterim?.(
-            transcript
-          );
+          onInterim?.(transcript);
 
           return;
         }
@@ -170,9 +178,7 @@ export async function startSpeech({
            FINAL TRANSCRIPT
         ================================================= */
 
-        if (
-          data.type === "final"
-        ) {
+        if (data.type === "final") {
           const transcript =
             data.transcript?.trim();
 
@@ -199,9 +205,7 @@ export async function startSpeech({
             transcript
           );
 
-          onFinal?.(
-            transcript
-          );
+          onFinal?.(transcript);
 
           return;
         }
@@ -210,10 +214,7 @@ export async function startSpeech({
            SPEECH STARTED
         ================================================= */
 
-        if (
-          data.type ===
-          "speech-started"
-        ) {
+        if (data.type === "speech-started") {
           /*
            * If AI is speaking, ignore this completely.
            */
@@ -239,10 +240,7 @@ export async function startSpeech({
            UTTERANCE END
         ================================================= */
 
-        if (
-          data.type ===
-          "utterance-end"
-        ) {
+        if (data.type === "utterance-end") {
           console.log(
             "🛑 Utterance ended"
           );
@@ -254,9 +252,7 @@ export async function startSpeech({
            SERVER ERROR
         ================================================= */
 
-        if (
-          data.type === "error"
-        ) {
+        if (data.type === "error") {
           const message =
             data.message ||
             "Speech recognition error";
@@ -280,16 +276,13 @@ export async function startSpeech({
            SERVER CLOSED
         ================================================= */
 
-        if (
-          data.type === "closed"
-        ) {
+        if (data.type === "closed") {
           console.log(
             "🔴 Speech server closed connection"
           );
 
           return;
         }
-
       } catch (error) {
         console.error(
           "❌ Invalid Speech WebSocket message:",
@@ -313,13 +306,9 @@ export async function startSpeech({
           "Speech WebSocket connection failed"
         );
 
-      rejectReady(
-        speechError
-      );
+      rejectReady(speechError);
 
-      onError?.(
-        speechError
-      );
+      onError?.(speechError);
     };
 
     /* =====================================================
@@ -367,13 +356,9 @@ export async function startSpeech({
 
     let mimeType = "";
 
-    for (
-      const type of supportedTypes
-    ) {
+    for (const type of supportedTypes) {
       if (
-        MediaRecorder.isTypeSupported(
-          type
-        )
+        MediaRecorder.isTypeSupported(type)
       ) {
         mimeType = type;
         break;
@@ -391,13 +376,12 @@ export async function startSpeech({
       mimeType
     );
 
-    mediaRecorder =
-      new MediaRecorder(
-        mediaStream,
-        {
-          mimeType,
-        }
-      );
+    mediaRecorder = new MediaRecorder(
+      mediaStream,
+      {
+        mimeType,
+      }
+    );
 
     /* =====================================================
        AUDIO DATA
@@ -437,9 +421,7 @@ export async function startSpeech({
       }
 
       try {
-        socket.send(
-          event.data
-        );
+        socket.send(event.data);
       } catch (error) {
         console.error(
           "❌ Failed to send audio chunk:",
@@ -512,14 +494,11 @@ export async function startSpeech({
        START RECORDING
     ===================================================== */
 
-    mediaRecorder.start(
-      250
-    );
+    mediaRecorder.start(250);
 
     console.log(
       "🎙️ Speech pipeline fully active"
     );
-
   } catch (error) {
     console.error(
       "❌ Failed to start speech:",
@@ -528,9 +507,7 @@ export async function startSpeech({
 
     stopSpeech();
 
-    onError?.(
-      error
-    );
+    onError?.(error);
 
     throw error;
   }
@@ -557,7 +534,6 @@ export async function startSpeech({
  */
 
 export function pauseSpeech() {
-
   if (isStopping) {
     return;
   }
@@ -587,7 +563,6 @@ export function pauseSpeech() {
       console.log(
         "⏸️ MediaRecorder paused"
       );
-
     } catch (error) {
       console.error(
         "❌ Failed to pause MediaRecorder:",
@@ -607,7 +582,6 @@ export function pauseSpeech() {
  */
 
 export function resumeSpeech() {
-
   if (isStopping) {
     return;
   }
@@ -637,7 +611,6 @@ export function resumeSpeech() {
       console.log(
         "▶️ MediaRecorder resumed"
       );
-
     } catch (error) {
       console.error(
         "❌ Failed to resume MediaRecorder:",
@@ -652,7 +625,6 @@ export function resumeSpeech() {
 ========================================================= */
 
 export function stopSpeech() {
-
   console.log(
     "🛑 Stopping speech recognition"
   );
@@ -671,7 +643,6 @@ export function stopSpeech() {
   ) {
     try {
       mediaRecorder.stop();
-
     } catch (error) {
       console.warn(
         "⚠️ Failed to stop MediaRecorder:",
@@ -687,24 +658,18 @@ export function stopSpeech() {
   ===================================================== */
 
   if (mediaStream) {
-
     mediaStream
       .getTracks()
-      .forEach(
-        (track) => {
-
-          try {
-            track.stop();
-
-          } catch (error) {
-            console.warn(
-              "⚠️ Failed to stop microphone track:",
-              error
-            );
-          }
-
+      .forEach((track) => {
+        try {
+          track.stop();
+        } catch (error) {
+          console.warn(
+            "⚠️ Failed to stop microphone track:",
+            error
+          );
         }
-      );
+      });
 
     mediaStream = null;
   }
@@ -723,16 +688,12 @@ export function stopSpeech() {
     )
   ) {
     try {
-
       socket.close();
-
     } catch (error) {
-
       console.warn(
         "⚠️ Failed to close Speech WebSocket:",
         error
       );
-
     }
   }
 
