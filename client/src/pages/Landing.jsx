@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   motion,
-  useScroll,
-  useTransform,
   AnimatePresence,
+  useScroll,
+  useSpring,
+  useTransform,
+  useReducedMotion,
 } from "framer-motion";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-
 import studyDiscussionAnimation from "../assets/Study discussion.json";
-
 import {
   Terminal,
   Menu,
@@ -17,15 +17,11 @@ import {
   ArrowRight,
   Bot,
   Sparkles,
-  Cpu,
   Mic,
   BarChart3,
-  Shuffle,
   Quote,
   Activity,
-  Globe,
   FileText,
-  BookOpen,
   Search,
   Brain,
   Layers,
@@ -37,1823 +33,2288 @@ import {
   Star,
   CheckCircle2,
   ArrowUpRight,
+  Upload,
+  Network,
+  ScanSearch,
+  GraduationCap,
+  LockKeyhole,
+  Play,
+  Waves,
+  Command,
+  LineChart,
+  Flame,
+  Trophy,
+  Target,
+  TrendingUp,
+  Check,
 } from "lucide-react";
 
-export default function LandingPage() {
-  const navigate = useNavigate();
+/**
+ * GD Arena + StudyMate
+ * Premium landing page — optimized visual system.
+ *
+ * Design direction:
+ * - Less black/gradient-heavy
+ * - Warm neutral surfaces with controlled red accents
+ * - Product-first micro-interactions
+ * - Animated RAG pipeline
+ * - Animated performance dashboard
+ * - Interactive streak-generation experience
+ *
+ * Dependencies:
+ * - react
+ * - react-router-dom
+ * - framer-motion
+ * - lucide-react
+ * - @lottiefiles/dotlottie-react
+ */
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [liveUsers, setLiveUsers] = useState(1420);
+const easeOut = [0.22, 1, 0.36, 1];
 
-  const currentTopic =
-    "Impact of LLMs on Software Engineering Salaries";
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: easeOut },
+  },
+};
 
-  const { scrollY } = useScroll();
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
 
-  const heroY = useTransform(scrollY, [0, 500], [0, 120]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0.3]);
+const featureCards = [
+  {
+    icon: Mic,
+    eyebrow: "VOICE-FIRST",
+    title: "Talk like it is a real GD.",
+    body: "Streaming speech, AI participants, interruption-aware turns, and live feedback keep the room moving naturally.",
+    accent: "rose",
+  },
+  {
+    icon: BarChart3,
+    eyebrow: "PERFORMANCE",
+    title: "See exactly how you improve.",
+    body: "Participation, clarity, confidence, pace, and knowledge gaps become a visual feedback loop.",
+    accent: "red",
+  },
+  {
+    icon: FileText,
+    eyebrow: "CONTEXT",
+    title: "Your PDFs become a second brain.",
+    body: "Upload notes, textbooks, interview prep, or class material and ask questions grounded in your own content.",
+    accent: "pink",
+  },
+  {
+    icon: Search,
+    eyebrow: "RAG",
+    title: "Retrieve before you generate.",
+    body: "Semantic retrieval finds the right chunks first, then the model answers from that evidence.",
+    accent: "violet",
+  },
+];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+const logos = [
+  "DSA",
+  "DBMS",
+  "OS",
+  "CN",
+  "SYSTEM DESIGN",
+  "APTITUDE",
+  "HR",
+  "INTERVIEWS",
+];
 
-    window.addEventListener("scroll", handleScroll);
+const stats = [
+  { value: "10K+", label: "practice sessions" },
+  { value: "5K+", label: "learners" },
+  { value: "100+", label: "discussion topics" },
+  { value: "24/7", label: "study companion" },
+];
 
-    const interval = setInterval(() => {
-      setLiveUsers((prev) =>
-        prev + (Math.random() > 0.5 ? 1 : -1)
-      );
-    }, 3500);
+function SectionHeading({ kicker, title, description, align = "center" }) {
+  return (
+    <motion.div
+      variants={stagger}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      className={`max-w-4xl ${
+        align === "center" ? "mx-auto text-center" : "text-left"
+      }`}
+    >
+      {kicker && (
+        <motion.div
+          variants={fadeUp}
+          className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-200/10 bg-white/[0.035] px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-red-300 backdrop-blur-xl"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          {kicker}
+        </motion.div>
+      )}
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearInterval(interval);
-    };
-  }, []);
+      <motion.h2
+        variants={fadeUp}
+        className="text-4xl font-black tracking-[-0.045em] text-white sm:text-5xl lg:text-7xl"
+      >
+        {title}
+      </motion.h2>
 
-  const scrollToSection = (id) => {
-    setIsOpen(false);
+      {description && (
+        <motion.p
+          variants={fadeUp}
+          className="mt-5 text-base leading-7 text-white/45 sm:text-lg"
+        >
+          {description}
+        </motion.p>
+      )}
+    </motion.div>
+  );
+}
 
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-    });
+function AmbientGlow({ className = "", color = "rose" }) {
+  const colors = {
+    rose: "bg-red-500/[0.09]",
+    red: "bg-red-400/[0.07]",
+    pink: "bg-red-500/[0.06]",
+    violet: "bg-violet-500/[0.055]",
   };
 
-  const containerVariants = {
-    hidden: {
-      opacity: 0,
-    },
+  return (
+    <div
+      className={`pointer-events-none absolute rounded-full blur-[120px] ${colors[color]} ${className}`}
+    />
+  );
+}
 
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-      },
-    },
-  };
+function Glass({ className = "", children }) {
+  return (
+    <div
+      className={`border border-white/[0.08] bg-white/[0.025] backdrop-blur-xl ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 28,
-    },
+function FlowingAudio({ side = "left" }) {
+  return (
+    <div
+      className={`relative flex items-center ${
+        side === "left" ? "justify-end" : "justify-start"
+      }`}
+    >
+      <div className="absolute h-px w-full bg-gradient-to-r from-transparent via-red-400/45 to-transparent" />
 
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.55,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
+      <motion.div
+        animate={{
+          x: side === "left" ? ["-20%", "118%"] : ["118%", "-20%"],
+        }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+        className="relative h-1.5 w-20 rounded-full bg-gradient-to-r from-transparent via-red-300 to-red-300 blur-[1px]"
+      />
 
-  const features = [
-    {
-      icon: Cpu,
-      title: "AI Group Discussions",
-      desc: "Dynamic AI participants that challenge, support, and evolve with every argument you make.",
-      color: "from-red-500 to-rose-500",
-    },
-    {
-      icon: Mic,
-      title: "Real-Time Voice",
-      desc: "Speak naturally. Ultra-low latency speech recognition that feels like a live room.",
-      color: "from-rose-500 to-orange-500",
-    },
-    {
-      icon: BarChart3,
-      title: "Deep Analytics",
-      desc: "Confidence, participation, vocabulary depth, and growth tracked with precision.",
-      color: "from-orange-500 to-amber-500",
-    },
-    {
-      icon: Shuffle,
-      title: "Smart Topics",
-      desc: "Endless technical, business, social & abstract GD topics generated on demand.",
-      color: "from-red-600 to-pink-500",
-    },
-    {
-      icon: FileText,
-      title: "PDF Knowledge Base",
-      desc: "Upload notes & textbooks. Instantly transform them into an interactive AI brain.",
-      color: "from-rose-600 to-red-500",
-    },
-    {
-      icon: BookOpen,
-      title: "Document Q&A",
-      desc: "Ask anything in natural language. Answers grounded strictly in your files.",
-      color: "from-red-500 to-rose-600",
-    },
-    {
-      icon: Search,
-      title: "Semantic RAG",
-      desc: "Finds the exact paragraphs that matter before generating every response.",
-      color: "from-pink-500 to-rose-500",
-    },
-    {
-      icon: Brain,
-      title: "Study Companion",
-      desc: "Revise faster, clarify concepts, and prepare from your own material 24/7.",
-      color: "from-rose-500 to-red-600",
-    },
-  ];
+      <div className="relative z-10 flex items-center gap-1 rounded-full border border-white/[0.08] bg-zinc-900/80 px-2.5 py-1.5 backdrop-blur-xl">
+        {[1, 0.65, 1.3, 0.75, 1.15, 0.6, 0.95].map((scale, i) => (
+          <motion.span
+            key={i}
+            animate={{ scaleY: [0.5, scale, 0.6] }}
+            transition={{
+              duration: 0.6 + i * 0.04,
+              repeat: Infinity,
+              repeatType: "mirror",
+            }}
+            className="h-3 w-0.5 origin-center rounded-full bg-red-300"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-  const steps = [
-    {
-      step: "01",
-      title: "Create Account",
-      desc: "Sign up in seconds with email or Google.",
-    },
-    {
-      step: "02",
-      title: "Practice GDs",
-      desc: "Jump into AI-powered group discussions with your voice.",
-    },
-    {
-      step: "03",
-      title: "Upload & Study",
-      desc: "Drop PDFs into StudyMate and build your knowledge base.",
-    },
-    {
-      step: "04",
-      title: "Ask Anything",
-      desc: "Query your documents and get precise, cited answers.",
-    },
-    {
-      step: "05",
-      title: "Level Up",
-      desc: "Track progress, close gaps, and walk in placement-ready.",
-    },
-  ];
+function AvatarOrb({ type = "human", label }) {
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div className="relative">
+        <motion.div
+          animate={{
+            scale: [1, 1.04, 1],
+            opacity: [0.25, 0.5, 0.25],
+          }}
+          transition={{ duration: 2.8, repeat: Infinity }}
+          className={`absolute -inset-3 rounded-[30px] ${
+            type === "human" ? "bg-red-400/20" : "bg-red-400/20"
+          } blur-2xl`}
+        />
 
-  const pipeline = [
-    {
-      icon: FileText,
-      label: "PDF",
-    },
-    {
-      icon: Layers,
-      label: "Extract",
-    },
-    {
-      icon: Layers,
-      label: "Chunk",
-    },
-    {
-      icon: Database,
-      label: "Embed",
-    },
-    {
-      icon: Search,
-      label: "Retrieve",
-    },
-    {
-      icon: MessageCircle,
-      label: "Answer",
-    },
-  ];
+        <motion.div
+          animate={{
+            y: [0, -5, 0],
+            rotate: type === "ai" ? [0, 3, -3, 0] : [0, -2, 2, 0],
+          }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+          className={`relative flex h-20 w-20 items-center justify-center rounded-[28px] border shadow-xl ${
+            type === "human"
+              ? "border-red-300/20 bg-gradient-to-br from-red-300 via-red-400 to-red-600"
+              : "border-red-300/20 bg-gradient-to-br from-red-400 via-red-500 to-violet-600"
+          }`}
+        >
+          {type === "human" ? (
+            <div className="h-10 w-10 rounded-full border-2 border-white/70 bg-white/20" />
+          ) : (
+            <Bot className="h-9 w-9 text-white" />
+          )}
+        </motion.div>
 
-  const testimonials = [
-    {
-      quote:
-        "Cleared my campus GD round with confidence. The AI room felt more real than any practice group I joined.",
-      author: "Ananya Iyer",
-      role: "Tier-1 Campus",
-      rating: 5,
-    },
-    {
-      quote:
-        "StudyMate turned my 200-page OS notes into something I could actually interrogate. Game changer for revision.",
-      author: "Rohan Malhotra",
-      role: "MBA Aspirant",
-      rating: 5,
-    },
-    {
-      quote:
-        "Finally a platform that treats both communication and knowledge with equal seriousness. Feels premium.",
-      author: "Sarah Jenkins",
-      role: "Software Engineer",
-      rating: 5,
-    },
+        <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-zinc-950 bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,.7)]" />
+      </div>
+
+      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function RAGPipeline() {
+  const nodes = [
+    { icon: Upload, label: "PDF" },
+    { icon: ScanSearch, label: "PARSE" },
+    { icon: Layers, label: "CHUNK" },
+    { icon: Brain, label: "EMBED" },
+    { icon: Database, label: "VECTOR" },
+    { icon: Search, label: "RETRIEVE" },
+    { icon: MessageCircle, label: "ANSWER" },
   ];
 
   return (
-    <div className="premium-page bg-[#030014] text-gray-100 min-h-screen font-sans selection:bg-red-500/30 selection:text-red-200 antialiased overflow-x-hidden">
+    <div className="relative mt-12 overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.025] p-5 shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:p-8">
+      <div className="absolute left-[7%] right-[7%] top-[51%] hidden h-px bg-gradient-to-r from-transparent via-red-300/35 to-transparent md:block" />
 
-      {/* =====================================================
-          AMBIENT BACKGROUND
-      ===================================================== */}
-
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-
-        <div
-          className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-red-600/20 rounded-full blur-[140px] animate-pulse"
-          style={{ animationDuration: "8s" }}
-        />
-
-        <div
-          className="absolute top-[30%] right-[-15%] w-[500px] h-[500px] bg-rose-500/15 rounded-full blur-[130px] animate-pulse"
-          style={{ animationDuration: "11s" }}
-        />
-
-        <div
-          className="absolute bottom-[10%] left-[20%] w-[400px] h-[400px] bg-orange-600/10 rounded-full blur-[120px] animate-pulse"
-          style={{ animationDuration: "14s" }}
-        />
-
-      </div>
-
-
-      {/* =====================================================
-          NAVBAR
-      ===================================================== */}
-
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? "bg-[#030014]/85 backdrop-blur-xl border-b border-white/5 py-3 shadow-2xl shadow-black/40"
-            : "bg-transparent py-5"
-        }`}
-      >
-
-        <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between">
-
-          {/* Logo */}
-
+      <div className="relative grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-7">
+        {nodes.map(({ icon: Icon, label }, i) => (
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2.5 cursor-pointer group"
-            onClick={() =>
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-              })
-            }
+            key={label}
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.07 }}
+            whileHover={{ y: -5, scale: 1.02 }}
+            className="group relative rounded-2xl border border-white/[0.08] bg-zinc-900/65 p-4 text-center backdrop-blur-xl"
           >
+            <motion.div
+              animate={{
+                boxShadow: [
+                  "0 0 0 rgba(251,113,133,0)",
+                  "0 0 22px rgba(251,113,133,.16)",
+                  "0 0 0 rgba(251,113,133,0)",
+                ],
+              }}
+              transition={{
+                duration: 2.2,
+                repeat: Infinity,
+                delay: i * 0.22,
+              }}
+              className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.035] ring-1 ring-white/[0.08] transition group-hover:scale-110 group-hover:ring-rose-300/30"
+            >
+              <Icon className="h-5 w-5 text-red-300" />
+            </motion.div>
 
-            <div className="relative">
-
-              <div className="absolute inset-0 bg-red-500 rounded-xl blur-md opacity-40 group-hover:opacity-70 transition-opacity" />
-
-              <div className="relative w-10 h-10 bg-gradient-to-br from-red-500 via-rose-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Terminal className="w-5 h-5 text-white" />
-              </div>
-
+            <div className="mt-3 text-[10px] font-black tracking-[0.18em] text-white/45">
+              {label}
             </div>
 
-            <span className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400">
-              GD Arena
-            </span>
-
-          </motion.div>
-
-
-          {/* Desktop Navigation */}
-
-          <div className="hidden lg:flex items-center gap-1 bg-white/[0.03] border border-white/5 rounded-full px-1.5 py-1.5 backdrop-blur-md">
-
-            {[
-              "Home",
-              "Features",
-              "StudyMate",
-              "How It Works",
-              "Metrics",
-            ].map((item) => (
-
-              <button
-                key={item}
-                onClick={() => {
-
-                  if (item === "Home") {
-                    window.scrollTo({
-                      top: 0,
-                      behavior: "smooth",
-                    });
-                  } else if (item === "Features") {
-                    scrollToSection("features");
-                  } else if (item === "StudyMate") {
-                    scrollToSection("studymate");
-                  } else if (item === "How It Works") {
-                    scrollToSection("how-it-works");
-                  } else {
-                    scrollToSection("stats");
-                  }
-
+            {i < nodes.length - 1 && (
+              <motion.div
+                animate={{
+                  opacity: [0.15, 1, 0.15],
+                  scale: [0.8, 1.2, 0.8],
                 }}
-                className="px-4 py-1.5 text-sm text-neutral-400 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200 cursor-pointer"
-              >
-                {item}
-              </button>
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+                className="absolute -right-2 top-1/2 hidden h-1.5 w-1.5 rounded-full bg-red-300 md:block"
+              />
+            )}
+          </motion.div>
+        ))}
+      </div>
 
-            ))}
+      <div className="mt-5 flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+        <motion.span
+          animate={{ x: [-5, 5, -5], opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        >
+          <Zap className="h-3.5 w-3.5 text-red-300" />
+        </motion.span>
+        retrieval signal moving through your knowledge base
+      </div>
+    </div>
+  );
+}
 
+function ChatWindow() {
+  const [step, setStep] = useState(0);
+
+  const messages = useMemo(
+    () => [
+      {
+        side: "user",
+        text: "Explain deadlock like I am revising for tomorrow's viva.",
+      },
+      {
+        side: "ai",
+        text: "I'll stay inside your OS notes and keep it viva-ready.",
+      },
+      {
+        side: "ai",
+        text: "Deadlock needs four conditions: mutual exclusion, hold & wait, no preemption, and circular wait.",
+      },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    const id = setInterval(
+      () => setStep((value) => (value + 1) % messages.length),
+      2500
+    );
+    return () => clearInterval(id);
+  }, [messages.length]);
+
+  return (
+    <div className="relative h-full min-h-[530px] overflow-hidden rounded-[32px] border border-white/[0.08] bg-zinc-900/70 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(244,63,94,.07),transparent_35%),radial-gradient(circle_at_15%_80%,rgba(239,68,68,.045),transparent_30%)]" />
+
+      <div className="relative flex items-center justify-between border-b border-white/[0.06] px-5 py-4 sm:px-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-400/10 ring-1 ring-rose-300/10">
+            <FileText className="h-5 w-5 text-red-300" />
           </div>
 
+          <div>
+            <div className="text-sm font-semibold text-white">
+              Operating Systems.pdf
+            </div>
+            <div className="mt-0.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-400">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+              Context loaded
+            </div>
+          </div>
+        </div>
 
-          {/* Desktop Auth */}
+        <div className="hidden items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/35 sm:flex">
+          <LockKeyhole className="h-3.5 w-3.5" />
+          grounded
+        </div>
+      </div>
 
-          <div className="hidden lg:flex items-center gap-3">
+      <div className="relative flex h-[450px] flex-col justify-end gap-4 p-5 sm:p-7">
+        <AnimatePresence mode="popLayout">
+          {messages.slice(0, step + 1).map((message, i) => (
+            <motion.div
+              key={`${step}-${i}-${message.text}`}
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.45, ease: easeOut }}
+              className={`flex ${
+                message.side === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${
+                  message.side === "user"
+                    ? "rounded-br-md border border-white/[0.08] bg-white/[0.035] text-zinc-200"
+                    : "rounded-bl-md border border-red-300/15 bg-red-400/[0.07] text-zinc-200"
+                }`}
+              >
+                {message.text}
 
+                {message.side === "ai" && i === 2 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ delay: 0.15 }}
+                    className="mt-3 rounded-xl border border-white/[0.07] bg-[#030305]/35 p-3"
+                  >
+                    <div className="mb-2 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-red-300">
+                      <Search className="h-3 w-3" />
+                      retrieved context
+                    </div>
+
+                    <div className="space-y-2 text-[11px] leading-5 text-white/35">
+                      {[
+                        "§4.2 — resource ownership",
+                        "§4.3 — hold and wait",
+                        "§4.4 — circular wait",
+                      ].map((item, index) => (
+                        <motion.div
+                          key={item}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.25 + index * 0.08 }}
+                          className="border-l-2 border-red-300/40 pl-2"
+                        >
+                          {item}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        <div className="mx-auto flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-white/25">
+          <Waves className="h-3.5 w-3.5" />
+          memory-aware answer engine
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AnimatedPerformance() {
+  const values = [42, 48, 46, 55, 61, 58, 69, 73, 77, 82, 88, 93];
+  const metrics = [
+    { label: "Clarity", value: 87 },
+    { label: "Confidence", value: 91 },
+    { label: "Participation", value: 74 },
+  ];
+
+  return (
+    <div className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.025] p-6 sm:p-8">
+      <AmbientGlow color="red" className="right-[-10%] top-[-35%] h-72 w-72" />
+
+      <div className="relative flex items-start justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-red-300">
+            performance engine
+          </div>
+          <h3 className="mt-2 text-2xl font-black tracking-tight">
+            Improvement should move.
+          </h3>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-white/35">
+            Every session feeds a visual feedback loop instead of leaving you
+            with a single score.
+          </p>
+        </div>
+
+        <div className="hidden rounded-xl border border-white/[0.08] bg-white/[0.04] p-2.5 sm:block">
+          <TrendingUp className="h-4 w-4 text-red-300" />
+        </div>
+      </div>
+
+      <div className="relative mt-7 rounded-[26px] border border-white/[0.07] bg-[#09090c]/95 p-5">
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
+              overall score
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 }}
+              className="mt-1 text-4xl font-black"
+            >
+              93
+              <span className="ml-1 text-sm text-emerald-400">+31%</span>
+            </motion.div>
+          </div>
+
+          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
+            session 12
+          </div>
+        </div>
+
+        <div className="relative flex h-44 items-end gap-1.5 sm:gap-2">
+          {values.map((value, i) => (
+            <div key={i} className="relative flex h-full flex-1 items-end">
+              <motion.div
+                initial={{ height: 0 }}
+                whileInView={{ height: `${value}%` }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{
+                  duration: 0.7,
+                  delay: i * 0.045,
+                  ease: easeOut,
+                }}
+                className="relative w-full rounded-t-md bg-gradient-to-t from-red-500/20 via-red-300/70 to-red-200"
+              >
+                <motion.div
+                  animate={{ opacity: [0.2, 0.7, 0.2] }}
+                  transition={{
+                    duration: 2.2,
+                    repeat: Infinity,
+                    delay: i * 0.12,
+                  }}
+                  className="absolute inset-x-0 top-0 h-1 rounded-full bg-white"
+                />
+              </motion.div>
+            </div>
+          ))}
+
+          <motion.div
+            initial={{ scaleX: 0, originX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.3, delay: 0.45 }}
+            className="pointer-events-none absolute bottom-[18%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent"
+          />
+        </div>
+
+        <div className="mt-4 flex justify-between border-t border-white/[0.06] pt-4 text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
+          <span>session 01</span>
+          <span className="text-emerald-400">+31% improvement</span>
+          <span>session 12</span>
+        </div>
+      </div>
+
+      <div className="relative mt-4 grid grid-cols-3 gap-2">
+        {metrics.map(({ label, value }, i) => (
+          <div
+            key={label}
+            className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-3"
+          >
+            <div className="text-[9px] font-black uppercase tracking-[0.14em] text-white/25">
+              {label}
+            </div>
+
+            <div className="mt-2 text-lg font-black">
+              {value}
+              <span className="text-[9px] text-white/25">%</span>
+            </div>
+
+            <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: `${value}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: i * 0.1 }}
+                className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StreakSystem() {
+  const [streak, setStreak] = useState(7);
+  const [claimed, setClaimed] = useState(false);
+  const [burst, setBurst] = useState(0);
+
+  const milestones = [
+    { day: 7, label: "Starter", icon: Flame },
+    { day: 14, label: "Focused", icon: Target },
+    { day: 30, label: "Unstoppable", icon: Trophy },
+  ];
+
+  const week = [
+    { day: "M", done: true },
+    { day: "T", done: true },
+    { day: "W", done: true },
+    { day: "T", done: true },
+    { day: "F", done: true },
+    { day: "S", done: true },
+    { day: "S", done: true, active: true },
+  ];
+
+  const claimStreak = () => {
+    if (claimed) return;
+
+    setClaimed(true);
+    setBurst((value) => value + 1);
+    setStreak((value) => Math.min(value + 1, 30));
+
+    window.setTimeout(() => setClaimed(false), 1700);
+  };
+
+  const nextMilestone =
+    milestones.find((item) => item.day > streak) || milestones[milestones.length - 1];
+
+  const milestoneProgress =
+    streak >= 30
+      ? 100
+      : ((streak - (nextMilestone.day === 14 ? 7 : 14)) /
+          (nextMilestone.day - (nextMilestone.day === 14 ? 7 : 14))) *
+        100;
+
+  return (
+    <div className="relative overflow-hidden rounded-[32px] border border-white/[0.07] bg-[#070709] p-5 shadow-[0_30px_90px_rgba(0,0,0,.32)] sm:p-7">
+      {/* subtle product glow — intentionally behind everything */}
+      <div className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-red-500/[0.07] blur-[110px]" />
+      <div className="pointer-events-none absolute -bottom-32 right-[-5%] h-80 w-80 rounded-full bg-red-400/[0.045] blur-[120px]" />
+
+      <div className="relative">
+        {/* Header */}
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <span className="grid h-7 w-7 place-items-center rounded-lg border border-red-300/20 bg-red-300/[0.08]">
+                <Flame className="h-3.5 w-3.5 fill-red-300/20 text-red-300" />
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                consistency engine
+              </span>
+            </div>
+
+            <h3 className="text-2xl font-black tracking-[-0.035em] text-white sm:text-3xl">
+              Your streak is becoming a habit.
+            </h3>
+
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/42">
+              Keep one practice session alive every day. Watch your chain,
+              milestones and momentum build in real time.
+            </p>
+          </div>
+
+          <div className="hidden rounded-xl border border-white/[0.08] bg-white/[0.025] px-3 py-2 sm:block">
+            <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.16em] text-white/35">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+              live progress
+            </div>
+          </div>
+        </div>
+
+        {/* Main premium streak panel */}
+        <div className="mt-6 grid overflow-hidden rounded-[26px] border border-white/[0.075] bg-[#0b0b0e] lg:grid-cols-[.9fr_1.1fr]">
+          {/* LEFT — streak identity */}
+          <div className="relative overflow-hidden border-b border-white/[0.06] p-6 lg:border-b-0 lg:border-r sm:p-7">
+            <div className="pointer-events-none absolute right-[-15%] top-[-30%] h-64 w-64 rounded-full bg-red-400/[0.055] blur-[90px]" />
+
+            <div className="relative flex h-full flex-col">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-black uppercase tracking-[0.18em] text-white/28">
+                  current streak
+                </span>
+
+                <motion.div
+                  animate={{ rotate: [0, 8, -8, 0] }}
+                  transition={{ duration: 2.4, repeat: Infinity }}
+                  className="text-red-300"
+                >
+                  <Flame className="h-4 w-4" />
+                </motion.div>
+              </div>
+
+              {/* Big number */}
+              <div className="relative mt-4 flex items-center gap-5">
+                <div className="relative grid h-28 w-28 shrink-0 place-items-center rounded-[30px] border border-red-300/15 bg-gradient-to-br from-red-300/[0.12] to-red-500/[0.055]">
+                  <motion.div
+                    animate={{
+                      opacity: [0.25, 0.55, 0.25],
+                      scale: [0.9, 1.08, 0.9],
+                    }}
+                    transition={{ duration: 2.5, repeat: Infinity }}
+                    className="absolute inset-[-8px] rounded-[34px] border border-red-300/10"
+                  />
+
+                  <div className="relative text-center">
+                    <motion.div
+                      key={streak}
+                      initial={{ opacity: 0, y: 8, scale: 0.7 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.4, ease: easeOut }}
+                      className="text-5xl font-black leading-none tracking-[-0.08em] text-white"
+                    >
+                      {streak}
+                    </motion.div>
+                    <div className="mt-1 text-[8px] font-black uppercase tracking-[0.18em] text-red-200/70">
+                      days
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-lg font-black text-white">Keep it going.</div>
+                  <div className="mt-1 text-xs leading-5 text-white/35">
+                    {streak >= 30
+                      ? "You've reached the 30-day milestone."
+                      : `${nextMilestone.day - streak} more ${
+                          nextMilestone.day - streak === 1 ? "day" : "days"
+                        } to your next badge.`}
+                  </div>
+                </div>
+              </div>
+
+              {/* Week */}
+              <div className="mt-auto pt-7">
+                <div className="mb-2.5 flex items-center justify-between">
+                  <span className="text-[8px] font-black uppercase tracking-[0.17em] text-white/25">
+                    weekly activity
+                  </span>
+                  <span className="text-[8px] font-black uppercase tracking-[0.15em] text-red-300">
+                    7 / 7 complete
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-7 gap-1.5">
+                  {week.map(({ day, done, active }, i) => (
+                    <motion.div
+                      key={`${day}-${i}`}
+                      animate={
+                        active
+                          ? { y: [0, -2, 0], scale: [1, 1.06, 1] }
+                          : {}
+                      }
+                      transition={{ duration: 1.8, repeat: Infinity }}
+                      className={`relative flex h-9 items-center justify-center rounded-xl border text-[9px] font-black ${
+                        done
+                          ? "border-red-300/20 bg-red-300/[0.09] text-red-100"
+                          : "border-white/[0.06] bg-white/[0.02] text-white/20"
+                      }`}
+                    >
+                      {day}
+                      {active && (
+                        <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.65)]" />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — action + milestones */}
+          <div className="relative p-6 sm:p-7">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/28">
+                  momentum
+                </div>
+                <div className="mt-1 text-sm font-black text-white">
+                  Build your next milestone
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-red-300/15 bg-red-300/[0.07] px-2.5 py-1.5 text-[9px] font-black text-red-200">
+                {Math.min(streak, 30)} / 30
+              </div>
+            </div>
+
+            {/* Progress */}
+            <div className="mt-5">
+              <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-[0.15em]">
+                <span className="text-white/22">progress</span>
+                <span className="text-red-300">
+                  {streak >= 30 ? "complete" : `${nextMilestone.day - streak} days left`}
+                </span>
+              </div>
+
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                <motion.div
+                  animate={{
+                    width: `${streak >= 30 ? 100 : Math.max(8, Math.min(100, milestoneProgress))}%`,
+                  }}
+                  transition={{ duration: 0.8, ease: easeOut }}
+                  className="relative h-full rounded-full bg-gradient-to-r from-red-500 via-red-400 to-red-200"
+                >
+                  <span className="absolute right-0 top-1/2 h-2 w-6 -translate-y-1/2 rounded-full bg-white/60 blur-[4px]" />
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Milestones */}
+            <div className="mt-5 grid gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
+              {milestones.map(({ day, label, icon: Icon }) => {
+                const unlocked = streak >= day;
+
+                return (
+                  <motion.div
+                    key={day}
+                    whileHover={{ x: 3 }}
+                    className={`group relative flex items-center justify-between overflow-hidden rounded-2xl border px-3.5 py-3 transition ${
+                      unlocked
+                        ? "border-red-300/15 bg-red-300/[0.055]"
+                        : "border-white/[0.055] bg-white/[0.018]"
+                    }`}
+                  >
+                    {unlocked && (
+                      <motion.div
+                        animate={{ x: ["-130%", "250%"] }}
+                        transition={{
+                          duration: 2.8,
+                          repeat: Infinity,
+                          delay: day * 0.03,
+                        }}
+                        className="pointer-events-none absolute inset-y-0 w-12 bg-gradient-to-r from-transparent via-white/[0.045] to-transparent"
+                      />
+                    )}
+
+                    <div className="relative z-10 flex items-center gap-3">
+                      <div
+                        className={`grid h-9 w-9 place-items-center rounded-xl ${
+                          unlocked
+                            ? "bg-red-300/10 text-red-200"
+                            : "bg-white/[0.035] text-white/20"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </div>
+
+                      <div>
+                        <div className="text-xs font-black text-white">
+                          {label}
+                        </div>
+                        <div className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.14em] text-white/25">
+                          {day} day milestone
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative z-10">
+                      {unlocked ? (
+                        <div className="flex items-center gap-1.5 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-2 py-1 text-[7px] font-black uppercase tracking-[0.12em] text-emerald-300">
+                          <CheckCircle2 className="h-3 w-3" />
+                          unlocked
+                        </div>
+                      ) : (
+                        <span className="text-[8px] font-black uppercase tracking-[0.12em] text-white/20">
+                          locked
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* CTA */}
+            <div className="mt-5 flex flex-col gap-3 border-t border-white/[0.055] pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="text-xs font-black text-white">
+                  Ready for today's session?
+                </div>
+                <div className="mt-0.5 text-[9px] text-white/28">
+                  One session keeps your streak alive.
+                </div>
+              </div>
+
+              <div className="relative">
+                <AnimatePresence>
+                  {claimed && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.8 }}
+                      animate={{ opacity: 1, y: -30, scale: 1 }}
+                      exit={{ opacity: 0, y: -48 }}
+                      transition={{ duration: 0.9, ease: easeOut }}
+                      className="pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-red-200"
+                    >
+                      +1 DAY 🔥
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {burst > 0 &&
+                    Array.from({ length: 18 }).map((_, i) => {
+                      const angle = (i / 18) * Math.PI * 2;
+                      return (
+                        <motion.span
+                          key={`${burst}-${i}`}
+                          initial={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                          animate={{
+                            opacity: 0,
+                            x: Math.cos(angle) * 55,
+                            y: Math.sin(angle) * 35,
+                            scale: 0,
+                          }}
+                          transition={{ duration: 0.75, ease: easeOut }}
+                          className="pointer-events-none absolute left-1/2 top-1/2 h-1 w-1 rounded-full bg-red-200"
+                        />
+                      );
+                    })}
+                </AnimatePresence>
+
+                <motion.button
+                  type="button"
+                  onClick={claimStreak}
+                  whileHover={{ y: -2, scale: 1.015 }}
+                  whileTap={{ scale: 0.97 }}
+                  animate={
+                    claimed
+                      ? {
+                          boxShadow: [
+                            "0 0 0 rgba(239,68,68,0)",
+                            "0 0 28px rgba(239,68,68,.3)",
+                            "0 0 0 rgba(239,68,68,0)",
+                          ],
+                        }
+                      : {}
+                  }
+                  transition={{ duration: 0.8 }}
+                  className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-red-200/20 bg-gradient-to-r from-red-500 to-red-400 px-5 py-3 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-[0_10px_30px_rgba(239,68,68,.15)] sm:w-auto"
+                >
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                  <span className="relative flex items-center gap-2">
+                    {claimed ? (
+                      <>
+                        <Check className="h-3.5 w-3.5" />
+                        Streak secured
+                      </>
+                    ) : (
+                      <>
+                        <Flame className="h-3.5 w-3.5 transition-transform group-hover:scale-125" />
+                        Complete today's practice
+                      </>
+                    )}
+                  </span>
+                </motion.button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ContextGraph() {
+  const nodes = [
+    ["PDF", 16, 54],
+    ["CHUNKS", 39, 25],
+    ["VECTOR", 67, 50],
+    ["QUERY", 34, 78],
+    ["ANSWER", 78, 76],
+  ];
+
+  return (
+    <div className="relative mt-6 h-[210px] overflow-hidden rounded-2xl border border-white/[0.07] bg-[#030305]/25">
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 500 210"
+        fill="none"
+      >
+        <path
+          d="M82 113 C145 65 145 62 195 53 S325 87 335 104"
+          stroke="rgba(251,113,133,.42)"
+          strokeWidth="1.5"
+          strokeDasharray="5 6"
+        />
+        <path
+          d="M168 164 C225 122 270 120 335 160"
+          stroke="rgba(239,68,68,.35)"
+          strokeWidth="1.5"
+          strokeDasharray="5 6"
+        />
+      </svg>
+
+      {nodes.map(([label, left, top], i) => (
+        <motion.div
+          key={label}
+          style={{ left: `${left}%`, top: `${top}%` }}
+          animate={{
+            scale: [1, 1.06, 1],
+            opacity: [0.65, 1, 0.65],
+          }}
+          transition={{
+            duration: 2.3,
+            repeat: Infinity,
+            delay: i * 0.25,
+          }}
+          className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-xl border border-white/[0.08] bg-zinc-900/85 px-3 py-2 text-[9px] font-black tracking-[0.16em] text-white/45 backdrop-blur-xl"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-red-300" />
+          {label}
+        </motion.div>
+      ))}
+
+      <motion.div
+        animate={{ x: ["-10%", "420%"] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: "linear" }}
+        className="absolute left-0 top-[52%] h-1 w-16 rounded-full bg-gradient-to-r from-transparent via-red-300 to-transparent"
+      />
+    </div>
+  );
+}
+
+function BentoFeature({ card }) {
+  const Icon = card.icon;
+
+  const accents = {
+    rose: "from-red-400/15 to-transparent text-red-300",
+    red: "from-red-300/15 to-transparent text-red-300",
+    pink: "from-red-400/15 to-transparent text-red-300",
+    violet: "from-violet-400/15 to-transparent text-violet-300",
+  };
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      whileHover={{ y: -7 }}
+      transition={{ duration: 0.25 }}
+      className="group relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.025] p-6 transition-colors hover:border-white/[0.14] sm:p-7"
+    >
+      <div
+        className={`absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br ${accents[card.accent]} blur-3xl opacity-0 transition duration-500 group-hover:opacity-100`}
+      />
+
+      <div className="relative">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${accents[card.accent]} ring-1 ring-white/[0.08]`}
+        >
+          <Icon className="h-5 w-5" />
+        </div>
+
+        <div className="mt-6 text-[10px] font-black tracking-[0.2em] text-white/25">
+          {card.eyebrow}
+        </div>
+
+        <h3 className="mt-2 text-xl font-black tracking-tight text-white">
+          {card.title}
+        </h3>
+
+        <p className="mt-3 text-sm leading-6 text-white/45">{card.body}</p>
+      </div>
+
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileHover={{ scaleX: 1 }}
+        className="absolute bottom-0 left-0 h-px w-full origin-left bg-gradient-to-r from-red-400 via-red-300 to-transparent"
+      />
+    </motion.div>
+  );
+}
+
+function LiveArenaCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96, y: 22 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.2, ease: easeOut }}
+      className="relative mx-auto w-full max-w-xl lg:ml-auto"
+    >
+      <motion.div
+        animate={{ rotate: [0, 1, -1, 0], y: [0, -4, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="relative rounded-[30px] border border-white/[0.08] bg-white/[0.025] p-3 shadow-2xl shadow-red-950/20 backdrop-blur-2xl sm:p-4"
+      >
+        <div className="rounded-[28px] border border-white/[0.07] bg-zinc-900/65 p-4 sm:p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-red-300">
+                live room
+              </div>
+              <div className="mt-1 text-sm font-bold text-white">
+                AI Group Discussion
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-300">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+              live
+            </div>
+          </div>
+
+          <div className="grid grid-cols-[.7fr_1.2fr_.7fr] items-center gap-2 sm:gap-4">
+            <AvatarOrb type="human" label="you" />
+
+            <div className="space-y-3">
+              <FlowingAudio side="left" />
+
+              <div className="rounded-2xl border border-white/[0.07] bg-white/[0.025] px-3 py-3 text-center">
+                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/25">
+                  topic
+                </div>
+                <div className="mt-1 text-xs font-semibold leading-5 text-white/60">
+                  Impact of LLMs on Software Engineering
+                </div>
+              </div>
+
+              <FlowingAudio side="right" />
+            </div>
+
+            <AvatarOrb type="ai" label="AI" />
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+            <div className="mb-3 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
+              <span>live coaching</span>
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <Activity className="h-3 w-3" />
+                listening
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                ["Clarity", "87"],
+                ["Participation", "74"],
+                ["Confidence", "91"],
+              ].map(([label, value]) => (
+                <motion.div
+                  key={label}
+                  whileHover={{ y: -3 }}
+                  className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3"
+                >
+                  <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/25">
+                    {label}
+                  </div>
+                  <div className="mt-1 text-xl font-black text-white">
+                    {value}
+                    <span className="text-[10px] text-white/35">%</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export default function LandingPage() {
+  const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
+  const { scrollY, scrollYProgress } = useScroll();
+
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    mass: 0.2,
+  });
+
+  const heroY = useTransform(scrollY, [0, 700], [0, reduceMotion ? 0 : 130]);
+  const heroOpacity = useTransform(
+    scrollY,
+    [0, 500],
+    [1, reduceMotion ? 1 : 0.18]
+  );
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeFeature, setActiveFeature] = useState("GD Arena");
+  const [cursor, setCursor] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    let raf = 0;
+
+    const onMove = (event) => {
+      cancelAnimationFrame(raf);
+
+      raf = requestAnimationFrame(() => {
+        setCursor({
+          x: (event.clientX / window.innerWidth - 0.5) * 2,
+          y: (event.clientY / window.innerHeight - 0.5) * 2,
+        });
+      });
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, [reduceMotion]);
+
+  const navTo = (id) => {
+    setMenuOpen(false);
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <main className="min-h-screen overflow-x-hidden bg-[#030305] font-sans text-gray-100 selection:bg-red-500/30">
+      {/* Scroll progress */}
+      <motion.div
+        style={{ scaleX: progress }}
+        className="fixed left-0 right-0 top-0 z-[90] h-[2px] origin-left bg-gradient-to-r from-red-600 via-red-500 to-red-300"
+      />
+
+      {/* Lightweight ambient background */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <AmbientGlow
+          color="rose"
+          className="left-[-16%] top-[-10%] h-[480px] w-[480px]"
+        />
+        <AmbientGlow
+          color="red"
+          className="right-[-15%] top-[28%] h-[430px] w-[430px]"
+        />
+
+        <motion.div
+          animate={
+            reduceMotion
+              ? {}
+              : {
+                  x: cursor.x * 12,
+                  y: cursor.y * 12,
+                }
+          }
+          transition={{ type: "spring", stiffness: 80, damping: 25 }}
+          className="absolute left-1/2 top-[14%] h-[430px] w-[430px] -translate-x-1/2 rounded-full border border-white/[0.025]"
+        />
+
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.018)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.018)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_70%_55%_at_50%_15%,black_25%,transparent_90%)]" />
+      </div>
+
+      {/* Navbar */}
+      <header className="fixed inset-x-0 top-0 z-[80] px-4 pt-4 sm:px-6">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/[0.08] bg-[#09090c]/75 px-3 py-2.5 shadow-xl shadow-black/10 backdrop-blur-2xl">
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="group flex items-center gap-2.5 rounded-xl px-2 py-1.5"
+          >
+            <motion.span
+              whileHover={{ rotate: 6, scale: 1.05 }}
+              className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white shadow-lg shadow-red-500/10"
+            >
+              <Terminal className="relative h-4 w-4" />
+            </motion.span>
+
+            <span className="text-sm font-black tracking-tight sm:text-base">
+              GD <span className="text-red-300">Arena</span>
+            </span>
+          </button>
+
+          <div className="hidden items-center gap-1 rounded-xl border border-white/[0.06] bg-white/[0.025] p-1 lg:flex">
+            {[
+              ["Product", "product"],
+              ["GD Arena", "gd-arena"],
+              ["StudyMate", "studymate"],
+              ["Workflow", "workflow"],
+            ].map(([label, id]) => (
+              <button
+                key={label}
+                onClick={() => navTo(id)}
+                className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white/45 transition hover:bg-white/[0.05] hover:text-white"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="hidden items-center gap-2 lg:flex">
             <button
               onClick={() => navigate("/login")}
-              className="text-sm font-medium text-neutral-300 hover:text-white px-4 py-2 transition-colors cursor-pointer"
+              className="rounded-xl px-4 py-2 text-xs font-bold text-white/60 transition hover:text-white"
             >
               Login
             </button>
 
             <button
               onClick={() => navigate("/signup")}
-              className="relative group overflow-hidden text-sm bg-white text-black font-bold px-5 py-2.5 rounded-full shadow-lg shadow-white/10 hover:shadow-white/20 transition-all cursor-pointer"
+              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-2.5 text-xs font-black text-white shadow-[0_10px_30px_rgba(220,38,38,0.16)] transition hover:-translate-y-0.5"
             >
-
-              <span className="relative z-10 flex items-center gap-1.5">
-                Sign Up
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </span>
-
-              <div className="absolute inset-0 bg-gradient-to-r from-red-100 to-rose-100 opacity-0 group-hover:opacity-100 transition-opacity" />
-
+              Start free
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
-
           </div>
-
-
-          {/* Mobile Menu */}
 
           <button
-            className="lg:hidden text-white p-2 cursor-pointer"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setMenuOpen((value) => !value)}
+            className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-2 lg:hidden"
           >
-            {isOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-
-        </div>
-
-
-        {/* Mobile Menu Content */}
+        </nav>
 
         <AnimatePresence>
-
-          {isOpen && (
-
+          {menuOpen && (
             <motion.div
-              initial={{
-                opacity: 0,
-                height: 0,
-              }}
-              animate={{
-                opacity: 1,
-                height: "auto",
-              }}
-              exit={{
-                opacity: 0,
-                height: 0,
-              }}
-              className="lg:hidden bg-[#030014]/98 backdrop-blur-xl border-b border-white/10 overflow-hidden"
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              className="mx-auto mt-2 max-w-7xl rounded-2xl border border-white/[0.08] bg-[#09090c]/95 p-2 shadow-xl backdrop-blur-xl lg:hidden"
             >
-
-              <div className="px-6 py-6 flex flex-col gap-1">
-
-                {[
-                  "Home",
-                  "Features",
-                  "StudyMate",
-                  "How It Works",
-                  "Login",
-                ].map((item) => (
-
-                  <button
-                    key={item}
-                    onClick={() => {
-
-                      if (item === "Home") {
-                        window.scrollTo({
-                          top: 0,
-                          behavior: "smooth",
-                        });
-                        setIsOpen(false);
-                      } else if (item === "Login") {
-                        navigate("/login");
-                        setIsOpen(false);
-                      } else if (item === "Features") {
-                        scrollToSection("features");
-                      } else if (item === "StudyMate") {
-                        scrollToSection("studymate");
-                      } else {
-                        scrollToSection("how-it-works");
-                      }
-
-                    }}
-                    className="text-left text-neutral-300 py-3 px-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer"
-                  >
-                    {item}
-                  </button>
-
-                ))}
-
-                <button
-                  onClick={() => navigate("/signup")}
-                  className="mt-3 w-full bg-gradient-to-r from-red-600 to-rose-600 text-white py-3.5 rounded-xl font-bold cursor-pointer"
-                >
-                  Sign Up Free
-                </button>
-
-              </div>
-
-            </motion.div>
-
-          )}
-
-        </AnimatePresence>
-
-      </nav>
-
-
-      {/* =====================================================
-          HERO
-      ===================================================== */}
-
-      <section className="hero-premium relative min-h-screen flex flex-col items-center justify-center pt-28 pb-20 px-5 md:px-8 overflow-hidden">
-
-        {/* Grid */}
-
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_20%,#000_40%,transparent_100%)]" />
-
-
-        <motion.div
-          style={{
-            y: heroY,
-            opacity: heroOpacity,
-          }}
-          className="relative z-10 max-w-6xl mx-auto text-center"
-        >
-
-          {/* Badge */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: -16,
-              scale: 0.95,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-            }}
-            transition={{
-              duration: 0.6,
-            }}
-            className="inline-flex items-center gap-2.5 bg-gradient-to-r from-red-500/10 via-rose-500/10 to-orange-500/10 border border-red-500/20 px-4 py-2 rounded-full mb-8 backdrop-blur-md"
-          >
-
-            <span className="relative flex h-2 w-2">
-
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-
-            </span>
-
-            <span className="text-xs font-semibold tracking-widest uppercase text-red-200">
-              AI-Powered Placement Preparation
-            </span>
-
-          </motion.div>
-
-
-          {/* Heading */}
-
-          <motion.h1
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.7,
-              delay: 0.1,
-            }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.95] mb-6"
-          >
-
-            <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-neutral-500">
-              Prepare Smarter.
-            </span>
-
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-rose-400 to-orange-400">
-              Speak Better.
-            </span>
-
-            <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-neutral-200 to-neutral-500">
-              Get Placement Ready.
-            </span>
-
-          </motion.h1>
-
-
-          {/* Description */}
-
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.6,
-              delay: 0.25,
-            }}
-            className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed mb-10"
-          >
-            Practice realistic AI group discussions and turn every PDF into
-            an interactive knowledge base with StudyMate.
-          </motion.p>
-
-
-          {/* CTA */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.6,
-              delay: 0.35,
-            }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-          >
-
-            <button
-              onClick={() => navigate("/signup")}
-              className="group relative w-full sm:w-auto overflow-hidden bg-gradient-to-r from-red-600 via-rose-600 to-orange-500 text-white font-bold px-8 py-4 rounded-2xl shadow-2xl shadow-red-500/30 hover:shadow-red-500/50 transition-all active:scale-[0.98] cursor-pointer"
-            >
-
-              <span className="relative z-10 flex items-center justify-center gap-2">
-
-                Start Practicing Free
-
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-
-              </span>
-
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-rose-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-            </button>
-
-
-            <button
-              onClick={() => scrollToSection("studymate")}
-              className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.04] border border-white/10 hover:border-white/20 hover:bg-white/[0.07] text-white font-semibold px-8 py-4 rounded-2xl backdrop-blur-md transition-all cursor-pointer"
-            >
-
-              <BookOpen className="w-4 h-4 text-rose-400" />
-
-              Explore StudyMate
-
-              <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-
-            </button>
-
-          </motion.div>
-
-
-          {/* =================================================
-              STUDY DISCUSSION LOTTIE
-          ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.8,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.45,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="relative w-full flex justify-center mb-6"
-          >
-
-            {/* Glow */}
-
-            <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-
-              <div className="w-[350px] h-[300px] bg-red-600/20 rounded-full blur-[100px]" />
-
-            </div>
-
-
-            {/* Animation */}
-
-            <div className="relative z-10">
-
-              <DotLottieReact
-                data={JSON.stringify(studyDiscussionAnimation)}
-                autoplay
-                loop
-                style={{
-                  width: "min(600px, 90vw)",
-                  height: "min(450px, 65vw)",
-                }}
-              />
-
-            </div>
-
-          </motion.div>
-
-
-          {/* Live Users */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 10,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: 0.6,
-            }}
-            className="inline-flex items-center gap-4 bg-black/40 border border-white/10 rounded-2xl px-5 py-3 backdrop-blur-xl mb-16"
-          >
-
-            <div className="relative">
-
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500/20 to-rose-500/20 flex items-center justify-center">
-
-                <Globe className="w-5 h-5 text-red-400" />
-
-              </div>
-
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[#030014] animate-pulse" />
-
-            </div>
-
-
-            <div className="text-left">
-
-              <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold flex items-center gap-1.5">
-
-                <Activity className="w-3 h-3" />
-
-                {liveUsers} Online Now
-
-              </div>
-
-
-              <div className="text-sm text-neutral-200 font-medium truncate max-w-[260px]">
-
-                Live:{" "}
-
-                <span className="text-rose-400">
-                  "{currentTopic}"
-                </span>
-
-              </div>
-
-            </div>
-
-          </motion.div>
-
-        </motion.div>
-
-      </section>
-
-
-      {/* =====================================================
-          FEATURES
-      ===================================================== */}
-
-      <section
-        id="features"
-        className="relative py-28 px-5 md:px-8"
-      >
-
-        <div className="max-w-7xl mx-auto">
-
-          <div className="text-center mb-16">
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-red-400 mb-4"
-            >
-
-              <Sparkles className="w-3.5 h-3.5" />
-
-              Platform Capabilities
-
-            </motion.div>
-
-
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4">
-
-              Built for{" "}
-
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-400">
-                Placement Success
-              </span>
-
-            </h2>
-
-
-            <p className="text-neutral-400 max-w-xl mx-auto text-lg">
-              Two pillars. One platform. Everything you need to walk in
-              prepared.
-            </p>
-
-          </div>
-
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{
-              once: true,
-              margin: "-80px",
-            }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-          >
-
-            {features.map((feature, index) => {
-
-              const Icon = feature.icon;
-
-              return (
-                <motion.div
-                  key={index}
-                  variants={itemVariants}
-                  whileHover={{
-                    y: -8,
-                    transition: {
-                      duration: 0.25,
-                    },
-                  }}
-                  className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/15 rounded-2xl p-6 transition-all duration-300 overflow-hidden"
-                >
-
-                  <div
-                    className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-500`}
-                  />
-
-
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} bg-opacity-20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
-                  >
-
-                    <Icon className="w-5 h-5 text-white" />
-
-                  </div>
-
-
-                  <h3 className="text-base font-bold text-white mb-2 tracking-tight">
-                    {feature.title}
-                  </h3>
-
-
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    {feature.desc}
-                  </p>
-
-                </motion.div>
-              );
-
-            })}
-
-          </motion.div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          STUDYMATE
-      ===================================================== */}
-
-      <section
-        id="studymate"
-        className="relative py-28 px-5 md:px-8 border-y border-white/5 overflow-hidden"
-      >
-
-        <div className="absolute inset-0 bg-gradient-to-b from-rose-950/20 via-transparent to-red-950/10 pointer-events-none" />
-
-
-        <div className="max-w-7xl mx-auto relative">
-
-          {/* Header */}
-
-          <div className="text-center mb-16">
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                scale: 0.9,
-              }}
-              whileInView={{
-                opacity: 1,
-                scale: 1,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5"
-            >
-
-              <Zap className="w-3.5 h-3.5" />
-
-              New Experience
-
-            </motion.div>
-
-
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4">
-
-              Meet{" "}
-
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">
-                StudyMate
-              </span>
-
-            </h2>
-
-
-            <p className="text-neutral-400 max-w-2xl mx-auto text-lg leading-relaxed">
-              Upload notes, textbooks, or interview material. StudyMate turns
-              them into a living knowledge base you can talk to.
-            </p>
-
-          </div>
-
-
-          {/* Pipeline */}
-
-          <div className="mb-20">
-
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-2">
-
-              {pipeline.map((node, index) => {
-
-                const Icon = node.icon;
-
-                return (
-                  <React.Fragment key={index}>
-
-                    <motion.div
-                      initial={{
-                        opacity: 0,
-                        y: 20,
-                      }}
-                      whileInView={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      viewport={{
-                        once: true,
-                      }}
-                      transition={{
-                        delay: index * 0.07,
-                      }}
-                      whileHover={{
-                        scale: 1.05,
-                      }}
-                      className="flex flex-col items-center gap-2.5 bg-white/[0.04] border border-white/10 hover:border-rose-500/40 rounded-2xl px-5 py-4 min-w-[90px] transition-colors"
-                    >
-
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500/20 to-red-500/20 flex items-center justify-center">
-
-                        <Icon className="w-5 h-5 text-rose-400" />
-
-                      </div>
-
-
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-300">
-                        {node.label}
-                      </span>
-
-                    </motion.div>
-
-
-                    {index < pipeline.length - 1 && (
-
-                      <div className="hidden md:flex items-center text-neutral-600">
-
-                        <ChevronRight className="w-5 h-5" />
-
-                      </div>
-
-                    )}
-
-                  </React.Fragment>
-                );
-
-              })}
-
-            </div>
-
-
-            <div className="flex flex-wrap justify-center gap-3 mt-8">
-
-              <span className="text-[10px] font-bold uppercase tracking-widest bg-red-500/15 text-red-300 border border-red-500/25 px-3.5 py-1.5 rounded-full">
-                Powered by RAG
-              </span>
-
-              <span className="text-[10px] font-bold uppercase tracking-widest bg-white/5 text-neutral-400 border border-white/10 px-3.5 py-1.5 rounded-full">
-                LangChain · Gemini · pgvector
-              </span>
-
-            </div>
-
-          </div>
-
-
-          {/* Chat + Technical Pipeline */}
-
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
-
-            {/* Chat */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                x: -30,
-              }}
-              whileInView={{
-                opacity: 1,
-                x: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="lg:col-span-3 bg-gradient-to-b from-white/[0.06] to-white/[0.02] border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-sm shadow-2xl shadow-black/40"
-            >
-
-              <div className="flex items-center gap-3 mb-6 pb-5 border-b border-white/5">
-
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500/20 to-rose-500/20 flex items-center justify-center">
-
-                  <FileText className="w-6 h-6 text-red-400" />
-
-                </div>
-
-
-                <div>
-
-                  <div className="font-semibold text-white">
-                    Operating Systems Notes.pdf
-                  </div>
-
-                  <div className="text-xs text-neutral-500">
-                    Active · Fully indexed
-                  </div>
-
-                </div>
-
-
-                <div className="ml-auto flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
-
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-
-                  Ready
-
-                </div>
-
-              </div>
-
-
-              <div className="space-y-4">
-
-                {/* User */}
-
-                <div className="flex justify-end">
-
-                  <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tr-md px-4 py-3 max-w-[85%]">
-
-                    <p className="text-sm text-neutral-200">
-                      What are the necessary conditions for deadlock?
-                    </p>
-
-                  </div>
-
-                </div>
-
-
-                {/* AI */}
-
-                <div className="flex justify-start">
-
-                  <div className="bg-gradient-to-br from-rose-600/20 to-red-600/10 border border-rose-500/30 rounded-2xl rounded-tl-md px-4 py-3 max-w-[90%]">
-
-                    <p className="text-sm text-neutral-200 leading-relaxed mb-3">
-                      Based on your uploaded notes, deadlock can occur when
-                      four conditions exist simultaneously: mutual exclusion,
-                      hold and wait, no preemption, and circular wait.
-                    </p>
-
-
-                    <div className="bg-black/30 rounded-xl p-3 space-y-2">
-
-                      <div className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
-                        Retrieved Sources
-                      </div>
-
-
-                      <div className="text-xs text-neutral-400 border-l-2 border-rose-500/50 pl-2.5">
-                        §4.2 — "A resource can be held by only one process at a
-                        time."
-                      </div>
-
-
-                      <div className="text-xs text-neutral-400 border-l-2 border-rose-500/50 pl-2.5">
-                        §4.3 — "Processes holding resources may request
-                        additional ones."
-                      </div>
-
-
-                      <div className="text-xs text-neutral-400 border-l-2 border-rose-500/50 pl-2.5">
-                        §4.4 — "Circular wait must be broken to prevent
-                        deadlock."
-                      </div>
-
-
-                      <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium pt-1">
-
-                        <Search className="w-3 h-3" />
-
-                        3 relevant sections retrieved
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-
-            {/* Technical Side */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                x: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                x: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="lg:col-span-2 flex flex-col gap-4"
-            >
-
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 flex-1">
-
-                <h3 className="text-lg font-bold text-white mb-1">
-                  From PDF → Answer
-                </h3>
-
-
-                <p className="text-sm text-neutral-400 mb-5">
-                  Every response is grounded in your documents — never
-                  generic.
-                </p>
-
-
-                <div className="space-y-2.5">
-
-                  {[
-                    "PDF Upload",
-                    "LangChain Pipeline",
-                    "Smart Chunking",
-                    "Gemini Embeddings",
-                    "Neon + pgvector",
-                    "Semantic Retrieval",
-                    "Grounded AI Response",
-                  ].map((label, index) => (
-
-                    <div
-                      key={index}
-                      className="flex items-center gap-3"
-                    >
-
-                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-500/20 to-rose-500/20 border border-white/5 flex items-center justify-center text-[11px] font-bold text-rose-300 shrink-0">
-                        {index + 1}
-                      </div>
-
-
-                      <div className="flex-1 text-sm text-neutral-300 font-medium bg-white/[0.02] border border-white/5 rounded-lg px-3 py-2">
-                        {label}
-                      </div>
-
-                    </div>
-
-                  ))}
-
-                </div>
-
-              </div>
-
-
-              {/* Security */}
-
-              <div className="bg-gradient-to-br from-red-600/10 to-rose-600/5 border border-red-500/20 rounded-2xl p-5">
-
-                <div className="flex items-start gap-3">
-
-                  <Shield className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-
-                  <div>
-
-                    <div className="text-sm font-semibold text-white mb-1">
-                      Your documents stay yours
-                    </div>
-
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      Embeddings & retrieval run on your material only. Answers
-                      cite exact source sections.
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          TWO PILLARS
-      ===================================================== */}
-
-      <section className="relative py-28 px-5 md:px-8">
-
-        <div className="max-w-6xl mx-auto">
-
-          <div className="text-center mb-14">
-
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
-
-              One Platform.{" "}
-
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-400">
-                Two Superpowers.
-              </span>
-
-            </h2>
-
-            <p className="text-neutral-400 text-lg">
-              Master how you speak. Master what you know.
-            </p>
-
-          </div>
-
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* GD Arena */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              whileHover={{
-                y: -6,
-              }}
-              className="relative group overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-red-950/40 via-[#0a0618] to-[#030014] p-8 md:p-10"
-            >
-
-              <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/20 rounded-full blur-[80px] opacity-50 group-hover:opacity-80 transition-opacity" />
-
-
-              <div className="relative">
-
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center mb-6 shadow-lg shadow-red-500/30">
-
-                  <Bot className="w-7 h-7 text-white" />
-
-                </div>
-
-
-                <h3 className="text-2xl md:text-3xl font-black text-white mb-1">
-                  GD Arena
-                </h3>
-
-
-                <p className="text-red-300 font-semibold text-sm uppercase tracking-widest mb-6">
-                  Master Communication
-                </p>
-
-
-                <ul className="space-y-3 mb-8">
-
-                  {[
-                    "AI group discussions",
-                    "Real-time voice interaction",
-                    "Live performance analytics",
-                    "Unlimited smart topics",
-                  ].map((text) => (
-
-                    <li
-                      key={text}
-                      className="flex items-center gap-3 text-neutral-300 text-sm"
-                    >
-
-                      <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />
-
-                      {text}
-
-                    </li>
-
-                  ))}
-
-                </ul>
-
-
-                <button
-                  onClick={() => navigate("/signup")}
-                  className="w-full group/btn bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-
-                  Practice GDs
-
-                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-
-                </button>
-
-              </div>
-
-            </motion.div>
-
-
-            {/* StudyMate */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              transition={{
-                delay: 0.1,
-              }}
-              whileHover={{
-                y: -6,
-              }}
-              className="relative group overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-rose-950/30 via-[#0a0618] to-[#030014] p-8 md:p-10"
-            >
-
-              <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/15 rounded-full blur-[80px] opacity-50 group-hover:opacity-80 transition-opacity" />
-
-
-              <div className="relative">
-
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center mb-6 shadow-lg shadow-rose-500/30">
-
-                  <BookOpen className="w-7 h-7 text-white" />
-
-                </div>
-
-
-                <h3 className="text-2xl md:text-3xl font-black text-white mb-1">
-                  StudyMate
-                </h3>
-
-
-                <p className="text-rose-300 font-semibold text-sm uppercase tracking-widest mb-6">
-                  Master Knowledge
-                </p>
-
-
-                <ul className="space-y-3 mb-8">
-
-                  {[
-                    "PDF upload & understanding",
-                    "RAG-powered Q&A",
-                    "Semantic document search",
-                    "Cited, grounded answers",
-                  ].map((text) => (
-
-                    <li
-                      key={text}
-                      className="flex items-center gap-3 text-neutral-300 text-sm"
-                    >
-
-                      <CheckCircle2 className="w-4 h-4 text-rose-400 shrink-0" />
-
-                      {text}
-
-                    </li>
-
-                  ))}
-
-                </ul>
-
-
-                <button
-                  onClick={() => scrollToSection("studymate")}
-                  className="w-full group/btn bg-white/5 border border-white/15 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-
-                  Explore StudyMate
-
-                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-
-                </button>
-
-              </div>
-
-            </motion.div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          HOW IT WORKS
-      ===================================================== */}
-
-      <section
-        id="how-it-works"
-        className="relative py-28 px-5 md:px-8 border-y border-white/5 bg-white/[0.015]"
-      >
-
-        <div className="max-w-7xl mx-auto">
-
-          <div className="text-center mb-16">
-
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
-              Your Placement Workflow
-            </h2>
-
-            <p className="text-neutral-400 text-lg max-w-lg mx-auto">
-              Five steps from zero to placement-ready.
-            </p>
-
-          </div>
-
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-
-            {steps.map((step, index) => (
-
-              <motion.div
-                key={index}
-                initial={{
-                  opacity: 0,
-                  y: 24,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  delay: index * 0.08,
-                }}
-                className="relative group"
-              >
-
-                <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-500/30 to-transparent mb-3 select-none group-hover:from-red-400/50 transition-all">
-                  {step.step}
-                </div>
-
-
-                <h4 className="text-base font-bold text-white mb-2">
-                  {step.title}
-                </h4>
-
-
-                <p className="text-sm text-neutral-400 leading-relaxed">
-                  {step.desc}
-                </p>
-
-              </motion.div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          STATS
-      ===================================================== */}
-
-      <section
-        id="stats"
-        className="relative py-24 px-5 md:px-8"
-      >
-
-        <div className="max-w-5xl mx-auto">
-
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-red-950/30 via-rose-950/20 to-transparent p-10 md:p-14">
-
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-red-500/10 via-transparent to-transparent" />
-
-
-            <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-
               {[
-                {
-                  value: "10,000+",
-                  label: "Discussions",
-                },
-                {
-                  value: "5,000+",
-                  label: "Learners",
-                },
-                {
-                  value: "100+",
-                  label: "GD Topics",
-                },
-                {
-                  value: "95%",
-                  label: "Satisfaction",
-                },
-              ].map((stat, index) => (
-
-                <motion.div
-                  key={index}
-                  initial={{
-                    opacity: 0,
-                    scale: 0.9,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    scale: 1,
-                  }}
-                  viewport={{
-                    once: true,
-                  }}
-                  transition={{
-                    delay: index * 0.08,
-                  }}
+                ["Product", "product"],
+                ["GD Arena", "gd-arena"],
+                ["StudyMate", "studymate"],
+                ["Workflow", "workflow"],
+              ].map(([label, id]) => (
+                <button
+                  key={label}
+                  onClick={() => navTo(id)}
+                  className="block w-full rounded-xl px-4 py-3 text-left text-sm text-white/60 hover:bg-white/[0.05]"
                 >
-
-                  <div className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-neutral-400 mb-1">
-                    {stat.value}
-                  </div>
-
-
-                  <div className="text-xs md:text-sm text-neutral-400 font-bold uppercase tracking-widest">
-                    {stat.label}
-                  </div>
-
-                </motion.div>
-
+                  {label}
+                </button>
               ))}
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          TESTIMONIALS
-      ===================================================== */}
-
-      <section className="relative py-28 px-5 md:px-8">
-
-        <div className="max-w-6xl mx-auto">
-
-          <div className="text-center mb-14">
-
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
-              Trusted by Placement Aspirants
-            </h2>
-
-            <p className="text-neutral-400">
-              Students, MBA candidates & professionals preparing for what
-              comes next.
-            </p>
-
-          </div>
-
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            {testimonials.map((testimonial, index) => (
-
-              <motion.div
-                key={index}
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  delay: index * 0.1,
-                }}
-                whileHover={{
-                  y: -4,
-                }}
-                className="relative bg-white/[0.03] border border-white/5 hover:border-white/15 rounded-2xl p-7 transition-all duration-300"
-              >
-
-                <div className="flex gap-1 mb-4">
-
-                  {[...Array(testimonial.rating)].map((_, starIndex) => (
-
-                    <Star
-                      key={starIndex}
-                      className="w-3.5 h-3.5 fill-rose-400 text-rose-400"
-                    />
-
-                  ))}
-
-                </div>
-
-
-                <Quote className="w-8 h-8 text-red-500/15 absolute top-6 right-6" />
-
-
-                <p className="text-neutral-300 text-sm leading-relaxed mb-6 relative z-10">
-                  "{testimonial.quote}"
-                </p>
-
-
-                <div>
-
-                  <div className="text-sm font-bold text-white">
-                    {testimonial.author}
-                  </div>
-
-                  <div className="text-xs text-neutral-500">
-                    {testimonial.role}
-                  </div>
-
-                </div>
-
-              </motion.div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          FINAL CTA
-      ===================================================== */}
-
-      <section className="relative py-32 px-5 md:px-8 overflow-hidden">
-
-        <div className="absolute inset-0 bg-gradient-to-t from-red-950/30 via-transparent to-transparent pointer-events-none" />
-
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-600/20 rounded-full blur-[120px] pointer-events-none" />
-
-
-        <div className="relative max-w-3xl mx-auto text-center">
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-          >
-
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-5">
-
-              Ready to Become{" "}
-
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-rose-400 to-orange-400">
-                Placement Ready?
-              </span>
-
-            </h2>
-
-
-            <p className="text-neutral-400 text-lg mb-10 max-w-md mx-auto">
-              Practice. Study. Improve. Walk into every round prepared.
-            </p>
-
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 
               <button
                 onClick={() => navigate("/signup")}
-                className="group relative overflow-hidden bg-white text-black font-bold px-10 py-4 rounded-2xl shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all active:scale-[0.98] cursor-pointer"
+                className="mt-1 w-full rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-sm font-black text-white"
               >
-
-                <span className="relative z-10 flex items-center gap-2">
-
-                  Start Free Today
-
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-
-                </span>
-
+                Start free
               </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
 
-
-              <button
-                onClick={() => scrollToSection("studymate")}
-                className="flex items-center gap-2 bg-white/5 border border-white/15 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-2xl transition-all cursor-pointer"
-              >
-
-                <BookOpen className="w-4 h-4 text-rose-400" />
-
-                Explore StudyMate
-
-              </button>
-
-            </div>
-
-          </motion.div>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          FOOTER
-      ===================================================== */}
-
-      <footer className="relative border-t border-white/5 py-12 px-5 md:px-8 bg-[#02000a]">
-
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-
-          {/* Logo */}
-
-          <div className="flex items-center gap-3">
-
-            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg flex items-center justify-center">
-
-              <Terminal className="w-4 h-4 text-white" />
-
-            </div>
-
-
+      {/* Hero */}
+      <section className="relative z-10 flex min-h-screen items-center px-5 pb-20 pt-32 sm:px-8 lg:pt-40">
+        <motion.div
+          style={{ y: heroY, opacity: heroOpacity }}
+          className="mx-auto w-full max-w-7xl"
+        >
+          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
             <div>
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, ease: easeOut }}
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-300/10 bg-white/[0.025] px-3.5 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-red-200 backdrop-blur-xl"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                </span>
+                AI-powered placement OS
+              </motion.div>
 
-              <div className="text-sm font-bold text-white">
-                GD Arena
-              </div>
+              <motion.h1
+                initial={{ opacity: 0, y: 26 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.08, ease: easeOut }}
+                className="max-w-5xl text-[clamp(3.5rem,7vw,7.6rem)] font-black leading-[0.88] tracking-[-0.065em]"
+              >
+                <span className="block text-white">Practice.</span>
+                <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-300 bg-clip-text text-transparent">
+                  Understand.
+                </span>
+                <span className="block text-white/35">Perform.</span>
+              </motion.h1>
 
-              <div className="text-xs text-neutral-500">
-                AI-powered placement preparation
-              </div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.2, ease: easeOut }}
+                className="mt-7 max-w-2xl text-base leading-7 text-white/45 sm:text-xl sm:leading-8"
+              >
+                GD Arena trains how you speak. StudyMate trains what you know.
+                One intelligent workspace for the high-pressure part of
+                placement preparation.
+              </motion.p>
 
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.3, ease: easeOut }}
+                className="mt-9 flex flex-col gap-3 sm:flex-row"
+              >
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-sm font-black text-white shadow-[0_18px_50px_rgba(244,63,94,.14)] transition hover:-translate-y-1"
+                >
+                  Enter the Arena
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+
+                <button
+                  onClick={() => navTo("studymate")}
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-red-300/20 bg-red-500/[0.035] px-6 py-4 text-sm font-bold text-white backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-red-300/35 hover:bg-red-500/[0.07]"
+                >
+                  See StudyMate
+                  <ChevronRight className="h-4 w-4 text-white/35 transition-transform group-hover:translate-x-1" />
+                </button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/25"
+              >
+                <span className="flex items-center gap-2">
+                  <Shield className="h-3.5 w-3.5" />
+                  context-grounded
+                </span>
+                <span className="flex items-center gap-2">
+                  <Zap className="h-3.5 w-3.5" />
+                  real-time
+                </span>
+                <span className="flex items-center gap-2">
+                  <Network className="h-3.5 w-3.5" />
+                  adaptive
+                </span>
+              </motion.div>
             </div>
 
+            <LiveArenaCard />
           </div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.65 }}
+            className="mt-16 border-y border-white/[0.055] py-5"
+          >
+            <div className="mb-3 text-center text-[9px] font-black uppercase tracking-[0.24em] text-white/25">
+              built around what you actually prepare
+            </div>
 
-          {/* Links */}
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-xs font-bold text-white/35 sm:gap-x-12">
+              {logos.map((logo) => (
+                <motion.span
+                  key={logo}
+                  whileHover={{ y: -2, color: "#f4f4f5" }}
+                  className="transition"
+                >
+                  {logo}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
 
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-neutral-400">
+      {/* Product bridge */}
+      <section
+        id="product"
+        className="relative z-10 border-y border-white/[0.055] bg-white/[0.012] px-5 py-28 sm:px-8"
+      >
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            kicker="two modes · one brain"
+            title={
+              <>
+                <span>Train your </span>
+                <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+                  performance.
+                </span>
+              </>
+            }
+            description="The interface behaves like a product, not a brochure: live state, retrieval, analytics, and progress are always moving."
+          />
 
-            <button
-              onClick={() =>
-                window.scrollTo({
-                  top: 0,
-                  behavior: "smooth",
-                })
+          <div className="mt-14 flex justify-center">
+            <div className="inline-flex rounded-2xl border border-white/[0.07] bg-white/[0.025] p-1.5">
+              {["GD Arena", "StudyMate"].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setActiveFeature(item)}
+                  className={`rounded-xl px-5 py-2.5 text-xs font-black transition ${
+                    activeFeature === item
+                      ? "bg-white text-white shadow-lg"
+                      : "text-white/35 hover:text-white"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeFeature}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.45, ease: easeOut }}
+              className="mt-8 grid gap-6 lg:grid-cols-[1.3fr_.7fr]"
+            >
+              <div className="relative min-h-[430px] overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.025] p-6 sm:p-8">
+                <AmbientGlow
+                  color={activeFeature === "GD Arena" ? "rose" : "pink"}
+                  className="right-[-10%] top-[-18%] h-[330px] w-[330px]"
+                />
+
+                {activeFeature === "GD Arena" ? (
+                  <div className="relative h-full">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                          GD Arena / session 027
+                        </div>
+                        <div className="mt-2 text-xl font-black tracking-tight">
+                          The AI listens. The room reacts.
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-2.5">
+                        <Mic className="h-4 w-4 text-red-300" />
+                      </div>
+                    </div>
+
+                    <div className="mt-12 grid grid-cols-[.75fr_1.5fr_.75fr] items-center gap-4">
+                      <AvatarOrb type="ai" label="opponent 01" />
+
+                      <div className="relative py-8">
+                        <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-red-500/10 via-red-300/60 to-red-300/10" />
+
+                        {[0, 1, 2].map((i) => (
+                          <motion.div
+                            key={i}
+                            animate={{ x: ["-20%", "120%"] }}
+                            transition={{
+                              duration: 2.1 + i * 0.35,
+                              repeat: Infinity,
+                              delay: i * 0.45,
+                              ease: "linear",
+                            }}
+                            className="absolute top-1/2 h-1.5 w-16 rounded-full bg-gradient-to-r from-transparent via-white to-transparent blur-[1px]"
+                          />
+                        ))}
+
+                        <div className="mx-auto w-fit rounded-2xl border border-white/[0.08] bg-zinc-900/70 px-5 py-4 text-center backdrop-blur-xl">
+                          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+                            current speaker
+                          </div>
+                          <div className="mt-1 text-sm font-bold text-white">
+                            You
+                          </div>
+
+                          <div className="mt-2 flex items-end justify-center gap-1">
+                            {[18, 34, 25, 45, 22, 38, 29, 42, 20, 31, 25].map(
+                              (h, i) => (
+                                <motion.span
+                                  key={i}
+                                  animate={{
+                                    height: [h, Math.max(10, h * 1.6), h],
+                                  }}
+                                  transition={{
+                                    duration: 0.7 + i * 0.03,
+                                    repeat: Infinity,
+                                  }}
+                                  className="w-1 rounded-full bg-red-300"
+                                />
+                              )
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <AvatarOrb type="ai" label="opponent 02" />
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 gap-3">
+                      {[
+                        ["Talk ratio", "38%"],
+                        ["Ideas landed", "06"],
+                        ["Follow-ups", "03"],
+                      ].map(([label, value]) => (
+                        <motion.div
+                          key={label}
+                          whileHover={{ y: -3 }}
+                          className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4"
+                        >
+                          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+                            {label}
+                          </div>
+                          <div className="mt-1 text-lg font-black">{value}</div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative grid h-full items-center gap-8 lg:grid-cols-[.85fr_1.15fr]">
+                    <div>
+                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                        StudyMate / memory graph
+                      </div>
+
+                      <div className="mt-3 text-3xl font-black tracking-tight">
+                        Answers change when your context changes.
+                      </div>
+
+                      <p className="mt-4 max-w-md text-sm leading-6 text-white/45">
+                        Upload one document. Ask different questions. StudyMate
+                        retrieves different evidence each time.
+                      </p>
+
+                      <div className="mt-7 flex flex-wrap gap-2">
+                        {[
+                          "OS Notes",
+                          "CN Revision",
+                          "DBMS Interview",
+                          "Resume Prep",
+                        ].map((tag) => (
+                          <motion.span
+                            key={tag}
+                            whileHover={{ y: -2 }}
+                            className="rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[10px] font-bold text-white/35"
+                          >
+                            {tag}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <ContextGraph />
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-4">
+                {[
+                  {
+                    icon: Sparkles,
+                    t: "Adaptive",
+                    d: "The experience changes with the learner instead of showing the same static marketing cards.",
+                  },
+                  {
+                    icon: Command,
+                    t: "Fast to understand",
+                    d: "Visual state explains the product before the visitor reads a wall of copy.",
+                  },
+                  {
+                    icon: LineChart,
+                    t: "Built to prove value",
+                    d: "Voice → retrieval → feedback → improvement becomes one visible loop.",
+                  },
+                ].map(({ icon: Icon, t, d }) => (
+                  <motion.div
+                    key={t}
+                    whileHover={{ y: -4 }}
+                    className="rounded-[28px] border border-white/[0.08] bg-white/[0.025] p-6"
+                  >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.03] ring-1 ring-white/[0.08]">
+                      <Icon className="h-5 w-5 text-red-300" />
+                    </div>
+                    <div className="mt-5 text-lg font-black">{t}</div>
+                    <p className="mt-2 text-sm leading-6 text-white/35">{d}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* GD Arena */}
+      <section
+        id="gd-arena"
+        className="relative z-10 px-5 py-28 sm:px-8"
+      >
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            kicker="GD Arena"
+            title={
+              <>
+                <span>Make communication </span>
+                <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+                  trainable.
+                </span>
+              </>
+            }
+            description="A simulated discussion room that listens, pushes back, and makes the next turn feel consequential."
+          />
+
+          <div className="relative mt-16 overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.025] p-5 shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:p-8">
+            <AmbientGlow
+              color="rose"
+              className="left-[-10%] top-[10%] h-[330px] w-[330px]"
+            />
+            <AmbientGlow
+              color="red"
+              className="right-[-8%] bottom-[-15%] h-[350px] w-[350px]"
+            />
+
+            <div className="relative grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+              <div>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-red-300">
+                  <Activity className="h-3.5 w-3.5" />
+                  room state / responding
+                </div>
+
+                <h3 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+                  A person speaks.
+                  <br />
+                  <span className="text-white/35">The room moves.</span>
+                </h3>
+
+                <p className="mt-5 max-w-xl text-sm leading-7 text-white/45 sm:text-base">
+                  Interim speech becomes a real-time conversation. AI
+                  participants react to arguments while analytics update with
+                  the discussion.
+                </p>
+
+                <div className="mt-7 space-y-3">
+                  {[
+                    "Interim speech becomes a real-time conversation",
+                    "AI participants react to your last argument",
+                    "Analytics update as the discussion evolves",
+                  ].map((item) => (
+                    <motion.div
+                      key={item}
+                      whileHover={{ x: 4 }}
+                      className="flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-3.5"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-red-300" />
+                      <span className="text-sm text-white/60">{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="relative rounded-[32px] border border-white/[0.08] bg-[#09090c]/95 p-3 backdrop-blur-xl">
+                  <DotLottieReact
+                    data={JSON.stringify(studyDiscussionAnimation)}
+                    autoplay
+                    loop
+                    style={{ width: "100%", height: "min(520px, 62vw)" }}
+                  />
+
+                  <div className="absolute bottom-5 left-5 right-5 grid grid-cols-3 gap-2 sm:left-7 sm:right-7">
+                    {[
+                      ["LIVE", "voice input"],
+                      ["AI", "argument model"],
+                      ["SMART", "feedback loop"],
+                    ].map(([a, b]) => (
+                      <motion.div
+                        key={a}
+                        whileHover={{ y: -3 }}
+                        className="rounded-xl border border-white/[0.08] bg-zinc-900/85 p-3 text-center backdrop-blur-xl"
+                      >
+                        <div className="text-[9px] font-black tracking-[0.18em] text-red-300">
+                          {a}
+                        </div>
+                        <div className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/25">
+                          {b}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* StudyMate / RAG */}
+      <section
+        id="studymate"
+        className="relative z-10 border-y border-white/[0.055] bg-white/[0.012] px-5 py-28 sm:px-8"
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+            <SectionHeading
+              align="left"
+              kicker="StudyMate"
+              title={
+                <>
+                  <span>Upload once. </span>
+                  <span className="bg-gradient-to-r from-red-300 to-red-200 bg-clip-text text-transparent">
+                    Ask in context.
+                  </span>
+                </>
               }
-              className="hover:text-white transition-colors cursor-pointer"
+              description="The PDF becomes a living, queryable memory through an animated retrieval pipeline."
+            />
+
+            <div className="justify-self-end rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-3 text-xs text-white/35">
+              <span className="font-black text-white">RAG</span> / retrieve →
+              ground → answer
+            </div>
+          </div>
+
+          <RAGPipeline />
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+            <ChatWindow />
+
+            <div className="grid gap-5">
+              <div className="rounded-[32px] border border-white/[0.08] bg-white/[0.025] p-6 sm:p-8">
+                <div className="flex items-center justify-between">
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                    context graph
+                  </div>
+                  <Network className="h-4 w-4 text-white/25" />
+                </div>
+
+                <ContextGraph />
+
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  {[
+                    ["memory", "document-aware"],
+                    ["retrieval", "semantic"],
+                  ].map(([label, value]) => (
+                    <motion.div
+                      key={label}
+                      whileHover={{ y: -3 }}
+                      className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4"
+                    >
+                      <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+                        {label}
+                      </div>
+                      <div className="mt-1 text-lg font-black">{value}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[32px] border border-red-300/10 bg-red-400/[0.035] p-6 sm:p-8">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.03] ring-1 ring-white/[0.08]">
+                    <Shield className="h-5 w-5 text-red-300" />
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-black">Grounded by design</div>
+                    <div className="text-xs text-white/35">
+                      Uploaded material stays at the center of the answer.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-2.5">
+                  {[
+                    "Source-aware answers",
+                    "Retrieved context",
+                    "Context-first response flow",
+                  ].map((label) => (
+                    <motion.div
+                      key={label}
+                      whileHover={{ x: 3 }}
+                      className="flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.02] px-3.5 py-3 text-xs text-white/45"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                      {label}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Performance + streak */}
+      <section className="relative z-10 px-5 py-28 sm:px-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            kicker="progress engine"
+            title={
+              <>
+                <span>Don't just practice.</span>
+                <br />
+                <span className="bg-gradient-to-r from-red-200 to-red-300 bg-clip-text text-transparent">
+                  See the compounding effect.
+                </span>
+              </>
+            }
+            description="Performance tells you what changed. Streaks give you a reason to come back. Together they turn practice into a loop."
+          />
+
+          <div className="mt-14 grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
+            <AnimatedPerformance />
+            <StreakSystem />
+          </div>
+        </div>
+      </section>
+
+      {/* Capability bento */}
+      <section className="relative z-10 px-5 py-28 sm:px-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            kicker="the system"
+            title={
+              <>
+                <span>Less brochure.</span>
+                <br />
+                <span className="text-white/35">More product.</span>
+              </>
+            }
+            description="Every section earns its place by showing how the platform behaves."
+          />
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4"
+          >
+            {featureCards.map((card) => (
+              <BentoFeature key={card.eyebrow} card={card} />
+            ))}
+          </motion.div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-3">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2"
             >
-              About
-            </button>
+              <AnimatedPerformance />
+            </motion.div>
 
-
-            <button
-              onClick={() => scrollToSection("features")}
-              className="hover:text-white transition-colors cursor-pointer"
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.08 }}
+              className="rounded-[30px] border border-white/[0.08] bg-red-300/[0.035] p-7 sm:p-9"
             >
-              Features
-            </button>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04]">
+                <GraduationCap className="h-5 w-5 text-red-300" />
+              </div>
 
+              <h3 className="mt-6 text-2xl font-black tracking-tight">
+                Placement mode.
+              </h3>
 
+              <p className="mt-3 text-sm leading-6 text-white/35">
+                Turn scattered practice into a repeatable loop: practice →
+                measure → study → repeat.
+              </p>
+
+              <div className="mt-8 space-y-3">
+                {[
+                  ["Communication", 87],
+                  ["Knowledge", 78],
+                  ["Confidence", 91],
+                ].map(([label, value], i) => (
+                  <div key={label}>
+                    <div className="mb-1 flex justify-between text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
+                      <span>{label}</span>
+                      <span>{value}%</span>
+                    </div>
+
+                    <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${value}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: i * 0.1 }}
+                        className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Workflow */}
+      <section
+        id="workflow"
+        className="relative z-10 border-y border-white/[0.055] bg-white/[0.012] px-5 py-28 sm:px-8"
+      >
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            kicker="workflow"
+            title={
+              <>
+                <span>Five moves.</span>{" "}
+                <span className="text-white/35">
+                  One serious advantage.
+                </span>
+              </>
+            }
+            description="The path from signup to placement-readiness stays visible from the first click."
+          />
+
+          <div className="relative mt-16">
+            <div className="absolute left-1/2 top-10 hidden h-[calc(100%-80px)] w-px -translate-x-1/2 bg-gradient-to-b from-red-400/45 via-red-300/20 to-transparent lg:block" />
+
+            <div className="space-y-5 lg:space-y-14">
+              {[
+                [
+                  "01",
+                  "Enter the room",
+                  "Pick a topic and start speaking. No waiting around for a human practice group.",
+                  Mic,
+                ],
+                [
+                  "02",
+                  "Get challenged",
+                  "AI participants respond to your arguments instead of handing you a canned answer.",
+                  Bot,
+                ],
+                [
+                  "03",
+                  "Bring your context",
+                  "Upload class notes, interview PDFs, or revision material into StudyMate.",
+                  FileText,
+                ],
+                [
+                  "04",
+                  "Ask better questions",
+                  "Retrieve the right context and get a grounded explanation exactly when you need it.",
+                  Search,
+                ],
+                [
+                  "05",
+                  "Repeat with evidence",
+                  "Use performance analytics and knowledge gaps to decide what to practice next.",
+                  BarChart3,
+                ],
+              ].map(([num, title, body, Icon], i) => (
+                <motion.div
+                  key={num}
+                  initial={{ opacity: 0, x: i % 2 ? 28 : -28 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: easeOut }}
+                  className={`relative grid gap-5 lg:grid-cols-2 lg:items-center ${
+                    i % 2 ? "lg:text-right" : ""
+                  }`}
+                >
+                  <div className={i % 2 ? "lg:order-2" : ""}>
+                    <div className="text-5xl font-black tracking-[-0.06em] text-white/[0.08] sm:text-7xl">
+                      {num}
+                    </div>
+
+                    <h3 className="mt-1 text-2xl font-black tracking-tight">
+                      {title}
+                    </h3>
+
+                    <p
+                      className={`mt-2 max-w-xl text-sm leading-6 text-white/35 ${
+                        i % 2 ? "lg:ml-auto" : ""
+                      }`}
+                    >
+                      {body}
+                    </p>
+                  </div>
+
+                  <motion.div
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    className={`${
+                      i % 2
+                        ? "lg:order-1 lg:justify-self-end"
+                        : "lg:justify-self-start"
+                    } flex w-fit items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-3`}
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.03]">
+                      <Icon className="h-4 w-4 text-red-300" />
+                    </div>
+
+                    <span className="text-xs font-black uppercase tracking-[0.16em] text-white/35">
+                      {
+                        [
+                          "real-time",
+                          "adaptive",
+                          "context-aware",
+                          "grounded",
+                          "measurable",
+                        ][i]
+                      }
+                    </span>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social proof */}
+      <section className="relative z-10 px-5 py-24 sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Glass className="rounded-[30px] bg-white/[0.025] p-7 sm:p-12">
+            <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+              {stats.map(({ value, label }, i) => (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.06 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    whileInView={{ y: [8, 0] }}
+                    viewport={{ once: true }}
+                    className="text-3xl font-black tracking-[-0.04em] sm:text-5xl"
+                  >
+                    {value}
+                  </motion.div>
+                  <div className="mt-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/25 sm:text-[10px]">
+                    {label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </Glass>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="relative z-10 px-5 pb-28 sm:px-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            kicker="the feeling we want"
+            title={
+              <>
+                <span>“Oh, this feels </span>
+                <span className="text-white/35">different.”</span>
+              </>
+            }
+            description="The product should feel alive before the visitor even signs in."
+          />
+
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            {[
+              [
+                "It stopped feeling like practice.",
+                "The AI room made me think on my feet. The live feedback changed how I approached a GD.",
+                "Ananya Iyer",
+              ],
+              [
+                "My notes finally became interactive.",
+                "Instead of searching a 200-page PDF, I can ask exactly what I am stuck on and see the supporting context.",
+                "Rohan Malhotra",
+              ],
+              [
+                "This is how a student product should feel.",
+                "It feels less like a college project and more like a focused product built around one clear outcome.",
+                "Sarah Jenkins",
+              ],
+            ].map(([quote, body, author], i) => (
+              <motion.div
+                key={author}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ y: -6 }}
+                className="relative rounded-[28px] border border-white/[0.08] bg-white/[0.025] p-7"
+              >
+                <Quote className="absolute right-6 top-6 h-8 w-8 text-red-400/10" />
+
+                <div className="mb-4 flex gap-1">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star
+                      key={s}
+                      className="h-3.5 w-3.5 fill-rose-300 text-red-300"
+                    />
+                  ))}
+                </div>
+
+                <div className="text-lg font-black tracking-tight">
+                  “{quote}”
+                </div>
+
+                <p className="mt-4 text-sm leading-6 text-white/35">{body}</p>
+
+                <div className="mt-7 text-xs font-black uppercase tracking-[0.16em] text-white/25">
+                  {author}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="relative z-10 overflow-hidden px-5 pb-20 pt-12 sm:px-8">
+        <motion.div
+          whileHover={{ scale: 1.003 }}
+          className="relative mx-auto max-w-6xl overflow-hidden rounded-[32px] border border-white/[0.09] bg-white/[0.025] px-6 py-20 text-center shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:px-12 lg:py-28"
+        >
+          <AmbientGlow
+            color="rose"
+            className="left-[22%] top-[-30%] h-[420px] w-[420px]"
+          />
+          <AmbientGlow
+            color="red"
+            className="right-[5%] bottom-[-35%] h-[360px] w-[360px]"
+          />
+
+          <div className="relative">
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.04, 1] }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-red-300 to-red-200 text-white shadow-[0_0_45px_rgba(244,63,94,.14)]"
+            >
+              <Terminal className="h-6 w-6" />
+            </motion.div>
+
+            <h2 className="mx-auto mt-7 max-w-4xl text-4xl font-black tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+              Stop preparing in pieces.
+              <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-300 bg-clip-text text-transparent">
+                Start training as a system.
+              </span>
+            </h2>
+
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/35 sm:text-lg">
+              Talk. Study. Retrieve. Improve. Walk into the next placement
+              round knowing exactly what to work on.
+            </p>
+
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <button
+                onClick={() => navigate("/signup")}
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-red-500 px-7 py-4 text-sm font-black text-white shadow-[0_18px_50px_rgba(239,68,68,.22)] transition hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(239,68,68,.30)]"
+              >
+                Start free
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+
+              <button
+                onClick={() => navTo("gd-arena")}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-300/20 bg-red-500/[0.035] px-7 py-4 text-sm font-bold text-white transition hover:border-red-300/35 hover:bg-red-500/[0.07]"
+              >
+                <Play className="h-4 w-4 text-red-300" />
+                See the experience
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/[0.055] px-5 py-10 sm:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-7 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-red-300 to-red-200 text-white">
+              <Terminal className="h-4 w-4" />
+            </div>
+
+            <div>
+              <div className="text-sm font-black">GD Arena</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-700">
+                practice smarter
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-white/25">
             <button
-              onClick={() => scrollToSection("studymate")}
-              className="hover:text-white transition-colors cursor-pointer"
+              onClick={() => navTo("gd-arena")}
+              className="transition hover:text-white"
+            >
+              GD Arena
+            </button>
+            <button
+              onClick={() => navTo("studymate")}
+              className="transition hover:text-white"
             >
               StudyMate
             </button>
-
-
-            <a
-              href="#"
-              className="hover:text-white transition-colors"
+            <button
+              onClick={() => navTo("workflow")}
+              className="transition hover:text-white"
             >
-              Privacy
-            </a>
-
-
-            <a
-              href="#"
-              className="hover:text-white transition-colors"
+              Workflow
+            </button>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="transition hover:text-white"
             >
-              Terms
-            </a>
-
+              Back to top
+            </button>
           </div>
 
-
-          {/* Copyright */}
-
-          <div className="text-xs text-neutral-600">
-            © 2026 GD Arena. All rights reserved.
+          <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-700">
+            © 2026 GD Arena
           </div>
-
         </div>
-
       </footer>
-
-    </div>
+    </main>
   );
 }
