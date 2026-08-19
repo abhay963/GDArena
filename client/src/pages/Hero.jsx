@@ -869,41 +869,47 @@ export default function Hero() {
      START GD
   ======================================================= */
 
-  const startGD = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/gd/start`
-      );
+ const startGD = async () => {
+  try {
+    console.log("🚀 Starting GD...");
 
-      console.log("🔥 GD START RESPONSE:", res.data);
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/gd/start`
+    );
 
-      setSessionId(res.data.sessionId);
-      setTopic(res.data.topic || "");
+    console.log("🔥 GD START RESPONSE:", res.data);
 
-      const initialPayload = [
-        {
-          speaker: "Player 1",
-          text: res.data.agents["Player 1"],
-          avatar: "🤖",
-        },
-        {
-          speaker: "Player 2",
-          text: res.data.agents["Player 2"],
-          avatar: "🤖",
-        },
-      ];
+    setSessionId(res.data.sessionId);
+    setTopic(res.data.topic || "");
 
-      setHistory(initialPayload);
-      setStep("gd");
-      aiSpeechQueue.current = [...initialPayload];
+    const initialPayload = [
+      {
+        speaker: "Player 1",
+        text: res.data.agents["Player 1"],
+        avatar: "🤖",
+      },
+      {
+        speaker: "Player 2",
+        text: res.data.agents["Player 2"],
+        avatar: "🤖",
+      },
+    ];
 
-      setTimeout(() => {
-        processSpeechQueue();
-      }, 400);
-    } catch (error) {
-      console.error("Failed to start GD:", error);
-    }
-  };
+    setHistory(initialPayload);
+    setStep("gd");
+
+    aiSpeechQueue.current = [...initialPayload];
+
+    setTimeout(() => {
+      processSpeechQueue();
+    }, 400);
+
+  } catch (error) {
+    console.error("🔥 Failed to start GD:", error);
+    console.error("Status:", error.response?.status);
+    console.error("Response:", error.response?.data);
+  }
+};
 
   /* =======================================================
      LOGOUT

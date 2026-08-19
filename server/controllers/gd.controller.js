@@ -29,7 +29,13 @@ import crypto from "crypto";
 
 export async function startGroupDiscussion(req, res) {
   try {
+    console.log("🚀 Starting Group Discussion...");
+
     const data = await startGD();
+
+    console.log("✅ startGD response received");
+    console.log("📌 Topic:", data.topic);
+    console.log("🤖 Agents:", data.agents);
 
     const sessionId = crypto.randomUUID();
 
@@ -39,8 +45,10 @@ export async function startGroupDiscussion(req, res) {
       data.agents
     );
 
+    console.log("✅ Session created:", sessionId);
+
     // Store opening AI messages
-    if (data.agents["Player 1"]) {
+    if (data.agents?.["Player 1"]) {
       addAIMessage(
         sessionId,
         "Player 1",
@@ -48,7 +56,7 @@ export async function startGroupDiscussion(req, res) {
       );
     }
 
-    if (data.agents["Player 2"]) {
+    if (data.agents?.["Player 2"]) {
       addAIMessage(
         sessionId,
         "Player 2",
@@ -56,20 +64,28 @@ export async function startGroupDiscussion(req, res) {
       );
     }
 
-    res.json({
+    console.log("✅ AI opening messages stored");
+
+    return res.status(200).json({
+      success: true,
       sessionId,
       topic: data.topic,
       agents: data.agents,
     });
 
   } catch (error) {
-    console.error(
-      "START GD ERROR:",
-      error.message
-    );
+    console.error("🔥 START GD ERROR");
+    console.error("Message:", error.message);
+    console.error("Status:", error.response?.status);
+    console.error("URL:", error.config?.url);
+    console.error("Method:", error.config?.method);
+    console.error("Response:", error.response?.data);
+    console.error("Stack:", error.stack);
 
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       error: "Failed to start GD",
+      message: error.message,
     });
   }
 }
