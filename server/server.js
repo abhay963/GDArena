@@ -6,7 +6,7 @@ import http from "http";
 import gdRoutes from "./routes/gd.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
 import documentRoutes from "./routes/documentRoutes.js";
-import performanceRoutes from "./routes/performance.routes.js";
+
 import chatRoutes from "./routes/chatRoutes.js";
 import studymateRoutes from "./routes/studymate.routes.js";
 
@@ -48,10 +48,7 @@ app.use(
   streakRoutes
 );
 
-app.use(
-  "/api/performance",
-  performanceRoutes
-);
+
 
 app.use(
   "/api/documents",

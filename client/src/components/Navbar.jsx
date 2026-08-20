@@ -13,7 +13,7 @@ import {
   FiZap,
 } from "react-icons/fi";
 
-import Performance from "./PerformanceDashboard.jsx";
+
 import { getStreak } from "../services/streak.service.js";
 
 export default function Navbar({
@@ -23,7 +23,7 @@ export default function Navbar({
   onNavigateHome,
   activeProduct = "gd",
 }) {
-  const [showPerformance, setShowPerformance] = useState(false);
+ 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showStreakPopup, setShowStreakPopup] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
@@ -1215,40 +1215,7 @@ export default function Navbar({
               </AnimatePresence>
             </div>
 
-            {/* =================================================
-                ANALYTICS
-            ================================================== */}
-
-            <button
-              type="button"
-              onClick={() => setShowPerformance(true)}
-              className="
-                hidden
-                sm:flex
-                items-center
-                gap-2.5
-                h-10
-                px-3.5
-                rounded-xl
-                border
-                border-white/[0.07]
-                bg-white/[0.025]
-                hover:bg-white/[0.05]
-                hover:border-indigo-400/20
-                text-white/50
-                hover:text-white
-                transition-all
-                duration-200
-                active:scale-95
-                cursor-pointer
-              "
-            >
-              <FiBarChart2 className="w-4 h-4 text-indigo-400" />
-
-              <span className="text-sm font-medium">
-                Analytics
-              </span>
-            </button>
+      
 
             {/* =================================================
                 PROFILE
@@ -1510,38 +1477,7 @@ export default function Navbar({
                       </div>
                     </div>
 
-                    {/* Mobile analytics */}
-
-                    <div className="sm:hidden px-2 pb-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowPerformance(true);
-                          setShowDropdown(false);
-                        }}
-                        className="
-                          w-full
-                          flex
-                          items-center
-                          gap-3
-                          px-3
-                          py-3
-                          rounded-xl
-                          text-left
-                          text-white/55
-                          hover:text-white
-                          hover:bg-white/[0.04]
-                          transition-all
-                          cursor-pointer
-                        "
-                      >
-                        <FiActivity className="w-4.5 h-4.5 text-indigo-400" />
-
-                        <span className="text-sm font-medium">
-                          Performance Analytics
-                        </span>
-                      </button>
-                    </div>
+               
 
                     <div className="h-px bg-white/[0.05]" />
 
@@ -1652,18 +1588,7 @@ export default function Navbar({
         </div>
       </motion.header>
 
-      {/* =====================================================
-          PERFORMANCE MODAL
-      ====================================================== */}
-
-      <AnimatePresence>
-        {showPerformance && (
-          <Performance
-            uid={uid}
-            onClose={() => setShowPerformance(false)}
-          />
-        )}
-      </AnimatePresence>
+  
     </>
   );
 }

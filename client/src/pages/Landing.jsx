@@ -45,7 +45,6 @@ import {
   Flame,
   Trophy,
   Target,
-  TrendingUp,
   Check,
 } from "lucide-react";
 
@@ -58,7 +57,6 @@ import {
  * - Warm neutral surfaces with controlled red accents
  * - Product-first micro-interactions
  * - Animated RAG pipeline
- * - Animated performance dashboard
  * - Interactive streak-generation experience
  *
  * Dependencies:
@@ -92,13 +90,6 @@ const featureCards = [
     title: "Talk like it is a real GD.",
     body: "Streaming speech, AI participants, interruption-aware turns, and live feedback keep the room moving naturally.",
     accent: "rose",
-  },
-  {
-    icon: BarChart3,
-    eyebrow: "PERFORMANCE",
-    title: "See exactly how you improve.",
-    body: "Participation, clarity, confidence, pace, and knowledge gaps become a visual feedback loop.",
-    accent: "red",
   },
   {
     icon: FileText,
@@ -475,134 +466,6 @@ function ChatWindow() {
           <Waves className="h-3.5 w-3.5" />
           memory-aware answer engine
         </div>
-      </div>
-    </div>
-  );
-}
-
-function AnimatedPerformance() {
-  const values = [42, 48, 46, 55, 61, 58, 69, 73, 77, 82, 88, 93];
-  const metrics = [
-    { label: "Clarity", value: 87 },
-    { label: "Confidence", value: 91 },
-    { label: "Participation", value: 74 },
-  ];
-
-  return (
-    <div className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.025] p-6 sm:p-8">
-      <AmbientGlow color="red" className="right-[-10%] top-[-35%] h-72 w-72" />
-
-      <div className="relative flex items-start justify-between gap-4">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-red-300">
-            performance engine
-          </div>
-          <h3 className="mt-2 text-2xl font-black tracking-tight">
-            Improvement should move.
-          </h3>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-white/35">
-            Every session feeds a visual feedback loop instead of leaving you
-            with a single score.
-          </p>
-        </div>
-
-        <div className="hidden rounded-xl border border-white/[0.08] bg-white/[0.04] p-2.5 sm:block">
-          <TrendingUp className="h-4 w-4 text-red-300" />
-        </div>
-      </div>
-
-      <div className="relative mt-7 rounded-[26px] border border-white/[0.07] bg-[#09090c]/95 p-5">
-        <div className="mb-5 flex items-end justify-between">
-          <div>
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
-              overall score
-            </div>
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.15 }}
-              className="mt-1 text-4xl font-black"
-            >
-              93
-              <span className="ml-1 text-sm text-emerald-400">+31%</span>
-            </motion.div>
-          </div>
-
-          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
-            session 12
-          </div>
-        </div>
-
-        <div className="relative flex h-44 items-end gap-1.5 sm:gap-2">
-          {values.map((value, i) => (
-            <div key={i} className="relative flex h-full flex-1 items-end">
-              <motion.div
-                initial={{ height: 0 }}
-                whileInView={{ height: `${value}%` }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{
-                  duration: 0.7,
-                  delay: i * 0.045,
-                  ease: easeOut,
-                }}
-                className="relative w-full rounded-t-md bg-gradient-to-t from-red-500/20 via-red-300/70 to-red-200"
-              >
-                <motion.div
-                  animate={{ opacity: [0.2, 0.7, 0.2] }}
-                  transition={{
-                    duration: 2.2,
-                    repeat: Infinity,
-                    delay: i * 0.12,
-                  }}
-                  className="absolute inset-x-0 top-0 h-1 rounded-full bg-white"
-                />
-              </motion.div>
-            </div>
-          ))}
-
-          <motion.div
-            initial={{ scaleX: 0, originX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.3, delay: 0.45 }}
-            className="pointer-events-none absolute bottom-[18%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent"
-          />
-        </div>
-
-        <div className="mt-4 flex justify-between border-t border-white/[0.06] pt-4 text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
-          <span>session 01</span>
-          <span className="text-emerald-400">+31% improvement</span>
-          <span>session 12</span>
-        </div>
-      </div>
-
-      <div className="relative mt-4 grid grid-cols-3 gap-2">
-        {metrics.map(({ label, value }, i) => (
-          <div
-            key={label}
-            className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-3"
-          >
-            <div className="text-[9px] font-black uppercase tracking-[0.14em] text-white/25">
-              {label}
-            </div>
-
-            <div className="mt-2 text-lg font-black">
-              {value}
-              <span className="text-[9px] text-white/25">%</span>
-            </div>
-
-            <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.06]">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${value}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: i * 0.1 }}
-                className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500"
-              />
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -1136,38 +999,6 @@ function LiveArenaCard() {
 
             <AvatarOrb type="ai" label="AI" />
           </div>
-
-          <div className="mt-6 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
-            <div className="mb-3 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
-              <span>live coaching</span>
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <Activity className="h-3 w-3" />
-                listening
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                ["Clarity", "87"],
-                ["Participation", "74"],
-                ["Confidence", "91"],
-              ].map(([label, value]) => (
-                <motion.div
-                  key={label}
-                  whileHover={{ y: -3 }}
-                  className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3"
-                >
-                  <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/25">
-                    {label}
-                  </div>
-                  <div className="mt-1 text-xl font-black text-white">
-                    {value}
-                    <span className="text-[10px] text-white/35">%</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -1486,11 +1317,11 @@ export default function LandingPage() {
               <>
                 <span>Train your </span>
                 <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
-                  performance.
+                  skills.
                 </span>
               </>
             }
-            description="The interface behaves like a product, not a brochure: live state, retrieval, analytics, and progress are always moving."
+            description="The interface behaves like a product, not a brochure: live state, retrieval, and voice are always moving."
           />
 
           <div className="mt-14 flex justify-center">
@@ -1593,25 +1424,6 @@ export default function LandingPage() {
 
                       <AvatarOrb type="ai" label="opponent 02" />
                     </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 gap-3">
-                      {[
-                        ["Talk ratio", "38%"],
-                        ["Ideas landed", "06"],
-                        ["Follow-ups", "03"],
-                      ].map(([label, value]) => (
-                        <motion.div
-                          key={label}
-                          whileHover={{ y: -3 }}
-                          className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4"
-                        >
-                          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
-                            {label}
-                          </div>
-                          <div className="mt-1 text-lg font-black">{value}</div>
-                        </motion.div>
-                      ))}
-                    </div>
                   </div>
                 ) : (
                   <div className="relative grid h-full items-center gap-8 lg:grid-cols-[.85fr_1.15fr]">
@@ -1667,7 +1479,7 @@ export default function LandingPage() {
                   {
                     icon: LineChart,
                     t: "Built to prove value",
-                    d: "Voice → retrieval → feedback → improvement becomes one visible loop.",
+                    d: "Voice → retrieval → discussion becomes one visible loop.",
                   },
                 ].map(({ icon: Icon, t, d }) => (
                   <motion.div
@@ -1731,16 +1543,16 @@ export default function LandingPage() {
                 </h3>
 
                 <p className="mt-5 max-w-xl text-sm leading-7 text-white/45 sm:text-base">
-                  Interim speech becomes a real-time conversation. AI
-                  participants react to arguments while analytics update with
-                  the discussion.
+                  Interim speech becomes a real-time conversation, and AI
+                  participants react to your arguments as the discussion
+                  unfolds.
                 </p>
 
                 <div className="mt-7 space-y-3">
                   {[
                     "Interim speech becomes a real-time conversation",
                     "AI participants react to your last argument",
-                    "Analytics update as the discussion evolves",
+                    "The room stays alive for the whole session",
                   ].map((item) => (
                     <motion.div
                       key={item}
@@ -1767,7 +1579,7 @@ export default function LandingPage() {
                     {[
                       ["LIVE", "voice input"],
                       ["AI", "argument model"],
-                      ["SMART", "feedback loop"],
+                      ["ROOM", "group discussion"],
                     ].map(([a, b]) => (
                       <motion.div
                         key={a}
@@ -1888,25 +1700,24 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Performance + streak */}
+      {/* Streaks */}
       <section className="relative z-10 px-5 py-28 sm:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeading
-            kicker="progress engine"
+            kicker="consistency engine"
             title={
               <>
                 <span>Don't just practice.</span>
                 <br />
                 <span className="bg-gradient-to-r from-red-200 to-red-300 bg-clip-text text-transparent">
-                  See the compounding effect.
+                  Keep coming back.
                 </span>
               </>
             }
-            description="Performance tells you what changed. Streaks give you a reason to come back. Together they turn practice into a loop."
+            description="Streaks give you a reason to show up every day, turning one-off practice into a lasting habit."
           />
 
-          <div className="mt-14 grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
-            <AnimatedPerformance />
+          <div className="mt-14">
             <StreakSystem />
           </div>
         </div>
@@ -1932,69 +1743,32 @@ export default function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4"
+            className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
           >
             {featureCards.map((card) => (
               <BentoFeature key={card.eyebrow} card={card} />
             ))}
           </motion.div>
 
-          <div className="mt-5 grid gap-5 lg:grid-cols-3">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="lg:col-span-2"
-            >
-              <AnimatedPerformance />
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-5 rounded-[30px] border border-white/[0.08] bg-red-300/[0.035] p-7 sm:p-9"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04]">
+              <GraduationCap className="h-5 w-5 text-red-300" />
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.08 }}
-              className="rounded-[30px] border border-white/[0.08] bg-red-300/[0.035] p-7 sm:p-9"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04]">
-                <GraduationCap className="h-5 w-5 text-red-300" />
-              </div>
+            <h3 className="mt-6 text-2xl font-black tracking-tight">
+              Placement mode.
+            </h3>
 
-              <h3 className="mt-6 text-2xl font-black tracking-tight">
-                Placement mode.
-              </h3>
-
-              <p className="mt-3 text-sm leading-6 text-white/35">
-                Turn scattered practice into a repeatable loop: practice →
-                measure → study → repeat.
-              </p>
-
-              <div className="mt-8 space-y-3">
-                {[
-                  ["Communication", 87],
-                  ["Knowledge", 78],
-                  ["Confidence", 91],
-                ].map(([label, value], i) => (
-                  <div key={label}>
-                    <div className="mb-1 flex justify-between text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
-                      <span>{label}</span>
-                      <span>{value}%</span>
-                    </div>
-
-                    <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${value}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: i * 0.1 }}
-                        className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-white/35">
+              Turn scattered practice into a repeatable loop: talk, study,
+              retrieve, and come back tomorrow.
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -2048,8 +1822,8 @@ export default function LandingPage() {
                 ],
                 [
                   "05",
-                  "Repeat with evidence",
-                  "Use performance analytics and knowledge gaps to decide what to practice next.",
+                  "Repeat daily",
+                  "Keep your streak alive and let daily practice compound into real readiness.",
                   BarChart3,
                 ],
               ].map(([num, title, body, Icon], i) => (
@@ -2100,7 +1874,7 @@ export default function LandingPage() {
                           "adaptive",
                           "context-aware",
                           "grounded",
-                          "measurable",
+                          "consistent",
                         ][i]
                       }
                     </span>
@@ -2161,7 +1935,7 @@ export default function LandingPage() {
             {[
               [
                 "It stopped feeling like practice.",
-                "The AI room made me think on my feet. The live feedback changed how I approached a GD.",
+                "The AI room made me think on my feet. It changed how I approached a GD.",
                 "Ananya Iyer",
               ],
               [
@@ -2242,7 +2016,7 @@ export default function LandingPage() {
             </h2>
 
             <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/35 sm:text-lg">
-              Talk. Study. Retrieve. Improve. Walk into the next placement
+              Talk. Study. Retrieve. Repeat. Walk into the next placement
               round knowing exactly what to work on.
             </p>
 

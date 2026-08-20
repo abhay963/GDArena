@@ -52,7 +52,7 @@ import {
   updateStreak,
 } from "../services/streak.service";
 
-import { savePerformance } from "../services/performance.service";
+
 
 // Custom Components
 import Navbar from "../components/Navbar";
@@ -884,23 +884,7 @@ export default function Hero() {
         throw new Error("User is not authenticated.");
       }
 
-      console.log("📊 Saving performance...");
-
-      try {
-        await savePerformance(
-          user.uid,
-          topic,
-          history
-        );
-
-        console.log("✅ Performance saved");
-      } catch (performanceError) {
-        console.error(
-          "❌ Performance save failed:",
-          performanceError.response?.data ||
-            performanceError.message
-        );
-      }
+     
 
       console.log("🔥 Updating streak...");
 
@@ -1449,11 +1433,7 @@ export default function Hero() {
                     "AI responds",
                     "Your speech is processed and the AI participants continue the discussion.",
                   ],
-                  [
-                    "05",
-                    "Review your performance",
-                    "Your complete discussion is analyzed when you exit the Arena.",
-                  ],
+                
                 ].map(
                   ([num, title, desc]) => (
                     <div
@@ -1801,8 +1781,7 @@ export default function Hero() {
                       <p className="text-[15px] sm:text-base text-white/40 leading-7 mt-4 max-w-lg">
                         Enter a live AI-moderated group
                         discussion. Speak, interrupt,
-                        challenge ideas, and receive
-                        performance insights.
+                        challenge ideas.
                       </p>
 
                       <div className="flex flex-wrap gap-2.5 mt-6">
@@ -1810,7 +1789,7 @@ export default function Hero() {
                         {[
                           "Real-time voice",
                           "AI participants",
-                          "Performance analysis",
+                          
                         ].map((item) => (
                           <span
                             key={item}
