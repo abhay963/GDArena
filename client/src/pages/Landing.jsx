@@ -139,7 +139,7 @@ function SectionHeading({ kicker, title, description, align = "center" }) {
       {kicker && (
         <motion.div
           variants={fadeUp}
-          className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-200/10 bg-white/[0.035] px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-red-300 backdrop-blur-xl"
+          className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-200/10 bg-white/[0.035] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.22em] text-red-300 backdrop-blur-xl"
         >
           <Sparkles className="h-3.5 w-3.5" />
           {kicker}
@@ -148,7 +148,7 @@ function SectionHeading({ kicker, title, description, align = "center" }) {
 
       <motion.h2
         variants={fadeUp}
-        className="text-4xl font-black tracking-[-0.045em] text-white sm:text-5xl lg:text-7xl"
+        className="text-5xl font-black tracking-[-0.045em] text-white sm:text-6xl lg:text-8xl"
       >
         {title}
       </motion.h2>
@@ -156,7 +156,7 @@ function SectionHeading({ kicker, title, description, align = "center" }) {
       {description && (
         <motion.p
           variants={fadeUp}
-          className="mt-5 text-base leading-7 text-white/45 sm:text-lg"
+          className="mt-5 text-lg leading-7 text-white/45 sm:text-xl"
         >
           {description}
         </motion.p>
@@ -262,7 +262,7 @@ function AvatarOrb({ type = "human", label }) {
         <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-zinc-950 bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,.7)]" />
       </div>
 
-      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+      <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/35">
         {label}
       </span>
     </div>
@@ -313,7 +313,7 @@ function RAGPipeline() {
               <Icon className="h-5 w-5 text-red-300" />
             </motion.div>
 
-            <div className="mt-3 text-[10px] font-black tracking-[0.18em] text-white/45">
+            <div className="mt-3 text-[12px] font-black tracking-[0.18em] text-white/45">
               {label}
             </div>
 
@@ -335,7 +335,7 @@ function RAGPipeline() {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+      <div className="mt-5 flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-white/25">
         <motion.span
           animate={{ x: [-5, 5, -5], opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 1.8, repeat: Infinity }}
@@ -388,17 +388,17 @@ function ChatWindow() {
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-white">
+            <div className="text-base font-semibold text-white">
               Operating Systems.pdf
             </div>
-            <div className="mt-0.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-400">
+            <div className="mt-0.5 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.18em] text-emerald-400">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
               Context loaded
             </div>
           </div>
         </div>
 
-        <div className="hidden items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/35 sm:flex">
+        <div className="hidden items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[12px] font-black uppercase tracking-[0.14em] text-white/35 sm:flex">
           <LockKeyhole className="h-3.5 w-3.5" />
           grounded
         </div>
@@ -418,7 +418,7 @@ function ChatWindow() {
               }`}
             >
               <div
-                className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${
+                className={`max-w-[88%] rounded-2xl px-4 py-3 text-base leading-6 ${
                   message.side === "user"
                     ? "rounded-br-md border border-white/[0.08] bg-white/[0.035] text-zinc-200"
                     : "rounded-bl-md border border-red-300/15 bg-red-400/[0.07] text-zinc-200"
@@ -433,12 +433,12 @@ function ChatWindow() {
                     transition={{ delay: 0.15 }}
                     className="mt-3 rounded-xl border border-white/[0.07] bg-[#030305]/35 p-3"
                   >
-                    <div className="mb-2 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-red-300">
+                    <div className="mb-2 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-red-300">
                       <Search className="h-3 w-3" />
                       retrieved context
                     </div>
 
-                    <div className="space-y-2 text-[11px] leading-5 text-white/35">
+                    <div className="space-y-2 text-[12px] leading-5 text-white/35">
                       {[
                         "§4.2 — resource ownership",
                         "§4.3 — hold and wait",
@@ -462,7 +462,7 @@ function ChatWindow() {
           ))}
         </AnimatePresence>
 
-        <div className="mx-auto flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-white/25">
+        <div className="mx-auto flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-white/25">
           <Waves className="h-3.5 w-3.5" />
           memory-aware answer engine
         </div>
@@ -526,23 +526,23 @@ function StreakSystem() {
               <span className="grid h-7 w-7 place-items-center rounded-lg border border-red-300/20 bg-red-300/[0.08]">
                 <Flame className="h-3.5 w-3.5 fill-red-300/20 text-red-300" />
               </span>
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+              <span className="text-[12px] font-black uppercase tracking-[0.22em] text-red-300">
                 consistency engine
               </span>
             </div>
 
-            <h3 className="text-2xl font-black tracking-[-0.035em] text-white sm:text-3xl">
+            <h3 className="text-3xl font-black tracking-[-0.035em] text-white sm:text-4xl">
               Your streak is becoming a habit.
             </h3>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/42">
+            <p className="mt-2 max-w-2xl text-base leading-6 text-white/42">
               Keep one practice session alive every day. Watch your chain,
               milestones and momentum build in real time.
             </p>
           </div>
 
           <div className="hidden rounded-xl border border-white/[0.08] bg-white/[0.025] px-3 py-2 sm:block">
-            <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.16em] text-white/35">
+            <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-white/35">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
               live progress
             </div>
@@ -557,7 +557,7 @@ function StreakSystem() {
 
             <div className="relative flex h-full flex-col">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-black uppercase tracking-[0.18em] text-white/28">
+                <span className="text-[11px] font-black uppercase tracking-[0.18em] text-white/28">
                   current streak
                 </span>
 
@@ -588,19 +588,19 @@ function StreakSystem() {
                       initial={{ opacity: 0, y: 8, scale: 0.7 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.4, ease: easeOut }}
-                      className="text-5xl font-black leading-none tracking-[-0.08em] text-white"
+                      className="text-6xl font-black leading-none tracking-[-0.08em] text-white"
                     >
                       {streak}
                     </motion.div>
-                    <div className="mt-1 text-[8px] font-black uppercase tracking-[0.18em] text-red-200/70">
+                    <div className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-red-200/70">
                       days
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-lg font-black text-white">Keep it going.</div>
-                  <div className="mt-1 text-xs leading-5 text-white/35">
+                  <div className="text-xl font-black text-white">Keep it going.</div>
+                  <div className="mt-1 text-sm leading-5 text-white/35">
                     {streak >= 30
                       ? "You've reached the 30-day milestone."
                       : `${nextMilestone.day - streak} more ${
@@ -613,10 +613,10 @@ function StreakSystem() {
               {/* Week */}
               <div className="mt-auto pt-7">
                 <div className="mb-2.5 flex items-center justify-between">
-                  <span className="text-[8px] font-black uppercase tracking-[0.17em] text-white/25">
+                  <span className="text-[10px] font-black uppercase tracking-[0.17em] text-white/25">
                     weekly activity
                   </span>
-                  <span className="text-[8px] font-black uppercase tracking-[0.15em] text-red-300">
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-red-300">
                     7 / 7 complete
                   </span>
                 </div>
@@ -631,7 +631,7 @@ function StreakSystem() {
                           : {}
                       }
                       transition={{ duration: 1.8, repeat: Infinity }}
-                      className={`relative flex h-9 items-center justify-center rounded-xl border text-[9px] font-black ${
+                      className={`relative flex h-9 items-center justify-center rounded-xl border text-[11px] font-black ${
                         done
                           ? "border-red-300/20 bg-red-300/[0.09] text-red-100"
                           : "border-white/[0.06] bg-white/[0.02] text-white/20"
@@ -652,22 +652,22 @@ function StreakSystem() {
           <div className="relative p-6 sm:p-7">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/28">
+                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/28">
                   momentum
                 </div>
-                <div className="mt-1 text-sm font-black text-white">
+                <div className="mt-1 text-base font-black text-white">
                   Build your next milestone
                 </div>
               </div>
 
-              <div className="rounded-lg border border-red-300/15 bg-red-300/[0.07] px-2.5 py-1.5 text-[9px] font-black text-red-200">
+              <div className="rounded-lg border border-red-300/15 bg-red-300/[0.07] px-2.5 py-1.5 text-[11px] font-black text-red-200">
                 {Math.min(streak, 30)} / 30
               </div>
             </div>
 
             {/* Progress */}
             <div className="mt-5">
-              <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-[0.15em]">
+              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em]">
                 <span className="text-white/22">progress</span>
                 <span className="text-red-300">
                   {streak >= 30 ? "complete" : `${nextMilestone.day - streak} days left`}
@@ -726,10 +726,10 @@ function StreakSystem() {
                       </div>
 
                       <div>
-                        <div className="text-xs font-black text-white">
+                        <div className="text-sm font-black text-white">
                           {label}
                         </div>
-                        <div className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.14em] text-white/25">
+                        <div className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/25">
                           {day} day milestone
                         </div>
                       </div>
@@ -737,12 +737,12 @@ function StreakSystem() {
 
                     <div className="relative z-10">
                       {unlocked ? (
-                        <div className="flex items-center gap-1.5 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-2 py-1 text-[7px] font-black uppercase tracking-[0.12em] text-emerald-300">
+                        <div className="flex items-center gap-1.5 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-emerald-300">
                           <CheckCircle2 className="h-3 w-3" />
                           unlocked
                         </div>
                       ) : (
-                        <span className="text-[8px] font-black uppercase tracking-[0.12em] text-white/20">
+                        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-white/20">
                           locked
                         </span>
                       )}
@@ -755,10 +755,10 @@ function StreakSystem() {
             {/* CTA */}
             <div className="mt-5 flex flex-col gap-3 border-t border-white/[0.055] pt-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-xs font-black text-white">
+                <div className="text-sm font-black text-white">
                   Ready for today's session?
                 </div>
-                <div className="mt-0.5 text-[9px] text-white/28">
+                <div className="mt-0.5 text-[11px] text-white/28">
                   One session keeps your streak alive.
                 </div>
               </div>
@@ -771,7 +771,7 @@ function StreakSystem() {
                       animate={{ opacity: 1, y: -30, scale: 1 }}
                       exit={{ opacity: 0, y: -48 }}
                       transition={{ duration: 0.9, ease: easeOut }}
-                      className="pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-red-200"
+                      className="pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-[12px] font-black text-red-200"
                     >
                       +1 DAY 🔥
                     </motion.div>
@@ -816,7 +816,7 @@ function StreakSystem() {
                       : {}
                   }
                   transition={{ duration: 0.8 }}
-                  className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-red-200/20 bg-gradient-to-r from-red-500 to-red-400 px-5 py-3 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-[0_10px_30px_rgba(239,68,68,.15)] sm:w-auto"
+                  className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-red-200/20 bg-gradient-to-r from-red-500 to-red-400 px-5 py-3 text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-[0_10px_30px_rgba(239,68,68,.15)] sm:w-auto"
                 >
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                   <span className="relative flex items-center gap-2">
@@ -885,7 +885,7 @@ function ContextGraph() {
             repeat: Infinity,
             delay: i * 0.25,
           }}
-          className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-xl border border-white/[0.08] bg-zinc-900/85 px-3 py-2 text-[9px] font-black tracking-[0.16em] text-white/45 backdrop-blur-xl"
+          className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-xl border border-white/[0.08] bg-zinc-900/85 px-3 py-2 text-[11px] font-black tracking-[0.16em] text-white/45 backdrop-blur-xl"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-red-300" />
           {label}
@@ -929,15 +929,15 @@ function BentoFeature({ card }) {
           <Icon className="h-5 w-5" />
         </div>
 
-        <div className="mt-6 text-[10px] font-black tracking-[0.2em] text-white/25">
+        <div className="mt-6 text-[12px] font-black tracking-[0.2em] text-white/25">
           {card.eyebrow}
         </div>
 
-        <h3 className="mt-2 text-xl font-black tracking-tight text-white">
+        <h3 className="mt-2 text-2xl font-black tracking-tight text-white">
           {card.title}
         </h3>
 
-        <p className="mt-3 text-sm leading-6 text-white/45">{card.body}</p>
+        <p className="mt-3 text-base leading-6 text-white/45">{card.body}</p>
       </div>
 
       <motion.div
@@ -965,15 +965,15 @@ function LiveArenaCard() {
         <div className="rounded-[28px] border border-white/[0.07] bg-zinc-900/65 p-4 sm:p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-red-300">
+              <div className="text-[12px] font-black uppercase tracking-[0.2em] text-red-300">
                 live room
               </div>
-              <div className="mt-1 text-sm font-bold text-white">
+              <div className="mt-1 text-base font-bold text-white">
                 AI Group Discussion
               </div>
             </div>
 
-            <div className="flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-300">
+            <div className="flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[12px] font-black uppercase tracking-[0.14em] text-emerald-300">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
               live
             </div>
@@ -986,10 +986,10 @@ function LiveArenaCard() {
               <FlowingAudio side="left" />
 
               <div className="rounded-2xl border border-white/[0.07] bg-white/[0.025] px-3 py-3 text-center">
-                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/25">
+                <div className="text-[12px] font-bold uppercase tracking-[0.18em] text-white/25">
                   topic
                 </div>
-                <div className="mt-1 text-xs font-semibold leading-5 text-white/60">
+                <div className="mt-1 text-sm font-semibold leading-5 text-white/60">
                   Impact of LLMs on Software Engineering
                 </div>
               </div>
@@ -1107,7 +1107,7 @@ export default function LandingPage() {
               <Terminal className="relative h-4 w-4" />
             </motion.span>
 
-            <span className="text-sm font-black tracking-tight sm:text-base">
+            <span className="text-base font-black tracking-tight sm:text-lg">
               GD <span className="text-red-300">Arena</span>
             </span>
           </button>
@@ -1122,7 +1122,7 @@ export default function LandingPage() {
               <button
                 key={label}
                 onClick={() => navTo(id)}
-                className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white/45 transition hover:bg-white/[0.05] hover:text-white"
+                className="rounded-lg px-3.5 py-2 text-sm font-semibold text-white/45 transition hover:bg-white/[0.05] hover:text-white"
               >
                 {label}
               </button>
@@ -1132,14 +1132,14 @@ export default function LandingPage() {
           <div className="hidden items-center gap-2 lg:flex">
             <button
               onClick={() => navigate("/login")}
-              className="rounded-xl px-4 py-2 text-xs font-bold text-white/60 transition hover:text-white"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-white/60 transition hover:text-white"
             >
               Login
             </button>
 
             <button
               onClick={() => navigate("/signup")}
-              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-2.5 text-xs font-black text-white shadow-[0_10px_30px_rgba(220,38,38,0.16)] transition hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-2.5 text-sm font-black text-white shadow-[0_10px_30px_rgba(220,38,38,0.16)] transition hover:-translate-y-0.5"
             >
               Start free
               <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -1171,7 +1171,7 @@ export default function LandingPage() {
                 <button
                   key={label}
                   onClick={() => navTo(id)}
-                  className="block w-full rounded-xl px-4 py-3 text-left text-sm text-white/60 hover:bg-white/[0.05]"
+                  className="block w-full rounded-xl px-4 py-3 text-left text-base text-white/60 hover:bg-white/[0.05]"
                 >
                   {label}
                 </button>
@@ -1179,7 +1179,7 @@ export default function LandingPage() {
 
               <button
                 onClick={() => navigate("/signup")}
-                className="mt-1 w-full rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-sm font-black text-white"
+                className="mt-1 w-full rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-base font-black text-white"
               >
                 Start free
               </button>
@@ -1200,7 +1200,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.65, ease: easeOut }}
-                className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-300/10 bg-white/[0.025] px-3.5 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-red-200 backdrop-blur-xl"
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-300/10 bg-white/[0.025] px-3.5 py-2 text-[12px] font-black uppercase tracking-[0.22em] text-red-200 backdrop-blur-xl"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
@@ -1213,7 +1213,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 26 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.08, ease: easeOut }}
-                className="max-w-5xl text-[clamp(3.5rem,7vw,7.6rem)] font-black leading-[0.88] tracking-[-0.065em]"
+                className="max-w-5xl text-[clamp(4rem,8vw,8.6rem)] font-black leading-[0.88] tracking-[-0.065em]"
               >
                 <span className="block text-white">Practice.</span>
                 <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-300 bg-clip-text text-transparent">
@@ -1226,7 +1226,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.65, delay: 0.2, ease: easeOut }}
-                className="mt-7 max-w-2xl text-base leading-7 text-white/45 sm:text-xl sm:leading-8"
+                className="mt-7 max-w-2xl text-lg leading-7 text-white/45 sm:text-2xl sm:leading-8"
               >
                 GD Arena trains how you speak. StudyMate trains what you know.
                 One intelligent workspace for the high-pressure part of
@@ -1241,7 +1241,7 @@ export default function LandingPage() {
               >
                 <button
                   onClick={() => navigate("/signup")}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-sm font-black text-white shadow-[0_18px_50px_rgba(244,63,94,.14)] transition hover:-translate-y-1"
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-base font-black text-white shadow-[0_18px_50px_rgba(244,63,94,.14)] transition hover:-translate-y-1"
                 >
                   Enter the Arena
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1249,7 +1249,7 @@ export default function LandingPage() {
 
                 <button
                   onClick={() => navTo("studymate")}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-red-300/20 bg-red-500/[0.035] px-6 py-4 text-sm font-bold text-white backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-red-300/35 hover:bg-red-500/[0.07]"
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-red-300/20 bg-red-500/[0.035] px-6 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-red-300/35 hover:bg-red-500/[0.07]"
                 >
                   See StudyMate
                   <ChevronRight className="h-4 w-4 text-white/35 transition-transform group-hover:translate-x-1" />
@@ -1260,7 +1260,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
-                className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/25"
+                className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] font-black uppercase tracking-[0.18em] text-white/25"
               >
                 <span className="flex items-center gap-2">
                   <Shield className="h-3.5 w-3.5" />
@@ -1286,11 +1286,11 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.65 }}
             className="mt-16 border-y border-white/[0.055] py-5"
           >
-            <div className="mb-3 text-center text-[9px] font-black uppercase tracking-[0.24em] text-white/25">
+            <div className="mb-3 text-center text-[11px] font-black uppercase tracking-[0.24em] text-white/25">
               built around what you actually prepare
             </div>
 
-            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-xs font-bold text-white/35 sm:gap-x-12">
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm font-bold text-white/35 sm:gap-x-12">
               {logos.map((logo) => (
                 <motion.span
                   key={logo}
@@ -1330,7 +1330,7 @@ export default function LandingPage() {
                 <button
                   key={item}
                   onClick={() => setActiveFeature(item)}
-                  className={`rounded-xl px-5 py-2.5 text-xs font-black transition ${
+                  className={`rounded-xl px-5 py-2.5 text-sm font-black transition ${
                     activeFeature === item
                       ? "bg-white text-white shadow-lg"
                       : "text-white/35 hover:text-white"
@@ -1361,10 +1361,10 @@ export default function LandingPage() {
                   <div className="relative h-full">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                        <div className="text-[12px] font-black uppercase tracking-[0.22em] text-red-300">
                           GD Arena / session 027
                         </div>
-                        <div className="mt-2 text-xl font-black tracking-tight">
+                        <div className="mt-2 text-2xl font-black tracking-tight">
                           The AI listens. The room reacts.
                         </div>
                       </div>
@@ -1395,10 +1395,10 @@ export default function LandingPage() {
                         ))}
 
                         <div className="mx-auto w-fit rounded-2xl border border-white/[0.08] bg-zinc-900/70 px-5 py-4 text-center backdrop-blur-xl">
-                          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+                          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/25">
                             current speaker
                           </div>
-                          <div className="mt-1 text-sm font-bold text-white">
+                          <div className="mt-1 text-base font-bold text-white">
                             You
                           </div>
 
@@ -1428,15 +1428,15 @@ export default function LandingPage() {
                 ) : (
                   <div className="relative grid h-full items-center gap-8 lg:grid-cols-[.85fr_1.15fr]">
                     <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                      <div className="text-[12px] font-black uppercase tracking-[0.22em] text-red-300">
                         StudyMate / memory graph
                       </div>
 
-                      <div className="mt-3 text-3xl font-black tracking-tight">
+                      <div className="mt-3 text-4xl font-black tracking-tight">
                         Answers change when your context changes.
                       </div>
 
-                      <p className="mt-4 max-w-md text-sm leading-6 text-white/45">
+                      <p className="mt-4 max-w-md text-base leading-6 text-white/45">
                         Upload one document. Ask different questions. StudyMate
                         retrieves different evidence each time.
                       </p>
@@ -1451,7 +1451,7 @@ export default function LandingPage() {
                           <motion.span
                             key={tag}
                             whileHover={{ y: -2 }}
-                            className="rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[10px] font-bold text-white/35"
+                            className="rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[12px] font-bold text-white/35"
                           >
                             {tag}
                           </motion.span>
@@ -1490,8 +1490,8 @@ export default function LandingPage() {
                     <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.03] ring-1 ring-white/[0.08]">
                       <Icon className="h-5 w-5 text-red-300" />
                     </div>
-                    <div className="mt-5 text-lg font-black">{t}</div>
-                    <p className="mt-2 text-sm leading-6 text-white/35">{d}</p>
+                    <div className="mt-5 text-xl font-black">{t}</div>
+                    <p className="mt-2 text-base leading-6 text-white/35">{d}</p>
                   </motion.div>
                 ))}
               </div>
@@ -1531,18 +1531,18 @@ export default function LandingPage() {
 
             <div className="relative grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
               <div>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-red-300">
+                <div className="flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] text-red-300">
                   <Activity className="h-3.5 w-3.5" />
                   room state / responding
                 </div>
 
-                <h3 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+                <h3 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">
                   A person speaks.
                   <br />
                   <span className="text-white/35">The room moves.</span>
                 </h3>
 
-                <p className="mt-5 max-w-xl text-sm leading-7 text-white/45 sm:text-base">
+                <p className="mt-5 max-w-xl text-base leading-7 text-white/45 sm:text-lg">
                   Interim speech becomes a real-time conversation, and AI
                   participants react to your arguments as the discussion
                   unfolds.
@@ -1560,7 +1560,7 @@ export default function LandingPage() {
                       className="flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-3.5"
                     >
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-red-300" />
-                      <span className="text-sm text-white/60">{item}</span>
+                      <span className="text-base text-white/60">{item}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -1586,10 +1586,10 @@ export default function LandingPage() {
                         whileHover={{ y: -3 }}
                         className="rounded-xl border border-white/[0.08] bg-zinc-900/85 p-3 text-center backdrop-blur-xl"
                       >
-                        <div className="text-[9px] font-black tracking-[0.18em] text-red-300">
+                        <div className="text-[11px] font-black tracking-[0.18em] text-red-300">
                           {a}
                         </div>
-                        <div className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/25">
+                        <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white/25">
                           {b}
                         </div>
                       </motion.div>
@@ -1623,7 +1623,7 @@ export default function LandingPage() {
               description="The PDF becomes a living, queryable memory through an animated retrieval pipeline."
             />
 
-            <div className="justify-self-end rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-3 text-xs text-white/35">
+            <div className="justify-self-end rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-3 text-sm text-white/35">
               <span className="font-black text-white">RAG</span> / retrieve →
               ground → answer
             </div>
@@ -1637,7 +1637,7 @@ export default function LandingPage() {
             <div className="grid gap-5">
               <div className="rounded-[32px] border border-white/[0.08] bg-white/[0.025] p-6 sm:p-8">
                 <div className="flex items-center justify-between">
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-red-300">
+                  <div className="text-[12px] font-black uppercase tracking-[0.22em] text-red-300">
                     context graph
                   </div>
                   <Network className="h-4 w-4 text-white/25" />
@@ -1655,10 +1655,10 @@ export default function LandingPage() {
                       whileHover={{ y: -3 }}
                       className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4"
                     >
-                      <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/25">
+                      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/25">
                         {label}
                       </div>
-                      <div className="mt-1 text-lg font-black">{value}</div>
+                      <div className="mt-1 text-xl font-black">{value}</div>
                     </motion.div>
                   ))}
                 </div>
@@ -1671,8 +1671,8 @@ export default function LandingPage() {
                   </div>
 
                   <div>
-                    <div className="text-sm font-black">Grounded by design</div>
-                    <div className="text-xs text-white/35">
+                    <div className="text-base font-black">Grounded by design</div>
+                    <div className="text-sm text-white/35">
                       Uploaded material stays at the center of the answer.
                     </div>
                   </div>
@@ -1687,7 +1687,7 @@ export default function LandingPage() {
                     <motion.div
                       key={label}
                       whileHover={{ x: 3 }}
-                      className="flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.02] px-3.5 py-3 text-xs text-white/45"
+                      className="flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.02] px-3.5 py-3 text-sm text-white/45"
                     >
                       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                       {label}
@@ -1760,11 +1760,11 @@ export default function LandingPage() {
               <GraduationCap className="h-5 w-5 text-red-300" />
             </div>
 
-            <h3 className="mt-6 text-2xl font-black tracking-tight">
+            <h3 className="mt-6 text-3xl font-black tracking-tight">
               Placement mode.
             </h3>
 
-            <p className="mt-3 max-w-xl text-sm leading-6 text-white/35">
+            <p className="mt-3 max-w-xl text-base leading-6 text-white/35">
               Turn scattered practice into a repeatable loop: talk, study,
               retrieve, and come back tomorrow.
             </p>
@@ -1838,16 +1838,16 @@ export default function LandingPage() {
                   }`}
                 >
                   <div className={i % 2 ? "lg:order-2" : ""}>
-                    <div className="text-5xl font-black tracking-[-0.06em] text-white/[0.08] sm:text-7xl">
+                    <div className="text-6xl font-black tracking-[-0.06em] text-white/[0.08] sm:text-8xl">
                       {num}
                     </div>
 
-                    <h3 className="mt-1 text-2xl font-black tracking-tight">
+                    <h3 className="mt-1 text-3xl font-black tracking-tight">
                       {title}
                     </h3>
 
                     <p
-                      className={`mt-2 max-w-xl text-sm leading-6 text-white/35 ${
+                      className={`mt-2 max-w-xl text-base leading-6 text-white/35 ${
                         i % 2 ? "lg:ml-auto" : ""
                       }`}
                     >
@@ -1867,7 +1867,7 @@ export default function LandingPage() {
                       <Icon className="h-4 w-4 text-red-300" />
                     </div>
 
-                    <span className="text-xs font-black uppercase tracking-[0.16em] text-white/35">
+                    <span className="text-sm font-black uppercase tracking-[0.16em] text-white/35">
                       {
                         [
                           "real-time",
@@ -1903,11 +1903,11 @@ export default function LandingPage() {
                   <motion.div
                     whileInView={{ y: [8, 0] }}
                     viewport={{ once: true }}
-                    className="text-3xl font-black tracking-[-0.04em] sm:text-5xl"
+                    className="text-4xl font-black tracking-[-0.04em] sm:text-6xl"
                   >
                     {value}
                   </motion.div>
-                  <div className="mt-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/25 sm:text-[10px]">
+                  <div className="mt-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/25 sm:text-[12px]">
                     {label}
                   </div>
                 </motion.div>
@@ -1969,13 +1969,13 @@ export default function LandingPage() {
                   ))}
                 </div>
 
-                <div className="text-lg font-black tracking-tight">
+                <div className="text-xl font-black tracking-tight">
                   “{quote}”
                 </div>
 
-                <p className="mt-4 text-sm leading-6 text-white/35">{body}</p>
+                <p className="mt-4 text-base leading-6 text-white/35">{body}</p>
 
-                <div className="mt-7 text-xs font-black uppercase tracking-[0.16em] text-white/25">
+                <div className="mt-7 text-sm font-black uppercase tracking-[0.16em] text-white/25">
                   {author}
                 </div>
               </motion.div>
@@ -2008,14 +2008,14 @@ export default function LandingPage() {
               <Terminal className="h-6 w-6" />
             </motion.div>
 
-            <h2 className="mx-auto mt-7 max-w-4xl text-4xl font-black tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+            <h2 className="mx-auto mt-7 max-w-4xl text-5xl font-black tracking-[-0.05em] sm:text-7xl lg:text-8xl">
               Stop preparing in pieces.
               <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-300 bg-clip-text text-transparent">
                 Start training as a system.
               </span>
             </h2>
 
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/35 sm:text-lg">
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-7 text-white/35 sm:text-xl">
               Talk. Study. Retrieve. Repeat. Walk into the next placement
               round knowing exactly what to work on.
             </p>
@@ -2023,7 +2023,7 @@ export default function LandingPage() {
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <button
                 onClick={() => navigate("/signup")}
-                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-red-500 px-7 py-4 text-sm font-black text-white shadow-[0_18px_50px_rgba(239,68,68,.22)] transition hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(239,68,68,.30)]"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-red-500 px-7 py-4 text-base font-black text-white shadow-[0_18px_50px_rgba(239,68,68,.22)] transition hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(239,68,68,.30)]"
               >
                 Start free
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -2031,7 +2031,7 @@ export default function LandingPage() {
 
               <button
                 onClick={() => navTo("gd-arena")}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-300/20 bg-red-500/[0.035] px-7 py-4 text-sm font-bold text-white transition hover:border-red-300/35 hover:bg-red-500/[0.07]"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-300/20 bg-red-500/[0.035] px-7 py-4 text-base font-bold text-white transition hover:border-red-300/35 hover:bg-red-500/[0.07]"
               >
                 <Play className="h-4 w-4 text-red-300" />
                 See the experience
@@ -2050,14 +2050,14 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <div className="text-sm font-black">GD Arena</div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-700">
+              <div className="text-base font-black">GD Arena</div>
+              <div className="text-[12px] font-bold uppercase tracking-[0.16em] text-zinc-700">
                 practice smarter
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-white/25">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-white/25">
             <button
               onClick={() => navTo("gd-arena")}
               className="transition hover:text-white"
@@ -2084,7 +2084,7 @@ export default function LandingPage() {
             </button>
           </div>
 
-          <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-700">
+          <div className="text-[12px] font-bold uppercase tracking-[0.14em] text-zinc-700">
             © 2026 GD Arena
           </div>
         </div>
